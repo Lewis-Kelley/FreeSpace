@@ -1,0 +1,5 @@
+* FreeSpace
+A space-themed SRPG in the vein of games like Shining Force and Fire Emblem
+
+This is going to just be a hobby project that I'll be working on in the free time I don't have.
+The hope is to learn more about C as well as to gain some experience in handling a large project.
