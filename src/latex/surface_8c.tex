@@ -1,0 +1,127 @@
+\hypertarget{surface_8c}{}\section{surface.\+c File Reference}
+\label{surface_8c}\index{surface.\+c@{surface.\+c}}
+{\ttfamily \#include \char`\"{}surface.\+h\char`\"{}}\\*
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+S\+D\+L\+\_\+\+Surface $\ast$ \hyperlink{surface_8c_afbb822a7d52ad4aaa2a2636647bd44d9}{load\+\_\+img} (char $\ast$file)
+\item 
+uint8\+\_\+t \hyperlink{surface_8c_a3d965647b090724fcdb44c5ba1e180ef}{draw\+\_\+surf} (S\+D\+L\+\_\+\+Surface $\ast$surf\+\_\+dest, S\+D\+L\+\_\+\+Surface $\ast$surf\+\_\+src, uint16\+\_\+t dest\+\_\+x, uint16\+\_\+t dest\+\_\+y)
+\item 
+uint8\+\_\+t \hyperlink{surface_8c_a9c4ce7c72e812cfc4aba686e354e4b6e}{draw\+\_\+surf\+\_\+region} (S\+D\+L\+\_\+\+Surface $\ast$surf\+\_\+dest, S\+D\+L\+\_\+\+Surface $\ast$surf\+\_\+src, uint16\+\_\+t dest\+\_\+x, uint16\+\_\+t dest\+\_\+y, uint16\+\_\+t src\+\_\+x, uint16\+\_\+t src\+\_\+y, uint16\+\_\+t src\+\_\+w, uint16\+\_\+t src\+\_\+h)
+\item 
+uint8\+\_\+t \hyperlink{surface_8c_ae2fdf37b2785b06594e890e98fb97bb1}{set\+\_\+invis\+\_\+color} (S\+D\+L\+\_\+\+Surface $\ast$surf, uint8\+\_\+t r, uint8\+\_\+t g, uint8\+\_\+t b)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Various functions for handling S\+D\+L\+\_\+\+Surface\textquotesingle{}s. 
+
+\subsection{Function Documentation}
+\index{surface.\+c@{surface.\+c}!draw\+\_\+surf@{draw\+\_\+surf}}
+\index{draw\+\_\+surf@{draw\+\_\+surf}!surface.\+c@{surface.\+c}}
+\subsubsection[{draw\+\_\+surf(\+S\+D\+L\+\_\+\+Surface $\ast$surf\+\_\+dest, S\+D\+L\+\_\+\+Surface $\ast$surf\+\_\+src, uint16\+\_\+t dest\+\_\+x, uint16\+\_\+t dest\+\_\+y)}]{\setlength{\rightskip}{0pt plus 5cm}uint8\+\_\+t draw\+\_\+surf (
+\begin{DoxyParamCaption}
+\item[{S\+D\+L\+\_\+\+Surface $\ast$}]{surf\+\_\+dest, }
+\item[{S\+D\+L\+\_\+\+Surface $\ast$}]{surf\+\_\+src, }
+\item[{uint16\+\_\+t}]{dest\+\_\+x, }
+\item[{uint16\+\_\+t}]{dest\+\_\+y}
+\end{DoxyParamCaption}
+)}\hypertarget{surface_8c_a3d965647b090724fcdb44c5ba1e180ef}{}\label{surface_8c_a3d965647b090724fcdb44c5ba1e180ef}
+Draws the src surface onto the dest surface at the given coordinates.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in,out}  & {\em surf\+\_\+dest} & The surface that will be drawn on. \\
+\hline
+\mbox{\tt in}  & {\em surf\+\_\+src} & The surface that will be drawn. \\
+\hline
+\mbox{\tt in}  & {\em dest\+\_\+x} & The x coordinate to draw surf\+\_\+src at. \\
+\hline
+\mbox{\tt in}  & {\em dest\+\_\+y} & The y coordinate to draw surf\+\_\+src at. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Status code indicating how the function terminated. 0 indicates success and -\/1 indicates a null pointer. 
+\end{DoxyReturn}
+\index{surface.\+c@{surface.\+c}!draw\+\_\+surf\+\_\+region@{draw\+\_\+surf\+\_\+region}}
+\index{draw\+\_\+surf\+\_\+region@{draw\+\_\+surf\+\_\+region}!surface.\+c@{surface.\+c}}
+\subsubsection[{draw\+\_\+surf\+\_\+region(\+S\+D\+L\+\_\+\+Surface $\ast$surf\+\_\+dest, S\+D\+L\+\_\+\+Surface $\ast$surf\+\_\+src, uint16\+\_\+t dest\+\_\+x, uint16\+\_\+t dest\+\_\+y, uint16\+\_\+t src\+\_\+x, uint16\+\_\+t src\+\_\+y, uint16\+\_\+t src\+\_\+w, uint16\+\_\+t src\+\_\+h)}]{\setlength{\rightskip}{0pt plus 5cm}uint8\+\_\+t draw\+\_\+surf\+\_\+region (
+\begin{DoxyParamCaption}
+\item[{S\+D\+L\+\_\+\+Surface $\ast$}]{surf\+\_\+dest, }
+\item[{S\+D\+L\+\_\+\+Surface $\ast$}]{surf\+\_\+src, }
+\item[{uint16\+\_\+t}]{dest\+\_\+x, }
+\item[{uint16\+\_\+t}]{dest\+\_\+y, }
+\item[{uint16\+\_\+t}]{src\+\_\+x, }
+\item[{uint16\+\_\+t}]{src\+\_\+y, }
+\item[{uint16\+\_\+t}]{src\+\_\+w, }
+\item[{uint16\+\_\+t}]{src\+\_\+h}
+\end{DoxyParamCaption}
+)}\hypertarget{surface_8c_a9c4ce7c72e812cfc4aba686e354e4b6e}{}\label{surface_8c_a9c4ce7c72e812cfc4aba686e354e4b6e}
+Draws the portion of the src surface indicated by a rectangular bounds onto the dest surface at the given coordinates.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in,out}  & {\em surf\+\_\+dest} & The surface that will be drawn on. \\
+\hline
+\mbox{\tt in}  & {\em surf\+\_\+src} & The surface that will be drawn. \\
+\hline
+\mbox{\tt in}  & {\em dest\+\_\+x} & The x coordinate to draw surf\+\_\+src at. \\
+\hline
+\mbox{\tt in}  & {\em dest\+\_\+y} & The y coordinate to draw surf\+\_\+src at. \\
+\hline
+\mbox{\tt in}  & {\em src\+\_\+x} & The x coordinate of the upper left corner of the selected portion of the src surface. \\
+\hline
+\mbox{\tt in}  & {\em src\+\_\+y} & The y coordinate of the upper left corner of the selected portion of the src surface. \\
+\hline
+\mbox{\tt in}  & {\em src\+\_\+w} & The width of the selected portion of the src surface. \\
+\hline
+\mbox{\tt in}  & {\em src\+\_\+h} & The height of the selected portion of the src surface. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Status code indicating how the function terminated. 0 indicates success and -\/1 indicates a null pointer. 
+\end{DoxyReturn}
+\index{surface.\+c@{surface.\+c}!load\+\_\+img@{load\+\_\+img}}
+\index{load\+\_\+img@{load\+\_\+img}!surface.\+c@{surface.\+c}}
+\subsubsection[{load\+\_\+img(char $\ast$file)}]{\setlength{\rightskip}{0pt plus 5cm}S\+D\+L\+\_\+\+Surface$\ast$ load\+\_\+img (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{file}
+\end{DoxyParamCaption}
+)}\hypertarget{surface_8c_afbb822a7d52ad4aaa2a2636647bd44d9}{}\label{surface_8c_afbb822a7d52ad4aaa2a2636647bd44d9}
+Loads the image from a file and returns it as an S\+D\+L\+\_\+\+Surface.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em file} & The name of the file to be loaded. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A new S\+D\+L\+\_\+\+Surface of the image in the loaded file. 
+\end{DoxyReturn}
+\index{surface.\+c@{surface.\+c}!set\+\_\+invis\+\_\+color@{set\+\_\+invis\+\_\+color}}
+\index{set\+\_\+invis\+\_\+color@{set\+\_\+invis\+\_\+color}!surface.\+c@{surface.\+c}}
+\subsubsection[{set\+\_\+invis\+\_\+color(\+S\+D\+L\+\_\+\+Surface $\ast$surf, uint8\+\_\+t r, uint8\+\_\+t g, uint8\+\_\+t b)}]{\setlength{\rightskip}{0pt plus 5cm}uint8\+\_\+t set\+\_\+invis\+\_\+color (
+\begin{DoxyParamCaption}
+\item[{S\+D\+L\+\_\+\+Surface $\ast$}]{surf, }
+\item[{uint8\+\_\+t}]{r, }
+\item[{uint8\+\_\+t}]{g, }
+\item[{uint8\+\_\+t}]{b}
+\end{DoxyParamCaption}
+)}\hypertarget{surface_8c_ae2fdf37b2785b06594e890e98fb97bb1}{}\label{surface_8c_ae2fdf37b2785b06594e890e98fb97bb1}
+Sets what color in the image file to treat as invisible.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in,out}  & {\em surf} & The S\+D\+L\+\_\+\+Surface that will be configured. \\
+\hline
+\mbox{\tt in}  & {\em r} & The red component of the surface. \\
+\hline
+\mbox{\tt in}  & {\em b} & The blue component of the surface. \\
+\hline
+\mbox{\tt in}  & {\em g} & The green component of the surface. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Status code indicating how the function terminated. 0 indicates success and -\/1 indicates a null pointer. 
+\end{DoxyReturn}

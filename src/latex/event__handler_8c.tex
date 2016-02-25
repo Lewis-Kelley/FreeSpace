@@ -1,0 +1,63 @@
+\hypertarget{event__handler_8c}{}\section{event\+\_\+handler.\+c File Reference}
+\label{event__handler_8c}\index{event\+\_\+handler.\+c@{event\+\_\+handler.\+c}}
+{\ttfamily \#include \char`\"{}event\+\_\+handler.\+h\char`\"{}}\\*
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{event__handler_8c_a7fab67de3e10543cdf88050802a590d8}{handle\+\_\+event} (S\+D\+L\+\_\+\+Event $\ast$event, \hyperlink{structGame__State}{Game\+\_\+\+State} $\ast$state)
+\item 
+void \hyperlink{event__handler_8c_aa9761847e6a46f0f12734bc612cc3db3}{key\+\_\+down} (S\+D\+L\+\_\+keysym keysym)
+\item 
+void \hyperlink{event__handler_8c_ae6f1a1e073d25fc7e03c9720a9dd00ae}{on\+\_\+quit} (\hyperlink{structGame__State}{Game\+\_\+\+State} $\ast$state)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Contains functions pertaining to handling different input events. 
+
+\subsection{Function Documentation}
+\index{event\+\_\+handler.\+c@{event\+\_\+handler.\+c}!handle\+\_\+event@{handle\+\_\+event}}
+\index{handle\+\_\+event@{handle\+\_\+event}!event\+\_\+handler.\+c@{event\+\_\+handler.\+c}}
+\subsubsection[{handle\+\_\+event(\+S\+D\+L\+\_\+\+Event $\ast$event, Game\+\_\+\+State $\ast$state)}]{\setlength{\rightskip}{0pt plus 5cm}void handle\+\_\+event (
+\begin{DoxyParamCaption}
+\item[{S\+D\+L\+\_\+\+Event $\ast$}]{event, }
+\item[{{\bf Game\+\_\+\+State} $\ast$}]{state}
+\end{DoxyParamCaption}
+)}\hypertarget{event__handler_8c_a7fab67de3e10543cdf88050802a590d8}{}\label{event__handler_8c_a7fab67de3e10543cdf88050802a590d8}
+Takes a generic event and decides what handler function to call with it.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em event} & The generic event to be handled. \\
+\hline
+\mbox{\tt in,out}  & {\em state} & The state of the game. \\
+\hline
+\end{DoxyParams}
+\index{event\+\_\+handler.\+c@{event\+\_\+handler.\+c}!key\+\_\+down@{key\+\_\+down}}
+\index{key\+\_\+down@{key\+\_\+down}!event\+\_\+handler.\+c@{event\+\_\+handler.\+c}}
+\subsubsection[{key\+\_\+down(\+S\+D\+L\+\_\+keysym keysym)}]{\setlength{\rightskip}{0pt plus 5cm}void key\+\_\+down (
+\begin{DoxyParamCaption}
+\item[{S\+D\+L\+\_\+keysym}]{keysym}
+\end{DoxyParamCaption}
+)}\hypertarget{event__handler_8c_aa9761847e6a46f0f12734bc612cc3db3}{}\label{event__handler_8c_aa9761847e6a46f0f12734bc612cc3db3}
+Event handles a key press.
+
+
+\begin{DoxyParams}{Parameters}
+{\em keysym} & An S\+D\+L\+\_\+keysym instance which represents which key was pressed. \\
+\hline
+\end{DoxyParams}
+\index{event\+\_\+handler.\+c@{event\+\_\+handler.\+c}!on\+\_\+quit@{on\+\_\+quit}}
+\index{on\+\_\+quit@{on\+\_\+quit}!event\+\_\+handler.\+c@{event\+\_\+handler.\+c}}
+\subsubsection[{on\+\_\+quit(\+Game\+\_\+\+State $\ast$state)}]{\setlength{\rightskip}{0pt plus 5cm}void on\+\_\+quit (
+\begin{DoxyParamCaption}
+\item[{{\bf Game\+\_\+\+State} $\ast$}]{state}
+\end{DoxyParamCaption}
+)}\hypertarget{event__handler_8c_ae6f1a1e073d25fc7e03c9720a9dd00ae}{}\label{event__handler_8c_ae6f1a1e073d25fc7e03c9720a9dd00ae}
+Handles what happens on a quit event. At this point, it only sets running to 0.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in,out}  & {\em state} & The state of the game. \\
+\hline
+\end{DoxyParams}

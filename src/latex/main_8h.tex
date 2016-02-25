@@ -1,0 +1,62 @@
+\hypertarget{main_8h}{}\section{main.\+h File Reference}
+\label{main_8h}\index{main.\+h@{main.\+h}}
+{\ttfamily \#include $<$S\+D\+L/\+S\+D\+L.\+h$>$}\\*
+{\ttfamily \#include $<$stdio.\+h$>$}\\*
+{\ttfamily \#include $<$stdint.\+h$>$}\\*
+{\ttfamily \#include $<$string.\+h$>$}\\*
+{\ttfamily \#include $<$stdarg.\+h$>$}\\*
+{\ttfamily \#include \char`\"{}game\+\_\+state.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}surface.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}event\+\_\+handler.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}image.\+h\char`\"{}}\\*
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \hyperlink{main_8h_ad72dbcf6d0153db1b8d8a58001feed83}{D\+E\+B\+UG}\hypertarget{main_8h_ad72dbcf6d0153db1b8d8a58001feed83}{}\label{main_8h_ad72dbcf6d0153db1b8d8a58001feed83}
+
+\begin{DoxyCompactList}\small\item\em Flag saying to include debugging information at compile time. \end{DoxyCompactList}\item 
+\#define \hyperlink{main_8h_af5b27449abdfc22a937250696492e03f}{S\+T\+R\+\_\+\+L\+EN}~75\hypertarget{main_8h_af5b27449abdfc22a937250696492e03f}{}\label{main_8h_af5b27449abdfc22a937250696492e03f}
+
+\begin{DoxyCompactList}\small\item\em The standard length of strings when intitialized. \end{DoxyCompactList}\item 
+\#define \hyperlink{main_8h_a2e6ef411e0ff00ad889788b6cde701b5}{W\+I\+N\+\_\+\+W\+I\+D\+TH}~600\hypertarget{main_8h_a2e6ef411e0ff00ad889788b6cde701b5}{}\label{main_8h_a2e6ef411e0ff00ad889788b6cde701b5}
+
+\begin{DoxyCompactList}\small\item\em The width of the window in pixels. \end{DoxyCompactList}\item 
+\#define \hyperlink{main_8h_a0a33b1743038db1adbbf1045aa839b38}{W\+I\+N\+\_\+\+H\+E\+I\+G\+HT}~600\hypertarget{main_8h_a0a33b1743038db1adbbf1045aa839b38}{}\label{main_8h_a0a33b1743038db1adbbf1045aa839b38}
+
+\begin{DoxyCompactList}\small\item\em The height of the window in pixels. \end{DoxyCompactList}\item 
+\#define \hyperlink{main_8h_a3c9c27541282b18cafd25005f199a8be}{A\+S\+S\+E\+RT}(exp)                                                                                              
+\item 
+\#define \hyperlink{main_8h_a78f03842530fb4e11058e726d43eb9b6}{E\+R\+R\+OR}(exp)                                                                                                        
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Used to D\+E\+B\+UG and E\+R\+R\+OR macros, various constants, and many of the include statements needed by most files. 
+
+\subsection{Macro Definition Documentation}
+\index{main.\+h@{main.\+h}!A\+S\+S\+E\+RT@{A\+S\+S\+E\+RT}}
+\index{A\+S\+S\+E\+RT@{A\+S\+S\+E\+RT}!main.\+h@{main.\+h}}
+\subsubsection[{A\+S\+S\+E\+RT}]{\setlength{\rightskip}{0pt plus 5cm}\#define A\+S\+S\+E\+RT(
+\begin{DoxyParamCaption}
+\item[{}]{exp}
+\end{DoxyParamCaption}
+)}\hypertarget{main_8h_a3c9c27541282b18cafd25005f199a8be}{}\label{main_8h_a3c9c27541282b18cafd25005f199a8be}
+{\bfseries Value\+:}
+\begin{DoxyCode}
+\textcolor{keywordflow}{if}(!exp)                                                        \(\backslash\)
+        printf(\textcolor{stringliteral}{"ASSERT ERROR: %s is not true at line %d in %s\(\backslash\)n"},   \(\backslash\)
+               #exp, \_\_LINE\_\_, \_\_FILE\_\_);
+\end{DoxyCode}
+Used only in debugging to assert that the expression is true. If it is, nothing happens, otherwise there is a print to the terminal. \index{main.\+h@{main.\+h}!E\+R\+R\+OR@{E\+R\+R\+OR}}
+\index{E\+R\+R\+OR@{E\+R\+R\+OR}!main.\+h@{main.\+h}}
+\subsubsection[{E\+R\+R\+OR}]{\setlength{\rightskip}{0pt plus 5cm}\#define E\+R\+R\+OR(
+\begin{DoxyParamCaption}
+\item[{}]{exp}
+\end{DoxyParamCaption}
+)}\hypertarget{main_8h_a78f03842530fb4e11058e726d43eb9b6}{}\label{main_8h_a78f03842530fb4e11058e726d43eb9b6}
+{\bfseries Value\+:}
+\begin{DoxyCode}
+printf(\textcolor{stringliteral}{"ERROR: %s at line %d in %s\(\backslash\)n"},                              \(\backslash\)
+           #exp, \_\_LINE\_\_, \_\_FILE\_\_);
+\end{DoxyCode}
+Used as a uniform way to show an error in the console. 
