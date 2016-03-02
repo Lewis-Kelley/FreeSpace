@@ -92,8 +92,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 Functions</h2></td></tr>
 <tr class="memitem:a7fab67de3e10543cdf88050802a590d8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="event__handler_8c.html#a7fab67de3e10543cdf88050802a590d8">handle_event</a> (SDL_Event *event, <a class="el" href="structGame__State.html">Game_State</a> *state)</td></tr>
 <tr class="separator:a7fab67de3e10543cdf88050802a590d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa9761847e6a46f0f12734bc612cc3db3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="event__handler_8c.html#aa9761847e6a46f0f12734bc612cc3db3">key_down</a> (SDL_keysym keysym)</td></tr>
-<tr class="separator:aa9761847e6a46f0f12734bc612cc3db3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a385c94b66359bc3d89f96d057aa42be0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="event__handler_8c.html#a385c94b66359bc3d89f96d057aa42be0">key_down</a> (SDL_keysym keysym, <a class="el" href="structGame__State.html">Game_State</a> *state)</td></tr>
+<tr class="separator:a385c94b66359bc3d89f96d057aa42be0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae6f1a1e073d25fc7e03c9720a9dd00ae"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="event__handler_8c.html#ae6f1a1e073d25fc7e03c9720a9dd00ae">on_quit</a> (<a class="el" href="structGame__State.html">Game_State</a> *state)</td></tr>
 <tr class="separator:ae6f1a1e073d25fc7e03c9720a9dd00ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -134,7 +134,7 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="aa9761847e6a46f0f12734bc612cc3db3"></a>
+<a class="anchor" id="a385c94b66359bc3d89f96d057aa42be0"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -142,8 +142,18 @@ Functions</h2></td></tr>
           <td class="memname">void key_down </td>
           <td>(</td>
           <td class="paramtype">SDL_keysym&#160;</td>
-          <td class="paramname"><em>keysym</em></td><td>)</td>
+          <td class="paramname"><em>keysym</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype"><a class="el" href="structGame__State.html">Game_State</a> *&#160;</td>
+          <td class="paramname"><em>state</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -151,6 +161,7 @@ Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">keysym</td><td>An SDL_keysym instance which represents which key was pressed. </td></tr>
+    <tr><td class="paramname">state</td><td>The current state of the game. </td></tr>
   </table>
   </dd>
 </dl>

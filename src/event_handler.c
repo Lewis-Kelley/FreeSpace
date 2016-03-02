@@ -38,7 +38,7 @@ void handle_event(SDL_Event *event, Game_State *state) {
 		}
 		break;
 	case SDL_KEYDOWN:
-        key_down(event->key.keysym);
+        key_down(event->key.keysym, state);
 		break;
 	case SDL_KEYUP :
 		//EMPTY
@@ -105,17 +105,17 @@ void handle_event(SDL_Event *event, Game_State *state) {
  * Event handles a key press.
  *
  * @param keysym An SDL_keysym instance which represents which key was pressed.
+ * @param state The current state of the game.
  */
-void key_down(SDL_keysym keysym) {
+void key_down(SDL_keysym keysym, Game_State *state) {
     switch(keysym.sym) {
     case SDLK_UP:
-        printf("Holding up\n");
         break;
     case SDLK_DOWN:
+        break;
     case SDLK_LEFT:
+        break;
     case SDLK_RIGHT:
-    case SDLK_e:
-        printf("Holding e\n");
         break;
     default:
         break;

@@ -5,7 +5,7 @@
 #include "game_state.h"
 
 void handle_event(SDL_Event *event, Game_State *state);
-void key_down(SDL_keysym keysym);
+void key_down(SDL_keysym keysym, Game_State *state);
 void on_quit(Game_State *state);
 
 #endif

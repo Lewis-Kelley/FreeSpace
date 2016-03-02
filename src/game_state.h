@@ -14,7 +14,6 @@
  */
 typedef struct {
     uint8_t running; ///< 1 if the game is still running, 0 if stopping
-    uint8_t turn; ///< 0 if player's turn, 1 if enemy's.
     Image board[GRID_COLS][GRID_ROWS]; ///< The current state of the board.
 } Game_State;
 

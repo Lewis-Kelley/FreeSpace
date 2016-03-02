@@ -1,5 +1,5 @@
 * FreeSpace
-A space-themed SRPG in the vein of games like Shining Force and Fire Emblem
+A space-themed SRPG in the vein of games like Shining Force and Fire Emblem. As a general concept, this means a turn-based strategy game where the player controls a group of characters that can move about a board with the usual goal of eliminating all of the opposing force, which may either be controlled by another player or an AI.
 
 This is going to just be a hobby project that I'll be working on in the free time I don't have.
 The hope is to learn more about C as well as to gain some experience in handling a large project.

@@ -6,7 +6,7 @@
 \item 
 void \hyperlink{event__handler_8c_a7fab67de3e10543cdf88050802a590d8}{handle\+\_\+event} (S\+D\+L\+\_\+\+Event $\ast$event, \hyperlink{structGame__State}{Game\+\_\+\+State} $\ast$state)
 \item 
-void \hyperlink{event__handler_8c_aa9761847e6a46f0f12734bc612cc3db3}{key\+\_\+down} (S\+D\+L\+\_\+keysym keysym)
+void \hyperlink{event__handler_8c_a385c94b66359bc3d89f96d057aa42be0}{key\+\_\+down} (S\+D\+L\+\_\+keysym keysym, \hyperlink{structGame__State}{Game\+\_\+\+State} $\ast$state)
 \item 
 void \hyperlink{event__handler_8c_ae6f1a1e073d25fc7e03c9720a9dd00ae}{on\+\_\+quit} (\hyperlink{structGame__State}{Game\+\_\+\+State} $\ast$state)
 \end{DoxyCompactItemize}
@@ -35,16 +35,19 @@ Takes a generic event and decides what handler function to call with it.
 \end{DoxyParams}
 \index{event\+\_\+handler.\+c@{event\+\_\+handler.\+c}!key\+\_\+down@{key\+\_\+down}}
 \index{key\+\_\+down@{key\+\_\+down}!event\+\_\+handler.\+c@{event\+\_\+handler.\+c}}
-\subsubsection[{key\+\_\+down(\+S\+D\+L\+\_\+keysym keysym)}]{\setlength{\rightskip}{0pt plus 5cm}void key\+\_\+down (
+\subsubsection[{key\+\_\+down(\+S\+D\+L\+\_\+keysym keysym, Game\+\_\+\+State $\ast$state)}]{\setlength{\rightskip}{0pt plus 5cm}void key\+\_\+down (
 \begin{DoxyParamCaption}
-\item[{S\+D\+L\+\_\+keysym}]{keysym}
+\item[{S\+D\+L\+\_\+keysym}]{keysym, }
+\item[{{\bf Game\+\_\+\+State} $\ast$}]{state}
 \end{DoxyParamCaption}
-)}\hypertarget{event__handler_8c_aa9761847e6a46f0f12734bc612cc3db3}{}\label{event__handler_8c_aa9761847e6a46f0f12734bc612cc3db3}
+)}\hypertarget{event__handler_8c_a385c94b66359bc3d89f96d057aa42be0}{}\label{event__handler_8c_a385c94b66359bc3d89f96d057aa42be0}
 Event handles a key press.
 
 
 \begin{DoxyParams}{Parameters}
 {\em keysym} & An S\+D\+L\+\_\+keysym instance which represents which key was pressed. \\
+\hline
+{\em state} & The current state of the game. \\
 \hline
 \end{DoxyParams}
 \index{event\+\_\+handler.\+c@{event\+\_\+handler.\+c}!on\+\_\+quit@{on\+\_\+quit}}
