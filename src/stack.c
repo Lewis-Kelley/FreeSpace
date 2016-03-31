@@ -9,7 +9,7 @@
  * 
  * @param [in, out] stack The Node to be modified.
  * @param [in] key The key to be stored.
- * @param [in] item The piece data to be stored. Must pass in a copy.
+ * @param [in] item The piece data to be stored.
  * @param [in] item_size The size of the data stored at item.
  * @return 0 if successful and the key was not already in use, -1 if there was
  * invalid input, or -2 if the key was already use.
@@ -19,13 +19,14 @@ int16_t stack_put(Node *stack, char *key, void *item, size_t item_size) {
     return -1;
     
   Node *curr;
-  if((curr = stack_find(*stack, key)) == NULL) {
+  if((curr = stack_find(*stack, key)) == NULL) { //FIXME Seg fault here
     curr = (Node *)malloc(sizeof(Node));
     *curr = (Node){stack->key, stack->data, stack->data_size, stack->next};
     *stack = (Node){(char *)malloc((strlen(key) + 1) * sizeof(char)),
                     malloc(item_size), item_size, curr};
     strcpy(stack->key, key);
 
+    // Copy the value in item into the newly malloc'ed data.
     for(size_t i = 0; i < item_size; i++) {
       *((uint8_t *)stack->data + i) = *((uint8_t *)item + i);
     }
@@ -98,25 +99,23 @@ void * stack_remove(Node *stack, char *key) {
  * wasn't found.
  */
 Node * stack_find(Node stack, char *key) {
+  printf("I'm here\n");
   if(key == NULL)
     return NULL;
 
-  if(stack.data != NULL)
-    printf("In stack_find with stack = {%s, %d, %p}\n", stack.key,
-           *(int *)stack.data, stack.next);
-    
+  if(stack.data == NULL)
+    printf("In stack_find with Node: {%s, NULL, %d, %p} and key: %s",
+           stack.key, (uint32_t)stack.data_size, stack.next, key);
+  else
+    printf("In stack_find with Node: {%s, %d, %d, %p} and key: %s",
+           stack.key, *(int *)stack.data, (uint32_t)stack.data_size, stack.next,
+           key);
+
   Node *curr = &stack;
 
-  do {
-    if(curr->key != NULL && strcmp(key, curr->key) == 0) {
-      printf("Found a match between %s and %s.\n", key, curr->key);
-      return curr;
-    }
+  while((curr->key == NULL || strcmp(key, curr->key) != 0) && (curr = curr->next));
 
-    curr = curr->next;
-  } while(curr != NULL);
-  
-  return NULL;
+  return curr;
 }
 
 /**

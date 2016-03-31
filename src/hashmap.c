@@ -6,14 +6,20 @@
 
 /**
  * Returns a hash code representing the given key.
+ * This is based on the djb2 hash code.
  *
  * @param [in] key The key to be hashed.
  * @param [in] map_size The number of buckets in the hashmap. The hash will be less than this number.
  * @return Hash code representing the given key.
  */
 uint16_t hash_func(char *key, uint16_t map_size) {
-  uint16_t hash = 0; //TODO Make an actual function.
-  return hash;
+  int32_t hash = 5381;
+  int8_t c;
+
+  while((c = *key++))
+    hash = (hash << 5) + hash + c; //hash * 33 + c
+
+  return (hash % map_size);
 }
 
 /**
@@ -24,6 +30,7 @@ uint16_t hash_func(char *key, uint16_t map_size) {
  * @param [in, out] map The Hashmap to store the items in.
  * @param [in] key The key to be added.
  * @param [in] item The item to be added.
+ * @param [in] item_size The number of bytes stored at item.
  * @return 0 if successfully inserted, -1 if there was an invalid parameter,
  * or -2 if there was already an item mapped to that key.
  */
