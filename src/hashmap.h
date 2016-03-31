@@ -16,9 +16,13 @@ typedef struct {
 } Hashmap;
 
 uint16_t hash_func(char *key, uint16_t map_size);
-int8_t hashmap_put(Hashmap *map, char *key, void *item);
+int8_t hashmap_put(Hashmap *map, char *key, void *item, size_t item_size);
 void * hashmap_remove(Hashmap *map, char *key);
 void * hashmap_find(Hashmap map, char *key);
 void hashmap_free(Hashmap *map);
+
+#ifdef DEBUG
+void hashmap_print(Hashmap map);
+#endif
 
 #endif

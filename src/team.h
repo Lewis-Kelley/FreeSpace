@@ -4,6 +4,9 @@
 #ifndef TEAM_H
 #define TEAM_H
 
+/** @enum Team
+ * Indicates what team a given cell or entity is.
+ */
 typedef enum {
   SELECTED, ///< Currently controlled directly by the player.
   PLAYER, ///< Can be controlled directly by the player, but not in this turn.
