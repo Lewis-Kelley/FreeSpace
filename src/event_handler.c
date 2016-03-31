@@ -18,14 +18,14 @@ void handle_event(SDL_Event *event, Game_State *state) {
 			if(event->active.gain) {
 				//EMPTY
 			} else {
-                //EMPTY
+        //EMPTY
 			}
 			break;
 		case SDL_APPINPUTFOCUS:
 			if(event->active.gain) {
-                //EMPTY
+        //EMPTY
 			} else {
-                //EMPTY
+        //EMPTY
 			}
 			break;
 		case SDL_APPACTIVE:
@@ -38,7 +38,7 @@ void handle_event(SDL_Event *event, Game_State *state) {
 		}
 		break;
 	case SDL_KEYDOWN:
-        key_down(event->key.keysym, state);
+    key_down(event->key.keysym, state);
 		break;
 	case SDL_KEYUP :
 		//EMPTY
@@ -49,7 +49,7 @@ void handle_event(SDL_Event *event, Game_State *state) {
 	case SDL_MOUSEBUTTONDOWN:
 		switch(event->button.button) {
 		case SDL_BUTTON_LEFT:
-            //EMPTY
+      //EMPTY
 			break;
 		case SDL_BUTTON_RIGHT:
 			//EMPTY
@@ -62,7 +62,7 @@ void handle_event(SDL_Event *event, Game_State *state) {
 	case SDL_MOUSEBUTTONUP:
 		switch(event->button.button) {
 		case SDL_BUTTON_LEFT:
-            //EMPTY
+      //EMPTY
 			break;
 		case SDL_BUTTON_RIGHT:
 			//EMPTY
@@ -88,12 +88,12 @@ void handle_event(SDL_Event *event, Game_State *state) {
 		//EMPTY
 		break;
 	case SDL_QUIT:
-        on_quit(state);
+    on_quit(state);
 		break;
 	case SDL_SYSWMEVENT:
 		break;
 	case SDL_VIDEORESIZE:
-        //EMPTY
+    //EMPTY
 		break;
 	case SDL_VIDEOEXPOSE:
 		//EMPTY
@@ -108,18 +108,18 @@ void handle_event(SDL_Event *event, Game_State *state) {
  * @param state The current state of the game.
  */
 void key_down(SDL_keysym keysym, Game_State *state) {
-    switch(keysym.sym) {
-    case SDLK_UP:
-        break;
-    case SDLK_DOWN:
-        break;
-    case SDLK_LEFT:
-        break;
-    case SDLK_RIGHT:
-        break;
-    default:
-        break;
-    }
+  switch(keysym.sym) {
+  case SDLK_UP:
+    break;
+  case SDLK_DOWN:
+    break;
+  case SDLK_LEFT:
+    break;
+  case SDLK_RIGHT:
+    break;
+  default:
+    break;
+  }
 }
 
 /**
@@ -129,5 +129,5 @@ void key_down(SDL_keysym keysym, Game_State *state) {
  * @param [in, out] state The state of the game.
  */
 void on_quit(Game_State *state) {
-    state->running = 0;
+  state->running = 0;
 }

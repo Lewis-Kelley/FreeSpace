@@ -15,8 +15,8 @@ typedef struct {
     uint16_t dest_y; ///< The y coordinate to draw this Image at.
     uint16_t src_x; ///< The x coordinate to read the image from.
     uint16_t src_y; ///< The y coordinate to read the image from.
-    uint16_t w; ///< The width of the image to read. Can be set to 0 to signify use of the whole image.
-    uint16_t h; ///< The width of the image to read. Can be set to 0 to signify use of the whole image.
+    uint16_t w; ///< The width of the image to read, 0 means use whole image.
+    uint16_t h; ///< The width of the image to read. 0 means use whole image.
 } Image;
 
 #endif

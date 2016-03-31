@@ -65,6 +65,3 @@ void hashmap_free(Hashmap *map) {
     free(map->data);
     free(map);
 }
-
-int main() {
-}

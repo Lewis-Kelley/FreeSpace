@@ -1,0 +1,8 @@
+*~
+Doxyfile
+*.html
+*.js
+*.css
+*.tex
+src/latex/*
+src/html/*
