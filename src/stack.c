@@ -4,6 +4,22 @@
 #include "stack.h"
 
 /**
+ * Helper function for stack_put that clones all the data given into the current
+ * head of the stack.
+ */
+static void set_stack_top(Node *stack, char *key, void *item, size_t item_size,
+                          Node *next) {
+  *stack = (Node){(char *)malloc((strlen(key) + 1) * sizeof(char)),
+                  malloc(item_size), item_size, next};
+  strcpy(stack->key, key);
+
+  // Copy the value in item into the newly malloc'ed data.
+  for(size_t i = 0; i < item_size; i++) {
+    *((uint8_t *)stack->data + i) = *((uint8_t *)item + i);
+  }
+}
+
+/**
  * Inserts a new Node with the given key and item.
  * If the key was already in use, that Node's item is replaced with the new one.
  * 
@@ -19,22 +35,30 @@ int16_t stack_put(Node *stack, char *key, void *item, size_t item_size) {
     return -1;
     
   Node *curr;
+
+  if(stack->key == NULL) { // Empty stack
+    set_stack_top(stack, key, item, item_size, NULL);
+    return 0;
+  }
+
   if((curr = stack_find(*stack, key)) == NULL) { //FIXME Seg fault here
     curr = (Node *)malloc(sizeof(Node));
     *curr = (Node){stack->key, stack->data, stack->data_size, stack->next};
-    *stack = (Node){(char *)malloc((strlen(key) + 1) * sizeof(char)),
-                    malloc(item_size), item_size, curr};
-    strcpy(stack->key, key);
-
-    // Copy the value in item into the newly malloc'ed data.
-    for(size_t i = 0; i < item_size; i++) {
-      *((uint8_t *)stack->data + i) = *((uint8_t *)item + i);
-    }
+    set_stack_top(stack, key, item, item_size, curr);
 
     return 0;
   }
 
-  curr->data = item;
+  // Update the value
+  if(curr->data_size != item_size) {
+    free(curr->data);
+    curr->data = malloc(item_size);
+    curr->data_size = item_size;
+  }
+  
+  for(size_t i = 0; i < item_size; i++) {
+    *((uint8_t *)curr->data + i) = *((uint8_t *)item + i);
+  }
   return -2;
 }
 
@@ -131,3 +155,17 @@ void stack_free(Node *stack) {
   free(stack->data);
   free(stack);
 }
+
+#ifdef DEBUG
+void stack_print(Node stack) {
+  Node *curr = &stack;
+
+  while(curr->next != NULL) {
+    printf("%s: %d\n", curr->key, *(int *)curr->data);
+    curr = curr->next;
+  }
+
+  if(curr->key != NULL)
+    printf("%s: %d\n", curr->key, *(int *)curr->data);
+}
+#endif
