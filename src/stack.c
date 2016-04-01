@@ -99,17 +99,8 @@ void * stack_remove(Node *stack, char *key) {
  * wasn't found.
  */
 Node * stack_find(Node stack, char *key) {
-  printf("I'm here\n");
   if(key == NULL)
     return NULL;
-
-  if(stack.data == NULL)
-    printf("In stack_find with Node: {%s, NULL, %d, %p} and key: %s",
-           stack.key, (uint32_t)stack.data_size, stack.next, key);
-  else
-    printf("In stack_find with Node: {%s, %d, %d, %p} and key: %s",
-           stack.key, *(int *)stack.data, (uint32_t)stack.data_size, stack.next,
-           key);
 
   Node *curr = &stack;
 
