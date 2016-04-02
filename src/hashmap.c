@@ -31,11 +31,10 @@ uint16_t hash_func(char *key, uint16_t map_size) {
  * @param [in] key The key to be added.
  * @param [in] item The item to be added.
  * @param [in] item_size The number of bytes stored at item.
- * @return 0 if successfully inserted, -1 if there was an invalid parameter,
- * or -2 if there was already an item mapped to that key.
+ * @return Stack_Status representing the status of the insertion.
  */
-int8_t hashmap_put(Hashmap *map, char *key, void *item, size_t item_size) {
-  return stack_put(&(map->data[hash_func(key, map->map_size)]), key, item, item_size);
+Stack_Status hashmap_put(Hashmap *map, char *key, void *item, size_t item_size) {
+  return stack_put(map->data + hash_func(key, map->map_size), key, item, item_size);
 }
 
 /**
@@ -46,7 +45,7 @@ int8_t hashmap_put(Hashmap *map, char *key, void *item, size_t item_size) {
  * @return A pointer to the data paired with the key or NULL if there wasn't any reference to the key in the map.
  */
 void * hashmap_remove(Hashmap *map, char *key) {
-  return stack_remove(&(map->data[hash_func(key, map->map_size)]), key);
+  return stack_remove(map->data + hash_func(key, map->map_size), key);
 }
 
 /**
@@ -54,19 +53,11 @@ void * hashmap_remove(Hashmap *map, char *key) {
  *
  * @param [in] map The Hashmap to be queried.
  * @param [in] key The key to be searched for.
- * @return The data associated with the given key.
+ * @return a pointer to the Node associated with the given key or
+ * NULL if the key wasn't found.
  */
-void * hashmap_find(Hashmap map, char *key) {
-  if(map.data[0].data != NULL)
-    printf("In hashmap_find with stack = {%s, %d, %p}\n", map.data[0].key,
-           *(int *)map.data[0].data, map.data[0].next);
-
-  Node *res = stack_find(map.data[hash_func(key, map.map_size)], key);
-  
-  if(res == NULL)
-    return NULL;
-
-  return res->data;
+Node * hashmap_find(Hashmap map, char *key) {
+  return stack_find(map.data[hash_func(key, map.map_size)], key);
 }
 
 /**
@@ -79,7 +70,6 @@ void hashmap_free(Hashmap *map) {
     stack_free(&(map->data[i]));
 
   free(map->data);
-  free(map);
 }
 
 #ifdef DEBUG

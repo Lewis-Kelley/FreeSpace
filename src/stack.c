@@ -71,6 +71,9 @@ Stack_Status stack_put(Node *stack, char *key, void *item, size_t item_size) {
  * with that key. Also returns NULL if any of the parameters are NULL.
  */
 void * stack_remove(Node *stack, char *key) {
+  if(stack == NULL || key == NULL || stack->key == NULL)
+    return NULL;
+
   if(strcmp(key, stack->key) == 0) { // The head is the Node to remove.
     void *data = stack->data;
     free(stack->key);

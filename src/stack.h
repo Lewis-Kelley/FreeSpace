@@ -28,8 +28,8 @@ typedef enum {
   STACK_REPLACED = 2 ///< The key was already present, and it's item was replaced.
 } Stack_Status;
 
-Stack_Status stack_put(Node *stack, char *key, void *item, size_t item_size);
-void * stack_remove(Node *stack, char *key);
-Node * stack_find(Node stack, char *key);
-void stack_free(Node *stack);
+extern Stack_Status stack_put(Node *stack, char *key, void *item, size_t item_size);
+extern void * stack_remove(Node *stack, char *key);
+extern Node * stack_find(Node stack, char *key);
+extern void stack_free(Node *stack);
 #endif
