@@ -125,6 +125,7 @@ void test_stack_remove() {
   CU_ASSERT_EQUAL(*(int *)stack_find(stack, "first")->data, 0);
   CU_ASSERT_EQUAL(*(char *)stack_find(stack, "third")->data, 'c');
   CU_ASSERT_EQUAL(*(char *)stack_find(stack, "fourth")->data, 'd');
+  CU_ASSERT_EQUAL_FATAL(*(char *)stack_find(stack, "third")->next->data, 0);
 
   CU_ASSERT_EQUAL(*(char *)stack_remove(&stack, "third"), 'c');
   CU_ASSERT_EQUAL(stack_find(stack, "third"), NULL);
@@ -134,6 +135,13 @@ void test_stack_remove() {
   CU_ASSERT_EQUAL(*(int *)stack_remove(&stack, "first"), 0);
   CU_ASSERT_EQUAL(*(char *)stack_find(stack, "fourth")->data, 'd');
   CU_ASSERT_EQUAL(stack_find(stack, "first"), NULL);
+  CU_ASSERT_EQUAL_FATAL(stack_find(stack, "fourth")->next, NULL);
+
+  CU_ASSERT_EQUAL(*(char *)stack_remove(&stack, "fourth"), 'd');
+  CU_ASSERT_EQUAL(stack.key, NULL);
+  CU_ASSERT_EQUAL(stack.data, NULL);
+  CU_ASSERT_EQUAL(stack.data_size, 0);
+  CU_ASSERT_EQUAL(stack.next, NULL);
 }
 
 void test_stack_free() {
@@ -164,6 +172,7 @@ int main(int argc, char **argv) {
   CU_basic_set_mode(CU_BRM_VERBOSE);
   CU_basic_run_test(stack_suite, CU_get_test(stack_suite, "stack_find"));
   CU_basic_run_test(stack_suite, CU_get_test(stack_suite, "stack_put"));
+  CU_basic_run_test(stack_suite, CU_get_test(stack_suite, "stack_remove"));
   printf("\n");
 
   QUIT;

@@ -75,9 +75,9 @@ void * stack_remove(Node *stack, char *key) {
     void *data = stack->data;
     free(stack->key);
 
-    if(stack->next == NULL)
-      free(stack);
-    else {
+    if(stack->next == NULL) {
+      *stack = (Node){NULL, NULL, 0, NULL};
+    } else {
       Node *next = stack->next;
       *stack = (Node){next->key, next->data, next->data_size, next->next};
       free(next);
@@ -93,22 +93,24 @@ void * stack_remove(Node *stack, char *key) {
   while(stack->next != NULL && strcmp(key, stack->next->key) != 0)
     stack = stack->next;
 
-  if(strcmp(key, stack->next->key) == 0) {
-    void *data = stack->next->data;
-    free(stack->next->key);
 
-    if(stack->next->next == NULL)
-      free(stack->next);
-    else {
-      Node *next = stack->next->next;
-      *stack->next = (Node){next->key, next->data, next->data_size, next->next};
-      free(next);
-    }
-
-    return data;
+  if(stack->next == NULL) {
+    return NULL;
   }
 
-  return NULL;
+  void *data = stack->next->data;
+  free(stack->next->key);
+
+  if(stack->next->next == NULL) {
+    free(stack->next);
+    stack->next = NULL;
+  } else {
+    Node *next = stack->next->next;
+    *stack->next = (Node){next->key, next->data, next->data_size, next->next};
+    free(next);
+  }
+
+  return data;
 }
 
 /**
@@ -128,7 +130,7 @@ Node * stack_find(Node stack, char *key) {
   Node *curr = &stack;
 
   while(curr != NULL && (curr->key == NULL || strcmp(key, curr->key) != 0))
-        curr = curr->next;
+    curr = curr->next;
 
   return curr;
 }

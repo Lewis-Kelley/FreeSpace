@@ -4,7 +4,7 @@
 #ifndef TEAM_H
 #define TEAM_H
 
-/** @enum Team
+/**
  * Indicates what team a given cell or entity is.
  */
 typedef enum {
