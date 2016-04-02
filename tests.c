@@ -63,17 +63,17 @@ void test_stack_put() {
   void *data = malloc(sizeof(int));
   
   *(int *)data = 1;
-  CU_ASSERT_EQUAL(stack_put(&stack, "first", data, sizeof(int)), 0);
+  CU_ASSERT_EQUAL(stack_put(&stack, "first", data, sizeof(int)), STACK_SUCCESS);
   CU_ASSERT_EQUAL(*(int *)stack_find(stack, "first")->data, 1);
 
   *(int *)data = 0;
   CU_ASSERT_EQUAL(*(int *)stack_find(stack, "first")->data, 1);
 
-  CU_ASSERT_EQUAL(stack_put(&stack, "first", data, sizeof(int)), -2);
+  CU_ASSERT_EQUAL(stack_put(&stack, "first", data, sizeof(int)), STACK_REPLACED);
   CU_ASSERT_EQUAL(*(int *)stack_find(stack, "first")->data, 0);
 
   *(int *)data = 1;
-  CU_ASSERT_EQUAL(stack_put(&stack, "second", data, sizeof(int)), 0);
+  CU_ASSERT_EQUAL(stack_put(&stack, "second", data, sizeof(int)), STACK_SUCCESS);
   CU_ASSERT_EQUAL(*(int *)stack_find(stack, "first")->data, 0);
   CU_ASSERT_EQUAL(*(int *)stack_find(stack, "second")->data, 1);
 
@@ -82,17 +82,22 @@ void test_stack_put() {
 
   *(char *)data = 'c';
   CU_ASSERT_EQUAL(*(int *)stack_find(stack, "second")->data, 1);
-  CU_ASSERT_EQUAL(stack_put(&stack, "third", data, sizeof(char)), 0);
+  CU_ASSERT_EQUAL(stack_put(&stack, "third", data, sizeof(char)), STACK_SUCCESS);
   CU_ASSERT_EQUAL(*(char *)stack_find(stack, "third")->data, 'c');
 
   free(data);
   data = malloc(sizeof(int));
 
   *(int *)data = 2;
-  CU_ASSERT_EQUAL(stack_put(&stack, "first", data, sizeof(int)), -2);
+  CU_ASSERT_EQUAL(stack_put(&stack, "first", data, sizeof(int)), STACK_REPLACED);
   CU_ASSERT_EQUAL(*(int *)stack_find(stack, "first")->data, 2);
   CU_ASSERT_EQUAL(*(char *)stack_find(stack, "third")->data, 'c');
   CU_ASSERT_EQUAL(stack_find(stack, "fourth"), NULL);
+
+  CU_ASSERT_EQUAL(stack_put(NULL, "word", data, sizeof(int)), STACK_INVALID_ARGS);
+  CU_ASSERT_EQUAL(stack_put(&stack, NULL, data, sizeof(int)), STACK_INVALID_ARGS);
+  CU_ASSERT_EQUAL(stack_put(&stack, "word", NULL, sizeof(int)), STACK_INVALID_ARGS);
+  CU_ASSERT_EQUAL(stack_put(&stack, "word", data, 0), STACK_INVALID_ARGS);
 }
 
 void test_stack_remove() {

@@ -27,18 +27,17 @@ static void set_stack_top(Node *stack, char *key, void *item, size_t item_size,
  * @param [in] key The key to be stored.
  * @param [in] item The piece data to be stored.
  * @param [in] item_size The size of the data stored at item.
- * @return 0 if successful and the key was not already in use, -1 if there was
- * invalid input, or -2 if the key was already use.
+ * @return Stack_Status representing the status of the stack.
  */
-int16_t stack_put(Node *stack, char *key, void *item, size_t item_size) {
-  if(stack == NULL || key == NULL || item == NULL)
-    return -1;
+Stack_Status stack_put(Node *stack, char *key, void *item, size_t item_size) {
+  if(stack == NULL || key == NULL || item == NULL || item_size == 0)
+    return STACK_INVALID_ARGS;
     
   Node *curr;
 
   if(stack->key == NULL) { // Empty stack
     set_stack_top(stack, key, item, item_size, NULL);
-    return 0;
+    return STACK_SUCCESS;
   }
 
   if((curr = stack_find(*stack, key)) == NULL) {
@@ -46,7 +45,7 @@ int16_t stack_put(Node *stack, char *key, void *item, size_t item_size) {
     *curr = (Node){stack->key, stack->data, stack->data_size, stack->next};
     set_stack_top(stack, key, item, item_size, curr);
 
-    return 0;
+    return STACK_SUCCESS;
   }
 
   // Update the value
@@ -59,7 +58,7 @@ int16_t stack_put(Node *stack, char *key, void *item, size_t item_size) {
   for(size_t i = 0; i < item_size; i++) {
     *((uint8_t *)curr->data + i) = *((uint8_t *)item + i);
   }
-  return -2;
+  return STACK_REPLACED;
 }
 
 /**

@@ -19,7 +19,16 @@ typedef struct _Node {
   struct _Node *next; ///< A pointer to the next element in the list.
 } Node;
 
-int16_t stack_put(Node *stack, char *key, void *item, size_t item_size);
+/**
+ * Return status for stack_put.
+ */
+typedef enum {
+  STACK_SUCCESS = 0, ///< The item was put onto the stack without collisions.
+  STACK_INVALID_ARGS = 1, ///< An argument was invalid.
+  STACK_REPLACED = 2 ///< The key was already present, and it's item was replaced.
+} Stack_Status;
+
+Stack_Status stack_put(Node *stack, char *key, void *item, size_t item_size);
 void * stack_remove(Node *stack, char *key);
 Node * stack_find(Node stack, char *key);
 void stack_free(Node *stack);

@@ -6,7 +6,7 @@
 #include <stdint.h>
 
 /** @struct Coord
- * Convenience 
+ * Convenience function structure for holding a coordinate.
  */
 typedef struct {
   uint8_t x; ///< The horizontal component of this coordinate.
