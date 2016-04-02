@@ -41,7 +41,7 @@ int16_t stack_put(Node *stack, char *key, void *item, size_t item_size) {
     return 0;
   }
 
-  if((curr = stack_find(*stack, key)) == NULL) { //FIXME Seg fault here
+  if((curr = stack_find(*stack, key)) == NULL) {
     curr = (Node *)malloc(sizeof(Node));
     *curr = (Node){stack->key, stack->data, stack->data_size, stack->next};
     set_stack_top(stack, key, item, item_size, curr);
@@ -128,7 +128,8 @@ Node * stack_find(Node stack, char *key) {
 
   Node *curr = &stack;
 
-  while((curr->key == NULL || strcmp(key, curr->key) != 0) && (curr = curr->next));
+  while(curr != NULL && (curr->key == NULL || strcmp(key, curr->key) != 0))
+        curr = curr->next;
 
   return curr;
 }

@@ -74,20 +74,24 @@ void test_stack_put() {
 
   *(int *)data = 1;
   CU_ASSERT_EQUAL(stack_put(&stack, "second", data, sizeof(int)), 0);
-  CU_ASSERT_EQUAL(*(int *)stack_find(stack, "first"), 0);
-  CU_ASSERT_EQUAL(*(int *)stack_find(stack, "second"), 1);
+  CU_ASSERT_EQUAL(*(int *)stack_find(stack, "first")->data, 0);
+  CU_ASSERT_EQUAL(*(int *)stack_find(stack, "second")->data, 1);
 
   free(data);
   data = malloc(sizeof(char));
 
   *(char *)data = 'c';
-  CU_ASSERT_EQUAL(*(int *)stack_find(stack, "second"), 1);
+  CU_ASSERT_EQUAL(*(int *)stack_find(stack, "second")->data, 1);
   CU_ASSERT_EQUAL(stack_put(&stack, "third", data, sizeof(char)), 0);
-  CU_ASSERT_EQUAL(*(char *)stack_find(stack, "third"), 'c');
+  CU_ASSERT_EQUAL(*(char *)stack_find(stack, "third")->data, 'c');
 
-  *(char *)data = 'd';
-  CU_ASSERT_EQUAL(*(int *)stack_find(stack, "first"), 1);
-  CU_ASSERT_EQUAL(*(char *)stack_find(stack, "third"), 'c');
+  free(data);
+  data = malloc(sizeof(int));
+
+  *(int *)data = 2;
+  CU_ASSERT_EQUAL(stack_put(&stack, "first", data, sizeof(int)), -2);
+  CU_ASSERT_EQUAL(*(int *)stack_find(stack, "first")->data, 2);
+  CU_ASSERT_EQUAL(*(char *)stack_find(stack, "third")->data, 'c');
   CU_ASSERT_EQUAL(stack_find(stack, "fourth"), NULL);
 }
 
@@ -155,7 +159,6 @@ int main(int argc, char **argv) {
   CU_basic_set_mode(CU_BRM_VERBOSE);
   CU_basic_run_test(stack_suite, CU_get_test(stack_suite, "stack_find"));
   CU_basic_run_test(stack_suite, CU_get_test(stack_suite, "stack_put"));
-  CU_basic_show_failures(CU_get_failure_list());
   printf("\n");
 
   QUIT;
