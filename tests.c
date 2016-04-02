@@ -145,7 +145,43 @@ void test_stack_remove() {
 }
 
 void test_stack_free() {
+  Node stack = (Node){(char *)malloc(256 * sizeof(char)), malloc(sizeof(int)),
+                      sizeof(int), NULL};
+  Node *curr = &stack;
+  *(int *)stack.data = 0;
 
+  for(int i = 1; i < 10; i++){
+    curr->next = (Node *)malloc(sizeof(Node));
+    *curr->next = (Node){(char *)malloc(256 * sizeof(char)), malloc(sizeof(int)),
+                         sizeof(int), NULL};
+
+    curr = curr->next;
+    *(int *)curr->data = i;
+  }
+
+  curr = &stack;
+  strcpy(curr->key, "first");
+  curr = curr->next;
+  strcpy(curr->key, "second");
+  curr = curr->next;
+  strcpy(curr->key, "third");
+  curr = curr->next;
+  strcpy(curr->key, "fourth");
+  curr = curr->next;
+  strcpy(curr->key, "fifth");
+  curr = curr->next;
+  strcpy(curr->key, "sixth");
+  curr = curr->next;
+  strcpy(curr->key, "seventh");
+  curr = curr->next;
+  strcpy(curr->key, "eigth");
+  curr = curr->next;
+  strcpy(curr->key, "ninth");
+  curr = curr->next;
+  strcpy(curr->key, "tenth");
+
+  stack_free(&stack);
+  CU_PASS();
 }
 
 #define QUIT do { CU_cleanup_registry(); return CU_get_error(); } while(0);
@@ -163,13 +199,14 @@ int main(int argc, char **argv) {
   if(stack_suite == NULL || hashmap_suite == NULL)
     QUIT;
 
-  if(CU_add_test(stack_suite, "stack_find", test_stack_find) == NULL
+  if(CU_add_test(stack_suite, "stack_free", test_stack_free) == NULL
+     || CU_add_test(stack_suite, "stack_find", test_stack_find) == NULL
      || CU_add_test(stack_suite, "stack_put", test_stack_put) == NULL
-     || CU_add_test(stack_suite, "stack_remove", test_stack_remove) == NULL
-     || CU_add_test(stack_suite, "stack_free", test_stack_free) == NULL)
+     || CU_add_test(stack_suite, "stack_remove", test_stack_remove) == NULL)
     QUIT;
 
   CU_basic_set_mode(CU_BRM_VERBOSE);
+  CU_basic_run_test(stack_suite, CU_get_test(stack_suite, "stack_free"));
   CU_basic_run_test(stack_suite, CU_get_test(stack_suite, "stack_find"));
   CU_basic_run_test(stack_suite, CU_get_test(stack_suite, "stack_put"));
   CU_basic_run_test(stack_suite, CU_get_test(stack_suite, "stack_remove"));

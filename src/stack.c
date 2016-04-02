@@ -141,6 +141,9 @@ Node * stack_find(Node stack, char *key) {
  * @param [in, out] stack The Stack to be cleared.
  */
 void stack_free(Node *stack) {
+  if(stack == NULL)
+    return;
+
   Node *temp;
 
   while(stack->next != NULL) {
@@ -153,9 +156,10 @@ void stack_free(Node *stack) {
     stack->next = temp;
   }
 
-  free(stack->key);
-  free(stack->data);
-  free(stack);
+  if(stack->key != NULL)
+    free(stack->key);
+  if(stack->data != NULL)
+    free(stack->data);
 }
 
 #ifdef DEBUG
