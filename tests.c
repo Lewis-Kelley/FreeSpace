@@ -300,13 +300,14 @@ void test_stack_find() {
 }
 
 void test_stack_put() {
-  Stack stack = (Stack){(Node *)malloc(sizeof(Node)), 0};
+  Stack stack = (Stack){NULL, 0};
 
   void *data = malloc(sizeof(int));
   
   *(int *)data = 1;
   CU_ASSERT_EQUAL(stack_put(&stack, "first", data, sizeof(int)), STACK_SUCCESS);
   CU_ASSERT_EQUAL(*(int *)stack_find(stack, "first")->data, 1);
+  CU_ASSERT_EQUAL(stack_find(stack, "first")->next, NULL);
 
   *(int *)data = 0;
   CU_ASSERT_EQUAL(*(int *)stack_find(stack, "first")->data, 1);
@@ -326,6 +327,7 @@ void test_stack_put() {
   CU_ASSERT_EQUAL(*(int *)stack_find(stack, "second")->data, 1);
   CU_ASSERT_EQUAL(stack_put(&stack, "third", data, sizeof(char)), STACK_SUCCESS);
   CU_ASSERT_EQUAL(*(char *)stack_find(stack, "third")->data, 'c');
+  CU_ASSERT_EQUAL(stack_find(stack, "first")->next, NULL);
 
   free(data);
   data = malloc(sizeof(int));
@@ -345,7 +347,7 @@ void test_stack_put() {
 }
 
 void test_stack_remove() {
-  Stack stack = (Stack){(Node *)malloc(sizeof(Node)), 0};
+  Stack stack = (Stack){NULL, 0};
 
   void *data = malloc(sizeof(int));
 
@@ -364,6 +366,7 @@ void test_stack_remove() {
   stack_put(&stack, "fourth", data, sizeof(char));
 
   CU_ASSERT_NOT_EQUAL_FATAL(stack_find(stack, "first"), NULL);
+  CU_ASSERT_EQUAL_FATAL(stack_find(stack, "first")->next, NULL);
   CU_ASSERT_EQUAL(stack_remove(&stack, "fifth"), NULL);
   CU_ASSERT_NOT_EQUAL_FATAL(stack_find(stack, "first"), NULL);
   CU_ASSERT_EQUAL(*(int *)stack_find(stack, "first")->data, 0);
@@ -385,6 +388,8 @@ void test_stack_remove() {
   CU_ASSERT_EQUAL(stack_find(stack, "third"), NULL);
   CU_ASSERT_EQUAL(*(int *)stack_find(stack, "first")->data, 0);
   CU_ASSERT_EQUAL(*(char *)stack_find(stack, "fourth")->data, 'd');
+  CU_ASSERT_EQUAL_FATAL(*(int *)stack_find(stack, "fourth")->next->data, 0);
+  CU_ASSERT_EQUAL_FATAL(stack_find(stack, "first")->next, NULL);
 
   CU_ASSERT_EQUAL(*(int *)stack_remove(&stack, "first"), 0);
   CU_ASSERT_EQUAL(*(char *)stack_find(stack, "fourth")->data, 'd');

@@ -86,7 +86,7 @@ Stack_Status stack_put(Stack *stack, void *key, void *item, size_t item_size) {
  * with that key. Also returns NULL if any of the parameters are NULL.
  */
 void * stack_remove(Stack *stack, void *key) {
-  if(stack == NULL || key == NULL)
+  if(stack == NULL || stack->head == NULL || key == NULL)
     return NULL;
 
   // Check if the head is the Node to remove.
@@ -105,7 +105,7 @@ void * stack_remove(Stack *stack, void *key) {
     return NULL;
 
   Node *curr = stack->head;
-  while(curr->next != NULL && key_comp(key, curr->key, stack->key_size) != 0)
+  while(curr->next != NULL && key_comp(key, curr->next->key, stack->key_size) != 0)
     curr = curr->next;
 
   if(curr->next == NULL) {
