@@ -4,7 +4,7 @@
 #include "src/hashmap.h"
 
 #define NEW_HASHMAP(size)                                 \
-  (Hashmap){(Stack *)calloc(size, sizeof(Stack)), size};
+  (Hashmap){(Stack *)malloc(size * sizeof(Stack)), size};
 
 int init_suite() {
   return 0;
@@ -404,6 +404,11 @@ void test_stack_remove() {
 
 void test_hashmap_free() {
   Hashmap hashmap = NEW_HASHMAP(100);
+  for(int i = 0; i < 100; i++) {
+    hashmap.data[i].key_size = 0;
+    hashmap.data[i].head = NULL;
+  }
+  
   void *data = malloc(sizeof(int));
 
   *(int *)data = 5;
@@ -420,30 +425,46 @@ void test_hashmap_free() {
   CU_PASS();
 
   hashmap = NEW_HASHMAP(100);
+  for(int i = 0; i < 100; i++) {
+    hashmap.data[i].key_size = 0;
+    hashmap.data[i].head = NULL;
+  }
+
   hashmap_free(&hashmap);
   CU_PASS();
 }
 
 void test_hashmap_put() {
   Hashmap hashmap = NEW_HASHMAP(100);
+  for(int i = 0; i < 100; i++) {
+    hashmap.data[i].key_size = 0;
+    hashmap.data[i].head = NULL;
+  }
+
   void *data = malloc(sizeof(int));
 
   *(int *)data = 100;
   CU_ASSERT_EQUAL(hashmap_put(&hashmap, "one", data, sizeof(int)),
                   STACK_SUCCESS);
-  CU_ASSERT_EQUAL(*(int *)stack_find(hashmap.data[hash_func("one", 100)],
+  CU_ASSERT_EQUAL(*(int *)stack_find(hashmap.data[hash_func("one",
+                                                            hashmap.data[0].
+                                                            key_size, 100)],
                                      "one")->data, 100);
 
   *(int *)data = 101;
   CU_ASSERT_EQUAL(hashmap_put(&hashmap, "one", data, sizeof(int)),
                   STACK_REPLACED);
-  CU_ASSERT_EQUAL(*(int *)stack_find(hashmap.data[hash_func("one", 100)],
+  CU_ASSERT_EQUAL(*(int *)stack_find(hashmap.data[hash_func("one",
+                                                            hashmap.data[0].
+                                                            key_size, 100)],
                                      "one")->data, 101);
 
   *(int *)data = 102;
   CU_ASSERT_EQUAL(hashmap_put(&hashmap, "two", data, sizeof(int)),
                   STACK_SUCCESS);
-  CU_ASSERT_EQUAL(*(int *)stack_find(hashmap.data[hash_func("two", 100)],
+  CU_ASSERT_EQUAL(*(int *)stack_find(hashmap.data[hash_func("two",
+                                                            hashmap.data[0].
+                                                            key_size, 100)],
                                      "two")->data, 102);
 
   free(data);
@@ -452,14 +473,20 @@ void test_hashmap_put() {
   *(char *)data = 'a';
   CU_ASSERT_EQUAL(hashmap_put(&hashmap, "three", data, sizeof(int)),
                   STACK_SUCCESS);
-  CU_ASSERT_EQUAL(*(char *)stack_find(hashmap.data[hash_func("three", 100)],
+  CU_ASSERT_EQUAL(*(char *)stack_find(hashmap.data[hash_func("three",
+                                                             hashmap.data[0].
+                                                             key_size, 100)],
                                       "three")->data, 'a');
-  CU_ASSERT_EQUAL(stack_find(hashmap.data[hash_func("three", 100)], "thwee"),
+  CU_ASSERT_EQUAL(stack_find(hashmap.data[hash_func("three",
+                                                    hashmap.data[0].
+                                                    key_size, 100)], "thwee"),
                   NULL);
 
   CU_ASSERT_EQUAL(hashmap_put(&hashmap, "one", data, sizeof(char)),
                   STACK_REPLACED);
-  CU_ASSERT_EQUAL(*(char *)stack_find(hashmap.data[hash_func("one", 100)],
+  CU_ASSERT_EQUAL(*(char *)stack_find(hashmap.data[hash_func("one",
+                                                             hashmap.data[0].
+                                                             key_size, 100)],
                                       "one")->data, 'a');
 
   hashmap_free(&hashmap);
@@ -467,6 +494,11 @@ void test_hashmap_put() {
 
 void test_hashmap_find() {
   Hashmap hashmap = NEW_HASHMAP(100);
+  for(int i = 0; i < 100; i++) {
+    hashmap.data[i].key_size = 0;
+    hashmap.data[i].head = NULL;
+  }
+
   void *data = malloc(sizeof(int));
 
   *(int *)data = 0;
@@ -487,10 +519,41 @@ void test_hashmap_find() {
   CU_ASSERT_EQUAL(*(char *)hashmap_find(hashmap, "third")->data, 'c');
 
   hashmap_free(&hashmap);
+
+  hashmap = NEW_HASHMAP(100);
+  for(int i = 0; i < 100; i++) {
+    hashmap.data[i].key_size = 0;
+    hashmap.data[i].head = NULL;
+  }
+
+  void *key = malloc(sizeof(int));
+
+  *(int *)key = 0;
+  *(int *)data = 0;
+  hashmap_put(&hashmap, key, data, sizeof(int));
+  CU_ASSERT_NOT_EQUAL_FATAL(hashmap_find(hashmap, key), NULL);
+  CU_ASSERT_EQUAL(*(int *)hashmap_find(hashmap, key)->data, 0);
+
+  *(int *)key = 1;
+  *(int *)data = 1;
+  CU_ASSERT_EQUAL(hashmap_find(hashmap, key), NULL);
+  hashmap_put(&hashmap, key, data, sizeof(int));
+  CU_ASSERT_NOT_EQUAL_FATAL(hashmap_find(hashmap, key), NULL);
+  CU_ASSERT_EQUAL(*(int *)hashmap_find(hashmap, key)->data, 1);
+
+  *(int *)key = 0;
+  CU_ASSERT_EQUAL(*(int *)hashmap_find(hashmap, key)->data, 0);
+
+  hashmap_free(&hashmap);
 }
 
 void test_hashmap_remove() {
   Hashmap hashmap = NEW_HASHMAP(100);
+  for(int i = 0; i < 100; i++) {
+    hashmap.data[i].key_size = 0;
+    hashmap.data[i].head = NULL;
+  }
+
   void *data = malloc(sizeof(int));
 
   CU_ASSERT_EQUAL_FATAL(hashmap_remove(&hashmap, "anything"), NULL);
@@ -522,14 +585,22 @@ int main(int argc, char **argv) {
   if(stack_suite == NULL || hashmap_suite == NULL)
     QUIT;
 
-  if(CU_add_test(stack_suite, "stack_free", test_stack_free) == NULL
-     || CU_add_test(stack_suite, "stack_find", test_stack_find) == NULL
-     || CU_add_test(stack_suite, "stack_put", test_stack_put) == NULL
-     || CU_add_test(stack_suite, "stack_remove", test_stack_remove) == NULL
-     /* || CU_add_test(hashmap_suite, "hashmap_free", test_hashmap_free) == NULL */
-     /* || CU_add_test(hashmap_suite, "hashmap_put", test_hashmap_put) == NULL */
-     /* || CU_add_test(hashmap_suite, "hashmap_find", test_hashmap_find) == NULL */
-     /* || CU_add_test(hashmap_suite, "hashmap_remove", test_hashmap_remove) == NULL */
+  if(CU_add_test(stack_suite, "stack_free",
+                 test_stack_free) == NULL
+     || CU_add_test(stack_suite, "stack_find",
+                    test_stack_find) == NULL
+     || CU_add_test(stack_suite, "stack_put",
+                    test_stack_put) == NULL
+     || CU_add_test(stack_suite, "stack_remove",
+                    test_stack_remove) == NULL
+     || CU_add_test(hashmap_suite, "hashmap_free",
+                    test_hashmap_free) == NULL
+     || CU_add_test(hashmap_suite, "hashmap_put",
+                    test_hashmap_put) == NULL
+     || CU_add_test(hashmap_suite, "hashmap_find",
+                    test_hashmap_find) == NULL
+     || CU_add_test(hashmap_suite, "hashmap_remove",
+                    test_hashmap_remove) == NULL
      )
     QUIT;
 

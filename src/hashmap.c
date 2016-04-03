@@ -12,12 +12,16 @@
  * @param [in] map_size The number of buckets in the hashmap. The hash will be less than this number.
  * @return Hash code representing the given key.
  */
-uint16_t hash_func(char *key, uint16_t map_size) {
+uint16_t hash_func(void *key, size_t key_size, uint16_t map_size) {
   int32_t hash = 5381;
   int8_t c;
 
-  while((c = *key++))
-    hash = (hash << 5) + hash + c; //hash * 33 + c
+  if(key_size == 0)
+    while((c = *(uint8_t *)key++))
+      hash = (hash << 5) + hash + c; //hash * 33 + c
+  else
+    for(size_t i = 0; i < key_size; i++)
+      hash = (hash << 5) + hash + *(uint8_t *)(key + i);
 
   return (hash % map_size);
 }
@@ -33,8 +37,8 @@ uint16_t hash_func(char *key, uint16_t map_size) {
  * @param [in] item_size The number of bytes stored at item.
  * @return Stack_Status representing the status of the insertion.
  */
-Stack_Status hashmap_put(Hashmap *map, char *key, void *item, size_t item_size) {
-  return stack_put(map->data + hash_func(key, map->map_size), key, item, item_size);
+Stack_Status hashmap_put(Hashmap *map, void *key, void *item, size_t item_size) {
+  return stack_put(map->data + hash_func(key, map->data[0].key_size, map->map_size), key, item, item_size);
 }
 
 /**
@@ -44,8 +48,8 @@ Stack_Status hashmap_put(Hashmap *map, char *key, void *item, size_t item_size) 
  * @param [in] key The key to be removed.
  * @return A pointer to the data paired with the key or NULL if there wasn't any reference to the key in the map.
  */
-void * hashmap_remove(Hashmap *map, char *key) {
-  return stack_remove(map->data + hash_func(key, map->map_size), key);
+void * hashmap_remove(Hashmap *map, void *key) {
+  return stack_remove(map->data + hash_func(key, map->data[0].key_size, map->map_size), key);
 }
 
 /**
@@ -56,8 +60,8 @@ void * hashmap_remove(Hashmap *map, char *key) {
  * @return a pointer to the Node associated with the given key or
  * NULL if the key wasn't found.
  */
-Node * hashmap_find(Hashmap map, char *key) {
-  return stack_find(map.data[hash_func(key, map.map_size)], key);
+Node * hashmap_find(Hashmap map, void *key) {
+  return stack_find(map.data[hash_func(key, map.data[0].key_size, map.map_size)], key);
 }
 
 /**
