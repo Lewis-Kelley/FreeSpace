@@ -7,16 +7,33 @@
  * Helper function for stack_put that clones all the data given into the current
  * head of the stack.
  */
-static void set_stack_top(Node *stack, char *key, void *item, size_t item_size,
+static void set_stack_top(Stack *stack, void *key, void *item, size_t item_size,
                           Node *next) {
-  *stack = (Node){(char *)malloc((strlen(key) + 1) * sizeof(char)),
-                  malloc(item_size), item_size, next};
-  strcpy(stack->key, key);
+  stack->head = (Node *)malloc(sizeof(Node));
+  *stack->head = (Node){(char *)malloc((strlen(key) + 1) * sizeof(char)),
+                        malloc(item_size), item_size, next};
+  strcpy(stack->head->key, key);
 
   // Copy the value in item into the newly malloc'ed data.
   for(size_t i = 0; i < item_size; i++) {
-    *((uint8_t *)stack->data + i) = *((uint8_t *)item + i);
+    *((uint8_t *)stack->head->data + i) = *((uint8_t *)item + i);
   }
+}
+
+/**
+ * Used to compare two keys of the given size.
+ * Note that if the key_size is 0, it is treated as a string.
+ */
+static int8_t key_comp(void *key_one, void *key_two, size_t key_size) {
+  if(key_size == 0)
+    return strcmp(key_one, key_two);
+  
+  for(size_t i = 0; i < key_size; i++) {
+    if(*((uint8_t *)key_one + i) != *((uint8_t *)key_two + i))
+      return *((uint8_t *)key_one + i) - *((uint8_t *)key_two + i);
+  }
+
+  return 0;
 }
 
 /**
@@ -29,21 +46,19 @@ static void set_stack_top(Node *stack, char *key, void *item, size_t item_size,
  * @param [in] item_size The size of the data stored at item.
  * @return Stack_Status representing the status of the stack.
  */
-Stack_Status stack_put(Node *stack, char *key, void *item, size_t item_size) {
+Stack_Status stack_put(Stack *stack, void *key, void *item, size_t item_size) {
   if(stack == NULL || key == NULL || item == NULL || item_size == 0)
     return STACK_INVALID_ARGS;
     
   Node *curr;
 
-  if(stack->key == NULL) { // Empty stack
+  if(stack->head == NULL) { // Empty stack
     set_stack_top(stack, key, item, item_size, NULL);
     return STACK_SUCCESS;
   }
 
   if((curr = stack_find(*stack, key)) == NULL) {
-    curr = (Node *)malloc(sizeof(Node));
-    *curr = (Node){stack->key, stack->data, stack->data_size, stack->next};
-    set_stack_top(stack, key, item, item_size, curr);
+    set_stack_top(stack, key, item, item_size, stack->head);
 
     return STACK_SUCCESS;
   }
@@ -70,46 +85,42 @@ Stack_Status stack_put(Node *stack, char *key, void *item, size_t item_size) {
  * @return A pointer to the removed data or NULL if there was no Node associated
  * with that key. Also returns NULL if any of the parameters are NULL.
  */
-void * stack_remove(Node *stack, char *key) {
-  if(stack == NULL || key == NULL || stack->key == NULL)
+void * stack_remove(Stack *stack, void *key) {
+  if(stack == NULL || key == NULL)
     return NULL;
 
-  if(strcmp(key, stack->key) == 0) { // The head is the Node to remove.
-    void *data = stack->data;
-    free(stack->key);
+  // Check if the head is the Node to remove.
+  if(key_comp(key, stack->head->key, stack->key_size) == 0) {
+    Node *next = stack->head->next;
+    void *data = stack->head->data;
+    free(stack->head->key);
 
-    if(stack->next == NULL) {
-      *stack = (Node){NULL, NULL, 0, NULL};
-    } else {
-      Node *next = stack->next;
-      *stack = (Node){next->key, next->data, next->data_size, next->next};
-      free(next);
-    }
+    free(stack->head);
+    stack->head = next;
 
     return data;
   }
 
-  if(stack->next == NULL)
+  if(stack->head->next == NULL)
     return NULL;
 
-    
-  while(stack->next != NULL && strcmp(key, stack->next->key) != 0)
-    stack = stack->next;
+  Node *curr = stack->head;
+  while(curr->next != NULL && key_comp(key, curr->key, stack->key_size) != 0)
+    curr = curr->next;
 
-
-  if(stack->next == NULL) {
+  if(curr->next == NULL) {
     return NULL;
   }
 
-  void *data = stack->next->data;
-  free(stack->next->key);
+  free(curr->next->key);
+  void *data = curr->next->data;
 
-  if(stack->next->next == NULL) {
-    free(stack->next);
-    stack->next = NULL;
+  if(curr->next->next == NULL) {
+    free(curr->next);
+    curr->next = NULL;
   } else {
-    Node *next = stack->next->next;
-    *stack->next = (Node){next->key, next->data, next->data_size, next->next};
+    Node *next = curr->next->next;
+    *curr->next = (Node){next->key, next->data, next->data_size, next->next};
     free(next);
   }
 
@@ -126,13 +137,14 @@ void * stack_remove(Node *stack, char *key) {
  * @return A pointer to the Node with the associated data or NULL if the key
  * wasn't found.
  */
-Node * stack_find(Node stack, char *key) {
+Node * stack_find(Stack stack, void *key) {
   if(key == NULL)
     return NULL;
 
-  Node *curr = &stack;
+  Node *curr = stack.head;
 
-  while(curr != NULL && (curr->key == NULL || strcmp(key, curr->key) != 0))
+  while(curr != NULL && (curr->key == NULL ||
+                         key_comp(key, curr->key, stack.key_size)!= 0))
     curr = curr->next;
 
   return curr;
@@ -143,38 +155,21 @@ Node * stack_find(Node stack, char *key) {
  *
  * @param [in, out] stack The Stack to be cleared.
  */
-void stack_free(Node *stack) {
-  if(stack == NULL)
+void stack_free(Stack *stack) {
+  if(stack->head == NULL)
     return;
 
-  Node *temp;
-
-  while(stack->next != NULL) {
-    free(stack->next->key);
-    free(stack->next->data);
-
-    temp = stack->next->next;
-    free(stack->next);
-
-    stack->next = temp;
+  Node *next;
+  while(stack->head->next != NULL) {
+    next = stack->head->next;
+    free(stack->head->key);
+    free(stack->head->data);
+    free(stack->head);
+    stack->head = next;
   }
 
-  if(stack->key != NULL)
-    free(stack->key);
-  if(stack->data != NULL)
-    free(stack->data);
+  free(stack->head->key);
+  free(stack->head->data);
+  free(stack->head);
+  stack->head = NULL;
 }
-
-#ifdef DEBUG
-void stack_print(Node stack) {
-  Node *curr = &stack;
-
-  while(curr->next != NULL) {
-    printf("%s: %d\n", curr->key, *(int *)curr->data);
-    curr = curr->next;
-  }
-
-  if(curr->key != NULL)
-    printf("%s: %d\n", curr->key, *(int *)curr->data);
-}
-#endif

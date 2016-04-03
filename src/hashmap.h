@@ -11,7 +11,7 @@
  * A generic hashmap implementation that can take any key and link it to any item.
  */
 typedef struct {
-    Node *data; ///< An array of Stacks that store the actual data.
+    Stack *data; ///< An array of Stacks that store the actual data.
     uint16_t map_size; ///< The number of buckets in this hashmap.
 } Hashmap;
 
@@ -20,9 +20,5 @@ extern Stack_Status hashmap_put(Hashmap *map, char *key, void *item, size_t item
 extern void * hashmap_remove(Hashmap *map, char *key);
 extern Node * hashmap_find(Hashmap map, char *key);
 extern void hashmap_free(Hashmap *map);
-
-#ifdef DEBUG
-extern void hashmap_print(Hashmap map);
-#endif
 
 #endif
