@@ -54,25 +54,30 @@ uint8_t surfs_init(SDL_Surface **surf_disp, SDL_Surface **surf_player,
  * Renders all of the surfaces onto the display surface.
  *
  * @param [in, out] surf_disp The background SDL_Surface.
- * @param [in] state The current state of the game.
+ * @param [in] game_data The current state of the game.
  * @param [in] num The number of Image's that are being passed in.
  * @param [in] ... Any number of Image's to be drawn on the surf_disp.
  */
-void render(SDL_Surface *surf_disp, Game_State state, int num, ...) {
+void render(SDL_Surface *surf_disp, Game_Data game_data, int num, ...) {
   va_list valist;
   va_start(valist, num);
 
-  for(int i = 0; i < GRID_COLS; i++) {
-    for(int j = 0; j < GRID_ROWS; j++) {
-      if(state.board[i][j].w == 0 || state.board[i][j].h == 0)
-        draw_surf(surf_disp, *state.board[i][j].surf, state.board[i][j].dest_x,
-                  state.board[i][j].dest_y);
-      else
-        draw_surf_region(surf_disp, *state.board[i][j].surf,
-                         state.board[i][j].dest_x, state.board[i][j].dest_y,
-                         state.board[i][j].src_x, state.board[i][j].src_y,
-                         state.board[i][j].w, state.board[i][j].h);
-    }
+  for(int i = 0; i < GRID_COLS * GRID_ROWS; i++) {
+    if(game_data.battle_data.board[i]->img.w == 0 ||
+       game_data.battle_data.board[i]->img.h == 0)
+      draw_surf(surf_disp,
+                *game_data.battle_data.board[i]->img.surf,
+                game_data.battle_data.board[i]->img.dest_x,
+                game_data.battle_data.board[i]->img.dest_y);
+    else
+      draw_surf_region(surf_disp,
+                       *game_data.battle_data.board[i]->img.surf,
+                       game_data.battle_data.board[i]->img.dest_x,
+                       game_data.battle_data.board[i]->img.dest_y,
+                       game_data.battle_data.board[i]->img.src_x,
+                       game_data.battle_data.board[i]->img.src_y,
+                       game_data.battle_data.board[i]->img.w,
+                       game_data.battle_data.board[i]->img.h);
   }
 
   Image img;
@@ -99,27 +104,40 @@ int main(int argc, char **argv) {
     *surf_player = NULL,
     *surf_empty = NULL;
 
-  Game_State state;
-  state.running = 1;
-  state.turn = 0;
+  surfs_init(&surf_disp, &surf_player, &surf_empty);
+
+  Game_Data game_data;
+
+  game_data.battle_data.state = GAME_BATTLE_MOVE;
+  game_data.battle_data.num_units = 1;
+  game_data.battle_data.board =
+    (Battle_Entity **)malloc(GRID_COLS * GRID_COLS * sizeof(Battle_Entity *));
+  game_data.battle_data.turn_order =
+    (Battle_Entity **)malloc(game_data.battle_data.num_units *
+                             sizeof(Battle_Entity *));
+  game_data.battle_data.camera = (Coord_f){0.0, 0.0};
+  game_data.battle_data.columns = GRID_COLS;
+  game_data.battle_data.rows = GRID_ROWS;
+  game_data.battle_data.turn = 0;
+
   for(int i = 0; i < GRID_ROWS; i++)
     for(int j = 0; j < GRID_COLS; j++)
-      state.board[i][j] = (Image){&surf_empty, i * WIN_WIDTH / GRID_COLS,
-                                  j * WIN_HEIGHT / GRID_ROWS, 0, 0, 0, 0};
+      *game_data.battle_data.board[i * GRID_COLS + j]
+        = (Battle_Entity){(Image){&surf_empty, i * WIN_WIDTH / GRID_COLS,
+                                  j * WIN_HEIGHT / GRID_ROWS, 0, 0, 0, 0},
+                          EMPTY};
 
   SDL_Event event;
 
-  state.board[10][22].surf = &surf_player;
-
-  surfs_init(&surf_disp, &surf_player, &surf_empty);
+  game_data.battle_data.board[10 * GRID_ROWS + 22]->img.surf = &surf_player;
 
   SDL_Flip(surf_disp);
 
-  while(state.running == 1) {
+  while(game_data.battle_data.state != GAME_STOPPED) {
     while(SDL_PollEvent(&event))
-      handle_event(&event, &state);
+      handle_event(&event, &game_data);
 
-    render(surf_disp, state, 0);
+    render(surf_disp, game_data, 0);
   }
 
   SDL_FreeSurface(surf_disp);

@@ -1,12 +1,12 @@
 CC = gcc
-CFLAGS = -g -O2 -Wall -std=gnu11 -DDEBUG
-LFLAGS = -lSDL2main -lSDL2_image -lSDL2
+CFLAGS = -g -O2 -Wall -std=gnu11
+LFLAGS = -lSDLmain -lSDL_image -lSDL
 
 SRCS = src/main.c src/surface.c src/event_handler.c src/hashmap.c src/stack.c
 OBJS = $(SRCS:.c=.o)
 PROG = FreeSpace
 
-all : $(PROG) testing
+all : $(PROG)
 
 $(PROG) : $(OBJS)
 	$(CC) $(OBJS) -o $(PROG) $(LFLAGS)

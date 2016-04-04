@@ -8,9 +8,9 @@
  * Takes a generic event and decides what handler function to call with it.
  *
  * @param [in] event The generic event to be handled.
- * @param [in, out] state The state of the game.
+ * @param [in, out] game_data The state of the game.
  */
-void handle_event(SDL_Event *event, Game_State *state) {
+void handle_event(SDL_Event *event, Game_Data *game_data) {
 	switch(event->type) {
 	case SDL_ACTIVEEVENT:
 		switch(event->active.state) {
@@ -38,7 +38,7 @@ void handle_event(SDL_Event *event, Game_State *state) {
 		}
 		break;
 	case SDL_KEYDOWN:
-    key_down(event->key.keysym, state);
+    key_down(event->key.keysym, game_data);
 		break;
 	case SDL_KEYUP :
 		//EMPTY
@@ -88,7 +88,7 @@ void handle_event(SDL_Event *event, Game_State *state) {
 		//EMPTY
 		break;
 	case SDL_QUIT:
-    on_quit(state);
+    on_quit(game_data);
 		break;
 	case SDL_SYSWMEVENT:
 		break;
@@ -105,9 +105,9 @@ void handle_event(SDL_Event *event, Game_State *state) {
  * Event handles a key press.
  *
  * @param keysym An SDL_keysym instance which represents which key was pressed.
- * @param state The current state of the game.
+ * @param game_data The current state of the game.
  */
-void key_down(SDL_keysym keysym, Game_State *state) {
+void key_down(SDL_keysym keysym, Game_Data *game_data) {
   switch(keysym.sym) {
   case SDLK_UP:
     break;
@@ -124,10 +124,10 @@ void key_down(SDL_keysym keysym, Game_State *state) {
 
 /**
  * Handles what happens on a quit event.
- * At this point, it only sets running to 0.
+ * At this point, it only sets running to GAME_STOPPED.
  *
- * @param [in, out] state The state of the game.
+ * @param [in, out] game_data The state of the game.
  */
-void on_quit(Game_State *state) {
-  state->running = 0;
+void on_quit(Game_Data *game_data) {
+  game_data->battle_data.state = GAME_STOPPED;
 }

@@ -9,6 +9,7 @@
  * This is based on the djb2 hash code.
  *
  * @param [in] key The key to be hashed.
+ * @param [in] key_size The size of whatever the key is.
  * @param [in] map_size The number of buckets in the hashmap. The hash will be less than this number.
  * @return Hash code representing the given key.
  */

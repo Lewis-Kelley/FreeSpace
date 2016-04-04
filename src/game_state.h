@@ -34,27 +34,24 @@ typedef enum {
 /**
  * Stores information about the current state of the game.
  */
-typedef struct {
-  Game_State state; ///< The current state of the game.
-  union {
-    struct {
-      Battle_Entity *board; ///< The current state of the board.
-      Node *turn_order; ///< Holds when each unit moves.
-      double x; ///< The current x position of the camera.
-      double y; ///< The current y position of the camera.
-      int columns; ///< The number of columns in the current board.
-      int rows; ///< The number of rows in the current board.
-      int turn; ///< The current move (not round).
-      int num_units;
-    } battle_data; ///< Holds data on the battle states.
-    struct {
-      Explore_Entity *board; ///< The current state of the board.
-      double x; ///< The current x position of the camera.
-      double y; ///< The current y position of the camera.
-      int columns; ///< The number of columns in the current board.
-      int rows; ///< The number of rows in the current board.
-    } explore_data; ///< Holds data on the exploration states.
-  } data; ///< The relevant data for the current Game_State.
+typedef union {
+  struct {
+    Game_State state; ///< The current state of the game.
+    Battle_Entity **board; ///< An array of Entity pointers.
+    Battle_Entity **turn_order; ///< Holds when each unit moves.
+    Coord_f camera; ///< The camera position.
+    int columns; ///< The number of columns in the current board.
+    int rows; ///< The number of rows in the current board.
+    int turn; ///< The current move (not round).
+    int num_units; ///< The number of units
+  } battle_data; ///< Holds data on the battle states.
+  struct {
+    Game_State state; ///< The current state of the game.
+    Explore_Entity **board; ///< An array of Entity pointers.
+    Coord_f camera; ///< The camera position.
+    int columns; ///< The number of columns in the current board.
+    int rows; ///< The number of rows in the current board.
+  } explore_data; ///< Holds data on the exploration states.
 } Game_Data;
 
 #endif
