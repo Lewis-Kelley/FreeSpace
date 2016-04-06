@@ -24,12 +24,10 @@
  *
  * @param [out] surf_disp The background SDL_Surface.
  * @param [out] surf_player The surface containing the image of the player's ship.
- * @param [out] surf_empty A completely transparent surface to represent an empty tile.
  * @return Status code indicating how the function terminated.
  * 0 indicates success and -1 indicates a fail.
  */
-uint8_t surfs_init(SDL_Surface **surf_disp, SDL_Surface **surf_player,
-                   SDL_Surface **surf_empty) {
+uint8_t surfs_init(SDL_Surface **surf_disp, SDL_Surface **surf_player) {
   char file[STR_LEN];
   memset(file, '\0', sizeof(file));
     
@@ -45,7 +43,6 @@ uint8_t surfs_init(SDL_Surface **surf_disp, SDL_Surface **surf_player,
   }
 
   INIT_SURF(surf_player);
-  INIT_SURF(surf_empty);
 
   return 0;
 }
@@ -63,21 +60,24 @@ void render(SDL_Surface *surf_disp, Game_Data game_data, int num, ...) {
   va_start(valist, num);
 
   for(int i = 0; i < GRID_COLS * GRID_ROWS; i++) {
-    if(game_data.battle_data.board[i]->img.w == 0 ||
-       game_data.battle_data.board[i]->img.h == 0)
-      draw_surf(surf_disp,
-                *game_data.battle_data.board[i]->img.surf,
-                game_data.battle_data.board[i]->img.dest_x,
-                game_data.battle_data.board[i]->img.dest_y);
-    else
-      draw_surf_region(surf_disp,
-                       *game_data.battle_data.board[i]->img.surf,
-                       game_data.battle_data.board[i]->img.dest_x,
-                       game_data.battle_data.board[i]->img.dest_y,
-                       game_data.battle_data.board[i]->img.src_x,
-                       game_data.battle_data.board[i]->img.src_y,
-                       game_data.battle_data.board[i]->img.w,
-                       game_data.battle_data.board[i]->img.h);
+    if(game_data.battle_data.board[i]->team != TEAM_EMPTY) {
+      if(game_data.battle_data.board[i]->img.w == 0 ||
+         game_data.battle_data.board[i]->img.h == 0) {
+        draw_surf(surf_disp,
+                  *game_data.battle_data.board[i]->img.surf,
+                  game_data.battle_data.board[i]->img.dest_x,
+                  game_data.battle_data.board[i]->img.dest_y);
+      } else {
+        draw_surf_region(surf_disp,
+                         *game_data.battle_data.board[i]->img.surf,
+                         game_data.battle_data.board[i]->img.dest_x,
+                         game_data.battle_data.board[i]->img.dest_y,
+                         game_data.battle_data.board[i]->img.src_x,
+                         game_data.battle_data.board[i]->img.src_y,
+                         game_data.battle_data.board[i]->img.w,
+                         game_data.battle_data.board[i]->img.h);
+      }
+    }
   }
 
   Image img;
@@ -104,12 +104,12 @@ int main(int argc, char **argv) {
     *surf_player = NULL,
     *surf_empty = NULL;
 
-  surfs_init(&surf_disp, &surf_player, &surf_empty);
+  surfs_init(&surf_disp, &surf_player);
 
   Game_Data game_data;
 
   game_data.battle_data.state = GAME_BATTLE_MOVE;
-  game_data.battle_data.num_units = 1;
+  game_data.battle_data.num_units = 2;
   game_data.battle_data.board =
     (Battle_Entity **)malloc(GRID_COLS * GRID_COLS * sizeof(Battle_Entity *));
   game_data.battle_data.turn_order =
@@ -120,16 +120,27 @@ int main(int argc, char **argv) {
   game_data.battle_data.rows = GRID_ROWS;
   game_data.battle_data.turn = 0;
 
-  for(int i = 0; i < GRID_ROWS; i++)
-    for(int j = 0; j < GRID_COLS; j++)
-      *game_data.battle_data.board[i * GRID_COLS + j]
+  for(int i = 0; i < GRID_COLS; i++)
+    for(int j = 0; j < GRID_ROWS; j++) {
+      game_data.battle_data.board[j * GRID_COLS + i]
+        = (Battle_Entity *)malloc(sizeof(Battle_Entity));
+      *game_data.battle_data.board[j * GRID_COLS + i]
         = (Battle_Entity){(Image){&surf_empty, i * WIN_WIDTH / GRID_COLS,
                                   j * WIN_HEIGHT / GRID_ROWS, 0, 0, 0, 0},
-                          EMPTY};
+                          TEAM_EMPTY};
+    }
 
   SDL_Event event;
 
-  game_data.battle_data.board[10 * GRID_ROWS + 22]->img.surf = &surf_player;
+  game_data.battle_data.board[10 * GRID_ROWS + 5]->img.surf = &surf_player;
+  game_data.battle_data.board[10 * GRID_ROWS + 5]->team = TEAM_PLAYER;
+  game_data.battle_data.turn_order[0]
+    = game_data.battle_data.board[10 * GRID_ROWS + 5];
+
+  game_data.battle_data.board[19 * GRID_ROWS + 19]->img.surf = &surf_player;
+  game_data.battle_data.board[19 * GRID_ROWS + 19]->team = TEAM_PLAYER;
+  game_data.battle_data.turn_order[1]
+    = game_data.battle_data.board[19 * GRID_ROWS + 19];
 
   SDL_Flip(surf_disp);
 

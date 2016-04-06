@@ -2,7 +2,7 @@ CC = gcc
 CFLAGS = -g -O2 -Wall -std=gnu11
 LFLAGS = -lSDLmain -lSDL_image -lSDL
 
-SRCS = src/main.c src/surface.c src/event_handler.c src/hashmap.c src/stack.c
+SRCS = src/main.c src/surface.c src/event_handler.c hashmap/hashmap.c hashmap/stack.c
 OBJS = $(SRCS:.c=.o)
 PROG = FreeSpace
 
@@ -20,20 +20,17 @@ surface.o : src/surface.c src/surface.h src/main.h
 event_handler.o : src/event_handler.c src/event_handler.h src/main.h
 	$(CC) $(CFLAGS) -c src/event_handler.c
 
-hashmap.o : src/hashmap.c src/hashmap.h src/stack.h
-	$(CC) $(CFLAGS) -c src/hashmap.c -o src/hashmap.o
+hashmap.o : hashmap/hashmap.c hashmap/hashmap.h hashmap/stack.h
+	$(CC) $(CFLAGS) -c hashmap/hashmap.c -o hashmap/hashmap.o
 
-stack.o : src/stack.c src/stack.h
-	$(CC) $(CFLAGS) -c src/stack.c -o src/stack.o
-
-hashmap-test : src/hashmap-test.c src/hashmap.c src/hashmap.h src/stack.c src/stack.h
-	$(CC) $(CFLAGS) $(LFLAGS) src/hashmap-test.c src/hashmap.c src/stack.c -o hashmap-test
+stack.o : hashmap/stack.c hashmap/stack.h
+	$(CC) $(CFLAGS) -c hashmap/stack.c -o hashmap/stack.o
 
 tests.o : tests.c 
 	$(CC) $(CFLAGS) -c tests.c
 
-testing : tests.o src/stack.o src/hashmap.o
-	$(CC) tests.o src/stack.o src/hashmap.o -o tests $(LFLAGS) -lcunit
+testing : tests.o hashmap/stack.o hashmap/hashmap.o
+	$(CC) tests.o hashmap/stack.o hashmap/hashmap.o -o tests $(LFLAGS) -lcunit
 	./tests
 
 clean : 

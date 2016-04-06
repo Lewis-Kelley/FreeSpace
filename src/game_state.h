@@ -6,11 +6,13 @@
 #include <stdint.h>
 #include "battle_entity.h"
 #include "explore_entity.h"
-#include "stack.h"
 #include "coord.h"
 
 #define GRID_ROWS 20 ///< The number of rows in the grid.
 #define GRID_COLS 20 ///< The number of columns in the grid.
+
+#define WIN_WIDTH 600 ///< The width of the window in pixels
+#define WIN_HEIGHT 600 ///<The height of the window in pixels
 
 /**
  * Represents the current state the game is in.
@@ -40,7 +42,7 @@ typedef union {
     Battle_Entity **board; ///< An array of Entity pointers.
     Battle_Entity **turn_order; ///< Holds when each unit moves.
     Coord_f camera; ///< The camera position.
-    int columns; ///< The number of columns in the current board.
+    int cols; ///< The number of columns in the current board.
     int rows; ///< The number of rows in the current board.
     int turn; ///< The current move (not round).
     int num_units; ///< The number of units
@@ -49,7 +51,7 @@ typedef union {
     Game_State state; ///< The current state of the game.
     Explore_Entity **board; ///< An array of Entity pointers.
     Coord_f camera; ///< The camera position.
-    int columns; ///< The number of columns in the current board.
+    int cols; ///< The number of columns in the current board.
     int rows; ///< The number of rows in the current board.
   } explore_data; ///< Holds data on the exploration states.
 } Game_Data;

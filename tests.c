@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "CUnit/CUnit.h"
 #include "CUnit/Basic.h"
-#include "src/hashmap.h"
+#include "hashmap/hashmap.h"
 
 #define NEW_HASHMAP(size)                                 \
   (Hashmap){(Stack *)malloc(size * sizeof(Stack)), size};

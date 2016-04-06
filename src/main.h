@@ -18,9 +18,6 @@
 #define DEBUG ///< Flag saying to include debugging information at compile time.
 #define STR_LEN 75 ///< The standard length of strings when intitialized.
 
-#define WIN_WIDTH 600 ///< The width of the window in pixels
-#define WIN_HEIGHT 600 ///<The height of the window in pixels
-
 #ifdef DEBUG
 
 /**
