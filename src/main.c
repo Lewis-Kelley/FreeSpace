@@ -116,7 +116,7 @@ int main(int argc, char **argv) {
     (Battle_Entity **)malloc(game_data.battle_data.num_units *
                              sizeof(Battle_Entity *));
   game_data.battle_data.camera = (Coord_f){0.0, 0.0};
-  game_data.battle_data.columns = GRID_COLS;
+  game_data.battle_data.cols = GRID_COLS;
   game_data.battle_data.rows = GRID_ROWS;
   game_data.battle_data.turn = 0;
 
@@ -127,7 +127,7 @@ int main(int argc, char **argv) {
       *game_data.battle_data.board[j * GRID_COLS + i]
         = (Battle_Entity){(Image){&surf_empty, i * WIN_WIDTH / GRID_COLS,
                                   j * WIN_HEIGHT / GRID_ROWS, 0, 0, 0, 0},
-                          TEAM_EMPTY};
+                          TEAM_EMPTY, (Coord_i){i, j}};
     }
 
   SDL_Event event;
