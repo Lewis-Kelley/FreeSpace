@@ -12,33 +12,8 @@
  */
 void handle_event(SDL_Event *event, Game_Data *game_data) {
 	switch(event->type) {
-	case SDL_ACTIVEEVENT:
-		switch(event->active.state) {
-		case SDL_APPMOUSEFOCUS:
-			if(event->active.gain) {
-				//EMPTY
-			} else {
-        //EMPTY
-			}
-			break;
-		case SDL_APPINPUTFOCUS:
-			if(event->active.gain) {
-        //EMPTY
-			} else {
-        //EMPTY
-			}
-			break;
-		case SDL_APPACTIVE:
-			if(event->active.gain) {
-				//EMPTY
-			} else {
-				//EMPTY
-			}
-			break;
-		}
-		break;
 	case SDL_KEYDOWN:
-    key_down(event->key.keysym, game_data);
+    key_down(event->key.keysym.sym, game_data);
 		break;
 	case SDL_KEYUP :
 		//EMPTY
@@ -91,12 +66,6 @@ void handle_event(SDL_Event *event, Game_Data *game_data) {
     on_quit(game_data);
 		break;
 	case SDL_SYSWMEVENT:
-		break;
-	case SDL_VIDEORESIZE:
-    //EMPTY
-		break;
-	case SDL_VIDEOEXPOSE:
-		//EMPTY
 		break;
 	}
 }
@@ -181,13 +150,13 @@ Move_Status move_entity(Coord_i origin, Coord_i dest, Game_Data* game_data) {
 /**
  * Event handles a key press.
  *
- * @param [in] keysym An SDL_keysym instance which represents which key was pressed.
+ * @param [in] keycode An SDL_Keycode instance which represents which key was pressed.
  * @param [in, out] game_data The current state of the game.
  */
-void key_down(SDL_keysym keysym, Game_Data *game_data) {
+void key_down(SDL_Keycode keycode, Game_Data *game_data) {
   Battle_Entity *ent = game_data->battle_data.turn_order[game_data->
                                                          battle_data.turn];
-  switch(keysym.sym) {
+  switch(keycode) {
   case SDLK_UP:
     move_entity(ent->pos, (Coord_i){ent->pos.x, ent->pos.y - 1}, game_data);
     break;

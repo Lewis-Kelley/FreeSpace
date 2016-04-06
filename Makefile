@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -g -O2 -Wall -std=gnu11
-LFLAGS = -lSDLmain -lSDL_image -lSDL
+LFLAGS = -lSDLmain -lSDL_image -lSDL2
 
 SRCS = src/main.c src/surface.c src/event_handler.c hashmap/hashmap.c hashmap/stack.c
 OBJS = $(SRCS:.c=.o)

@@ -16,9 +16,6 @@ SDL_Surface * load_img(char *file) {
     if((surf_temp = SDL_LoadBMP(file)) == NULL)
         return NULL;
 
-    surf_return = SDL_DisplayFormat(surf_temp);
-    SDL_FreeSurface(surf_temp);
-
     return surf_return;
 }
 
@@ -96,11 +93,11 @@ uint8_t draw_surf_region(SDL_Surface *surf_dest, SDL_Surface *surf_src,
  * @return Status code indicating how the function terminated.
  * 0 indicates success and -1 indicates a null pointer.
  */
-uint8_t set_invis_color(SDL_Surface *surf, uint8_t r, uint8_t g, uint8_t b) {
-    if(surf == NULL)
-        return -1;
+/* uint8_t set_invis_color(SDL_Surface *surf, uint8_t r, uint8_t g, uint8_t b) { */
+/*     if(surf == NULL) */
+/*         return -1; */
 
-    SDL_SetColorKey(surf, SDL_SRCCOLORKEY | SDL_RLEACCEL, SDL_MapRGB(surf->format, r, g, b));
+/*     SDL_SetColorKey(surf, SDL_SRCCOLORKEY | SDL_RLEACCEL, SDL_MapRGB(surf->format, r, g, b)); */
 
-    return 0;
-}
+/*     return 0; */
+/* } */

@@ -5,7 +5,7 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
@@ -36,6 +36,6 @@
  */
 #define ERROR(exp)                                                      \
     printf("ERROR: %s at line %d in %s\n",                              \
-           #exp, __LINE__, __FILE__);
+           exp, __LINE__, __FILE__);
 
 #endif

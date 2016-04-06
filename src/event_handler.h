@@ -20,7 +20,7 @@ typedef enum {
 
 void handle_event(SDL_Event *event, Game_Data *game_data);
 Move_Status move_entity(Coord_i origin, Coord_i dest, Game_Data *game_data);
-void key_down(SDL_keysym keysym, Game_Data *game_data);
+void key_down(SDL_Keycode keycode, Game_Data *game_data);
 void on_quit(Game_Data *game_data);
 
 #endif

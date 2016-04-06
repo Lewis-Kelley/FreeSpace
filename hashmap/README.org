@@ -1,0 +1,1 @@
+Hashmap structure that can hold multiple types of data and use any type of key. This is done in large part with void pointers, so it is necessary for the programmer to keep track of what datatype everything is.
