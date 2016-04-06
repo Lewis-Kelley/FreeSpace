@@ -339,7 +339,7 @@ void test_stack_put() {
   CU_ASSERT_EQUAL(stack_find(stack, "fourth"), NULL);
 
   CU_ASSERT_EQUAL(stack_put(NULL, "word", data, sizeof(int)), STACK_INVALID_ARGS);
-  CU_ASSERT_EQUAL(stack_put(&stack, NULL, data, sizeof(int)), STACK_INVALID_ARGS);
+  CU_ASSERT_EQUAL(stack_put(&stack, NULL, data, sizeof(int)), STACK_SUCCESS);
   CU_ASSERT_EQUAL(stack_put(&stack, "word", NULL, sizeof(int)), STACK_INVALID_ARGS);
   CU_ASSERT_EQUAL(stack_put(&stack, "word", data, 0), STACK_INVALID_ARGS);
 

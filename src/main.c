@@ -13,7 +13,7 @@
   strcat(file, #surf);                          \
   strcat(file, ".bmp");                         \
   if((*surf = load_img(file)) == NULL) {        \
-    ERROR("Could not load #surf on init.");     \
+    ERROR("Could not load surface on init.");   \
     return -1;                                  \
   }                                             \
   set_invis_color(*surf, 255, 0, 255);          \
@@ -40,7 +40,7 @@ void init(SDL_Window **win, SDL_Renderer **rend, SDL_Texture **tex_player) {
   }
 
   *rend = SDL_CreateRenderer(*win, -1, SDL_RENDERER_ACCELERATED |
-                            SDL_RENDERER_PRESENTVSYNC);
+                             SDL_RENDERER_PRESENTVSYNC);
   if(*rend == NULL) {
     SDL_DestroyWindow(*win);
     ERROR("Failed to create renderer.");
@@ -56,6 +56,7 @@ void init(SDL_Window **win, SDL_Renderer **rend, SDL_Texture **tex_player) {
     SDL_Quit();
     return;
   }
+  SDL_SetColorKey(bmp, SDL_TRUE, SDL_MapRGB(bmp->format, 0xFF, 0, 0xFF));
 
   *tex_player = SDL_CreateTextureFromSurface(*rend, bmp);
   SDL_FreeSurface(bmp);
@@ -65,6 +66,54 @@ void init(SDL_Window **win, SDL_Renderer **rend, SDL_Texture **tex_player) {
     ERROR("Failed to create tex_player.");
     SDL_Quit();
     return;
+  }
+}
+
+/**
+ * Checks the time delta and updates the game state accordingly.
+ *
+ * @param [in, out] game_data The current state of the game.
+ */
+void update(Game_Data *game_data) {
+  Battle_Entity *temp;
+  switch(game_data->battle_data.state % STATES) {
+  case STATE_MENU:
+    break;
+  case STATE_BATTLE:
+    for(uint16_t i = 0; i < game_data->battle_data.rows *
+          game_data->battle_data.cols; i++) {
+      temp = game_data->battle_data.board[i];
+
+      if(temp->team != TEAM_EMPTY) {
+        temp->pos.x += temp->vel.x;
+        temp->pos.y += temp->vel.y;
+
+        if(temp->move_queue.head != NULL) {
+          if(temp->vel.x != 0.0 &&
+             ABS(temp->pos.x -
+                 ((Coord_i *)temp->move_queue.head->data)->x) < ROUNDOFF) {
+
+            temp->pos.x = ((Coord_i *)temp->move_queue.head->data)->x;
+            temp->vel = (Coord_f){0.0, 0.0};
+
+            stack_remove(&temp->move_queue, NULL);
+          } else if(temp->vel.y != 0.0 &&
+             ABS(temp->pos.y - ((Coord_i *)temp->move_queue.head->data)->y)
+             < ROUNDOFF) {
+
+            temp->pos.y = ((Coord_i *)temp->move_queue.head->data)->y;
+            temp->vel = (Coord_f){0.0, 0.0};
+
+            stack_remove(&temp->move_queue, NULL);
+          }
+        }
+      }
+    }
+    break;
+  case STATE_EXPLORE:
+    break;
+  default:
+    ERROR("Invalid state.");
   }
 }
 
@@ -80,11 +129,13 @@ void render(SDL_Renderer *rend, Game_Data *game_data) {
     if(game_data->battle_data.board[i]->team != TEAM_EMPTY) {
       dest.w = WIN_WIDTH / game_data->battle_data.cols;
       dest.h = WIN_HEIGHT / game_data->battle_data.rows;
-      dest.x = game_data->battle_data.board[i]->pos.x * dest.w;
-      dest.y = game_data->battle_data.board[i]->pos.y * dest.h;
+      dest.x = game_data->battle_data.board[i]->pos.x * dest.w +
+        game_data->battle_data.camera.x;
+      dest.y = game_data->battle_data.board[i]->pos.y * dest.h +
+        game_data->battle_data.camera.y;
 
       SDL_RenderCopy(rend, game_data->battle_data.board[i]->img.tex,
-                      NULL, &dest);
+                     NULL, &dest);
     }
   }
 
@@ -126,7 +177,8 @@ int main(int argc, char **argv) {
       *game_data.battle_data.board[j * GRID_COLS + i]
         = (Battle_Entity){(Image){NULL, i * WIN_WIDTH / GRID_COLS,
                                   j * WIN_HEIGHT / GRID_ROWS, 0, 0, 0, 0},
-                          TEAM_EMPTY, (Coord_i){i, j}};
+                          TEAM_EMPTY, (Coord_f){i, j}, (Coord_f){0, 0},
+                          (Stack){NULL, 0}};
     }
 
   SDL_Event event;
@@ -146,6 +198,7 @@ int main(int argc, char **argv) {
     while(SDL_PollEvent(&event))
       handle_event(&event, &game_data);
 
+    update(&game_data);
     render(rend, &game_data);
     SDL_RenderPresent(rend);
   }

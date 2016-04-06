@@ -71,8 +71,9 @@ void handle_event(SDL_Event *event, Game_Data *game_data) {
 }
 
 /**
- * Attempts to move the entity at the origin coordinates to the destination.
- * If the move is illegal, does not move the entity and returns an error enum.
+ * Attempts to set the velocity of the entity at the origin coordinates 
+ * so as to reach the destination. If the move is illegal, does not move
+ * the entity and returns an error enum.
  *
  * @param [in] origin The coordinates of the entity to move.
  * @param [in] dest The coordinates of where to move the entity to.
@@ -97,9 +98,9 @@ Move_Status move_entity(Coord_i origin, Coord_i dest, Game_Data* game_data) {
                                                            game_data->battle_data
                                                            .cols + dest.x];
     if(dest_ent->team == TEAM_EMPTY) {
-      orig_ent->img.dest_x = dest.x * WIN_WIDTH / game_data->battle_data.cols;
-      orig_ent->img.dest_y = dest.y * WIN_HEIGHT / game_data->battle_data.rows;
-      orig_ent->pos = dest;
+      stack_put(&orig_ent->move_queue, NULL, &dest, sizeof(Coord_i));
+      orig_ent->vel.x = (dest.x - origin.x) / MOVE_TIME;
+      orig_ent->vel.y = (dest.y - origin.y) / MOVE_TIME;
 
       game_data->battle_data.board[dest.y * game_data->battle_data.cols
                                    + dest.x] = orig_ent;
@@ -158,20 +159,39 @@ void key_down(SDL_Keycode keycode, Game_Data *game_data) {
                                                          battle_data.turn];
   switch(keycode) {
   case SDLK_UP:
-    move_entity(ent->pos, (Coord_i){ent->pos.x, ent->pos.y - 1}, game_data);
+    move_entity((Coord_i){ent->pos.x, ent->pos.y},
+                (Coord_i){ent->pos.x, ent->pos.y - 1}, game_data);
     break;
   case SDLK_DOWN:
-    move_entity(ent->pos, (Coord_i){ent->pos.x, ent->pos.y + 1}, game_data);
+    move_entity((Coord_i){ent->pos.x, ent->pos.y},
+                (Coord_i){ent->pos.x, ent->pos.y + 1}, game_data);
     break;
   case SDLK_LEFT:
-    move_entity(ent->pos, (Coord_i){ent->pos.x - 1, ent->pos.y}, game_data);
+    move_entity((Coord_i){ent->pos.x, ent->pos.y},
+                (Coord_i){ent->pos.x - 1, ent->pos.y}, game_data);
     break;
   case SDLK_RIGHT:
-    move_entity(ent->pos, (Coord_i){ent->pos.x + 1, ent->pos.y}, game_data);
+    move_entity((Coord_i){ent->pos.x, ent->pos.y},
+                (Coord_i){ent->pos.x + 1, ent->pos.y}, game_data);
     break;
   case SDLK_SPACE:
     game_data->battle_data.turn = (game_data->battle_data.turn + 1)
       % game_data->battle_data.num_units;
+    break;
+  case SDLK_q:
+    on_quit(game_data);
+    break;
+  case SDLK_w:
+    game_data->battle_data.camera.y += 10;
+    break;
+  case SDLK_r:
+    game_data->battle_data.camera.y -= 10;
+    break;
+  case SDLK_a:
+    game_data->battle_data.camera.x += 10;
+    break;
+  case SDLK_s:
+    game_data->battle_data.camera.x -= 10;
     break;
   default:
     break;

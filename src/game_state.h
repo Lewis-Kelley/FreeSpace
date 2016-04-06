@@ -14,23 +14,30 @@
 #define WIN_WIDTH 600 ///< The width of the window in pixels
 #define WIN_HEIGHT 600 ///<The height of the window in pixels
 
+#define STATES 3 ///< The number of major states in the program.
+
+/**
+ * The different types of major states.
+ */
+typedef enum {
+  STATE_MENU = 0, ///< In a menu outside of the actual game.
+  STATE_BATTLE = 1, ///< In a battle state.
+  STATE_EXPLORE = 2 ///< In an exploration state.
+} Major_State;
+
 /**
  * Represents the current state the game is in.
- * Grouped into three groups by their divisibility by 3.
- * % 3 = 0: Various menu things that are outside the main two modes.
- * % 3 = 1: Battle mode states.
- * % 3 = 2: Exploration mode states.
  */
 typedef enum {
   GAME_STOPPED = 0, ///< Game is stopping.
-  GAME_BATTLE_MOVE = 1, ///< Moving a unit.
-  GAME_BATTLE_TARGETING = 4, ///< Target selection in a battle.
-  GAME_BATTLE_SURVEY = 7, ///< Free camera in a battle.
-  GAME_BATTLE_ATTACK = 10, ///< An attack is ongoing.
-  GAME_EXPLORE_MOVE = 2, ///< Explore state when walking around.
-  GAME_EXPLORE_TALK = 5, ///< Talking with an NPC.
-  GAME_EXPLORE_SEARCH = 8, ///< Searching an object.
-  GAME_MAIN_MENU = 3 ///< Main menu that the game starts in.
+  GAME_BATTLE_MOVE = 0 * STATES + STATE_BATTLE, ///< Moving a unit.
+  GAME_BATTLE_TARGETING = 1 * STATES + STATE_BATTLE, ///< Selecting target.
+  GAME_BATTLE_SURVEY = 2 * STATES + STATE_BATTLE, ///< Free camera in a battle.
+  GAME_BATTLE_ATTACK = 3 * STATES + STATE_BATTLE, ///< An attack is ongoing.
+  GAME_EXPLORE_MOVE = 0 * STATES + STATE_EXPLORE, ///< Just walking.
+  GAME_EXPLORE_TALK = 1 * STATES + STATE_EXPLORE, ///< Talking with an NPC.
+  GAME_EXPLORE_SEARCH = 2 * STATES + STATE_EXPLORE, ///< Searching an object.
+  GAME_MAIN_MENU = 0 * STATES + STATE_MENU ///< Statup menu.
 } Game_State;
 
 /**

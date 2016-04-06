@@ -10,9 +10,20 @@
 static void set_stack_top(Stack *stack, void *key, void *item, size_t item_size,
                           Node *next) {
   stack->head = (Node *)malloc(sizeof(Node));
-  *stack->head = (Node){(char *)malloc((strlen(key) + 1) * sizeof(char)),
-                        malloc(item_size), item_size, next};
-  strcpy(stack->head->key, key);
+  if(key == NULL) {
+    *stack->head = (Node){NULL, malloc(item_size), item_size, next};
+  } else if(stack->key_size != 0) {
+    *stack->head = (Node){malloc(stack->key_size), malloc(item_size),
+                          item_size, next};
+
+    for(size_t i = 0; i < stack->key_size; i++) {
+      *((uint8_t *)stack->head->key + i) = *((uint8_t *)key + i);
+    }
+  } else {
+    *stack->head = (Node){(char *)malloc((strlen(key) + 1) * sizeof(char)),
+                          malloc(item_size), item_size, next};
+    strcpy(stack->head->key, key);
+  }
 
   // Copy the value in item into the newly malloc'ed data.
   for(size_t i = 0; i < item_size; i++) {
@@ -25,6 +36,9 @@ static void set_stack_top(Stack *stack, void *key, void *item, size_t item_size,
  * Note that if the key_size is 0, it is treated as a string.
  */
 static int8_t key_comp(void *key_one, void *key_two, size_t key_size) {
+  if(key_one == NULL || key_two == NULL)
+    return -1;
+
   if(key_size == 0)
     return strcmp(key_one, key_two);
   
@@ -47,13 +61,13 @@ static int8_t key_comp(void *key_one, void *key_two, size_t key_size) {
  * @return Stack_Status representing the status of the stack.
  */
 Stack_Status stack_put(Stack *stack, void *key, void *item, size_t item_size) {
-  if(stack == NULL || key == NULL || item == NULL || item_size == 0)
+  if(stack == NULL || item == NULL || item_size == 0)
     return STACK_INVALID_ARGS;
-    
+
   Node *curr;
 
-  if(stack->head == NULL) { // Empty stack
-    set_stack_top(stack, key, item, item_size, NULL);
+  if(key == NULL || stack->head == NULL) { // Empty stack
+    set_stack_top(stack, key, item, item_size, stack->head);
     return STACK_SUCCESS;
   }
 
@@ -77,20 +91,22 @@ Stack_Status stack_put(Stack *stack, void *key, void *item, size_t item_size) {
 }
 
 /**
- * Removes the Node from the stack with the given key and returns the item associated
- * with that key. If there was no Node associated with the key, returns NULL.
+ * Removes the Node from the stack with the given key and returns the item
+ * associated with that key. If there was no Node associated with the key,
+ * returns NULL. If the key is NULL, removes the top item off the stack.
  *
  * @param [in, out] stack The Stack to be edited.
- * @param [in] key The key of the Node to be removed.
+ * @param [in] key The key of the Node to be removed. If NULL, remove the top of
+ * the stack.
  * @return A pointer to the removed data or NULL if there was no Node associated
  * with that key. Also returns NULL if any of the parameters are NULL.
  */
 void * stack_remove(Stack *stack, void *key) {
-  if(stack == NULL || stack->head == NULL || key == NULL)
+  if(stack == NULL || stack->head == NULL)
     return NULL;
 
-  // Check if the head is the Node to remove.
-  if(key_comp(key, stack->head->key, stack->key_size) == 0) {
+  // Check if the head is the Node to remove or no key is supplied.
+  if(key == NULL || key_comp(key, stack->head->key, stack->key_size) == 0) {
     Node *next = stack->head->next;
     void *data = stack->head->data;
     free(stack->head->key);
