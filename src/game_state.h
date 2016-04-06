@@ -11,8 +11,8 @@
 #define GRID_ROWS 20 ///< The number of rows in the grid.
 #define GRID_COLS 20 ///< The number of columns in the grid.
 
-#define WIN_WIDTH 600 ///< The width of the window in pixels
-#define WIN_HEIGHT 600 ///<The height of the window in pixels
+#define WIN_WIDTH 1000 ///< The width of the window in pixels
+#define WIN_HEIGHT 1000 ///<The height of the window in pixels
 
 #define STATES 3 ///< The number of major states in the program.
 
@@ -46,6 +46,8 @@ typedef enum {
 typedef union {
   struct {
     Game_State state; ///< The current state of the game.
+    double delta; ///< The time since the last tick.
+    double last_time; ///< The time of the previous tick.
     Battle_Entity **board; ///< An array of Entity pointers.
     Battle_Entity **turn_order; ///< Holds when each unit moves.
     Coord_f camera; ///< The camera position.
@@ -56,6 +58,8 @@ typedef union {
   } battle_data; ///< Holds data on the battle states.
   struct {
     Game_State state; ///< The current state of the game.
+    double delta; ///< The time since the last tick.
+    double last_time; ///< The time of the previous tick.
     Explore_Entity **board; ///< An array of Entity pointers.
     Coord_f camera; ///< The camera position.
     int cols; ///< The number of columns in the current board.

@@ -76,35 +76,49 @@ void init(SDL_Window **win, SDL_Renderer **rend, SDL_Texture **tex_player) {
  */
 void update(Game_Data *game_data) {
   Battle_Entity *temp;
+  double time = SDL_GetTicks();
   switch(game_data->battle_data.state % STATES) {
   case STATE_MENU:
     break;
   case STATE_BATTLE:
+    game_data->battle_data.delta = time - game_data->battle_data.last_time;
+    game_data->battle_data.last_time = time;
+
     for(uint16_t i = 0; i < game_data->battle_data.rows *
           game_data->battle_data.cols; i++) {
       temp = game_data->battle_data.board[i];
 
       if(temp->team != TEAM_EMPTY) {
-        temp->pos.x += temp->vel.x;
-        temp->pos.y += temp->vel.y;
+        temp->pos.x += temp->vel.x * game_data->battle_data.delta;
+        temp->pos.y += temp->vel.y * game_data->battle_data.delta;
 
         if(temp->move_queue.head != NULL) {
-          if(temp->vel.x != 0.0 &&
-             ABS(temp->pos.x -
-                 ((Coord_i *)temp->move_queue.head->data)->x) < ROUNDOFF) {
+          if(temp->vel.x != 0.0) {
+            if(ABS(temp->pos.x -
+                   ((Coord_i *)temp->move_queue.head->data)->x) < ROUNDOFF
+               || (temp->vel.x > 0.0 && temp->pos.x >
+                   ((Coord_i *)temp->move_queue.head->data)->x)
+               || (temp->vel.x < 0.0 && temp->pos.x <
+                   ((Coord_i *)temp->move_queue.head->data)->x)) {
 
-            temp->pos.x = ((Coord_i *)temp->move_queue.head->data)->x;
-            temp->vel = (Coord_f){0.0, 0.0};
+              temp->pos.x = ((Coord_i *)temp->move_queue.head->data)->x;
+              temp->vel = (Coord_f){0.0, 0.0};
 
-            stack_remove(&temp->move_queue, NULL);
-          } else if(temp->vel.y != 0.0 &&
-             ABS(temp->pos.y - ((Coord_i *)temp->move_queue.head->data)->y)
-             < ROUNDOFF) {
+              stack_remove(&temp->move_queue, NULL);
+            }
+          } else if(temp->vel.y != 0.0) {
+            if(ABS(temp->pos.y -
+                   ((Coord_i *)temp->move_queue.head->data)->y) < ROUNDOFF
+               || (temp->vel.y > 0.0 && temp->pos.y >
+                   ((Coord_i *)temp->move_queue.head->data)->y)
+               || (temp->vel.y < 0.0 && temp->pos.y <
+                   ((Coord_i *)temp->move_queue.head->data)->y)) {
 
-            temp->pos.y = ((Coord_i *)temp->move_queue.head->data)->y;
-            temp->vel = (Coord_f){0.0, 0.0};
+              temp->pos.y = ((Coord_i *)temp->move_queue.head->data)->y;
+              temp->vel = (Coord_f){0.0, 0.0};
 
-            stack_remove(&temp->move_queue, NULL);
+              stack_remove(&temp->move_queue, NULL);
+            }
           }
         }
       }

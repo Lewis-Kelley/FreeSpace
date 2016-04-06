@@ -16,6 +16,7 @@ void handle_event(SDL_Event *event, Game_Data *game_data) {
     key_down(event->key.keysym.sym, game_data);
 		break;
 	case SDL_KEYUP :
+    key_up(event->key.keysym.sym, game_data);
 		//EMPTY
 		break;
 	case SDL_MOUSEMOTION:
@@ -146,6 +147,16 @@ Move_Status move_entity(Coord_i origin, Coord_i dest, Game_Data* game_data) {
       return MOVE_OBSTRUCTED;
     }
   }
+}
+
+/**
+ * Handles a released key event.
+ *
+ * @param [in] keycode The key that has been released.
+ * @param [in, out] game_data The current state of the game.
+ */
+void key_up(SDL_Keycode keycode, Game_Data *game_data) {
+
 }
 
 /**
