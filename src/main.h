@@ -11,6 +11,7 @@
 #include <string.h>
 #include <stdarg.h>
 #include "game_state.h"
+#include "update.h"
 #include "surface.h"
 #include "event_handler.h"
 #include "image.h"

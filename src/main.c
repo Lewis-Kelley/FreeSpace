@@ -70,86 +70,15 @@ void init(SDL_Window **win, SDL_Renderer **rend, SDL_Texture **tex_player) {
 }
 
 /**
- * Checks the time delta and updates the game state accordingly.
- *
- * @param [in, out] game_data The current state of the game.
- */
-void update(Game_Data *game_data) {
-  Battle_Entity *temp;
-  double time = SDL_GetTicks();
-  switch(game_data->battle_data.state % STATES) {
-  case STATE_MENU:
-    break;
-  case STATE_BATTLE:
-    game_data->battle_data.delta = time - game_data->battle_data.last_time;
-    game_data->battle_data.last_time = time;
-
-    for(uint16_t i = 0; i < game_data->battle_data.rows *
-          game_data->battle_data.cols; i++) {
-      temp = game_data->battle_data.board[i];
-
-      if(temp->team != TEAM_EMPTY) {
-        temp->pos.x += temp->vel.x * game_data->battle_data.delta;
-        temp->pos.y += temp->vel.y * game_data->battle_data.delta;
-
-        if(temp->move_queue.head != NULL) {
-          if(temp->vel.x != 0.0) {
-            if(ABS(temp->pos.x -
-                   ((Coord_i *)temp->move_queue.head->data)->x) < ROUNDOFF
-               || (temp->vel.x > 0.0 && temp->pos.x >
-                   ((Coord_i *)temp->move_queue.head->data)->x)
-               || (temp->vel.x < 0.0 && temp->pos.x <
-                   ((Coord_i *)temp->move_queue.head->data)->x)) {
-
-              temp->pos.x = ((Coord_i *)temp->move_queue.head->data)->x;
-              temp->vel = (Coord_f){0.0, 0.0};
-
-              stack_remove(&temp->move_queue, NULL);
-            }
-          } else if(temp->vel.y != 0.0) {
-            if(ABS(temp->pos.y -
-                   ((Coord_i *)temp->move_queue.head->data)->y) < ROUNDOFF
-               || (temp->vel.y > 0.0 && temp->pos.y >
-                   ((Coord_i *)temp->move_queue.head->data)->y)
-               || (temp->vel.y < 0.0 && temp->pos.y <
-                   ((Coord_i *)temp->move_queue.head->data)->y)) {
-
-              temp->pos.y = ((Coord_i *)temp->move_queue.head->data)->y;
-              temp->vel = (Coord_f){0.0, 0.0};
-
-              stack_remove(&temp->move_queue, NULL);
-            }
-          }
-        }
-      }
-    }
-    break;
-  case STATE_EXPLORE:
-    break;
-  default:
-    ERROR("Invalid state.");
-  }
-}
-
-/**
  * Renders all of the surfaces onto the display surface.
  *
  * @param [in, out] rend The renderer for the window.
  * @param [in] game_data The current state of the game.
  */
 void render(SDL_Renderer *rend, Game_Data *game_data) {
-  SDL_Rect dest;
   for(int i = 0; i < GRID_COLS * GRID_ROWS; i++) {
     if(game_data->battle_data.board[i]->team != TEAM_EMPTY) {
-      dest.w = WIN_WIDTH / game_data->battle_data.cols;
-      dest.h = WIN_HEIGHT / game_data->battle_data.rows;
-      dest.x = game_data->battle_data.board[i]->pos.x * dest.w +
-        game_data->battle_data.camera.x;
-      dest.y = game_data->battle_data.board[i]->pos.y * dest.h +
-        game_data->battle_data.camera.y;
-
-      SDL_RenderCopy(rend, game_data->battle_data.board[i]->img.tex,
-                     NULL, &dest);
+      image_draw(&game_data->battle_data.board[i]->img, rend);
     }
   }
 
@@ -179,7 +108,8 @@ int main(int argc, char **argv) {
   game_data.battle_data.turn_order =
     (Battle_Entity **)malloc(game_data.battle_data.num_units *
                              sizeof(Battle_Entity *));
-  game_data.battle_data.camera = (Coord_f){0.0, 0.0};
+  game_data.battle_data.camera_pos = (Coord_f){0.0, 0.0};
+  game_data.battle_data.camera_vel = (Coord_f){0.0, 0.0};
   game_data.battle_data.cols = GRID_COLS;
   game_data.battle_data.rows = GRID_ROWS;
   game_data.battle_data.turn = 0;
@@ -190,7 +120,9 @@ int main(int argc, char **argv) {
         = (Battle_Entity *)malloc(sizeof(Battle_Entity));
       *game_data.battle_data.board[j * GRID_COLS + i]
         = (Battle_Entity){(Image){NULL, i * WIN_WIDTH / GRID_COLS,
-                                  j * WIN_HEIGHT / GRID_ROWS, 0, 0, 0, 0},
+                                  j * WIN_HEIGHT / GRID_ROWS,
+                                  WIN_WIDTH /GRID_COLS, WIN_HEIGHT / GRID_ROWS,
+                                  0, 0, 0, 0},
                           TEAM_EMPTY, (Coord_f){i, j}, (Coord_f){0, 0},
                           (Stack){NULL, 0}};
     }
@@ -212,7 +144,7 @@ int main(int argc, char **argv) {
     while(SDL_PollEvent(&event))
       handle_event(&event, &game_data);
 
-    update(&game_data);
+    update_world(&game_data);
     render(rend, &game_data);
     SDL_RenderPresent(rend);
   }

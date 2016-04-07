@@ -50,7 +50,8 @@ typedef union {
     double last_time; ///< The time of the previous tick.
     Battle_Entity **board; ///< An array of Entity pointers.
     Battle_Entity **turn_order; ///< Holds when each unit moves.
-    Coord_f camera; ///< The camera position.
+    Coord_f camera_pos; ///< The camera's pixel position.
+    Coord_f camera_vel; ///< The camera velocity.
     int cols; ///< The number of columns in the current board.
     int rows; ///< The number of rows in the current board.
     int turn; ///< The current move (not round).
@@ -61,7 +62,8 @@ typedef union {
     double delta; ///< The time since the last tick.
     double last_time; ///< The time of the previous tick.
     Explore_Entity **board; ///< An array of Entity pointers.
-    Coord_f camera; ///< The camera position.
+    Coord_f camera_pos; ///< The camera's pixel position.
+    Coord_f camera_vel; ///< The camera velocity.
     int cols; ///< The number of columns in the current board.
     int rows; ///< The number of rows in the current board.
   } explore_data; ///< Holds data on the exploration states.

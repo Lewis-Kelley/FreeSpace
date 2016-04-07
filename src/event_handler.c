@@ -95,6 +95,10 @@ Move_Status move_entity(Coord_i origin, Coord_i dest, Game_Data* game_data) {
       return MOVE_EMPTY_ORIGIN;
     }
 
+    if(orig_ent->vel.x != 0.0 || orig_ent->vel.y != 0.0) {
+      return MOVE_ONGOING;
+    }
+
     Battle_Entity *dest_ent = game_data->battle_data.board[dest.y *
                                                            game_data->battle_data
                                                            .cols + dest.x];
@@ -193,16 +197,16 @@ void key_down(SDL_Keycode keycode, Game_Data *game_data) {
     on_quit(game_data);
     break;
   case SDLK_w:
-    game_data->battle_data.camera.y += 10;
+    game_data->battle_data.camera_vel.y = 10;
     break;
   case SDLK_r:
-    game_data->battle_data.camera.y -= 10;
+    game_data->battle_data.camera_vel.y = -10;
     break;
   case SDLK_a:
-    game_data->battle_data.camera.x += 10;
+    game_data->battle_data.camera_vel.x = 10;
     break;
   case SDLK_s:
-    game_data->battle_data.camera.x -= 10;
+    game_data->battle_data.camera_vel.x = -10;
     break;
   default:
     break;

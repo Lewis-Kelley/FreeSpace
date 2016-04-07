@@ -4,5 +4,6 @@ Doxyfile
 *.js
 *.css
 *.tex
+*.o
 src/latex/*
 src/html/*
