@@ -41,11 +41,28 @@ typedef enum {
 } Game_State;
 
 /**
+ * List of masking powiers of 2 representing the current state
+ * of the keyboard.
+ */
+typedef enum {
+  KEY_MOVE_RIGHT = 1,
+  KEY_MOVE_UP = 2,
+  KEY_MOVE_LEFT = 4,
+  KEY_MOVE_DOWN = 8,
+
+  KEY_CAM_RIGHT = 16,
+  KEY_CAM_UP = 32,
+  KEY_CAM_LEFT = 64,
+  KEY_CAM_DOWN = 128
+} KEYS;
+
+/**
  * Stores information about the current state of the game.
  */
 typedef union {
   struct {
     Game_State state; ///< The current state of the game.
+    uint16_t keys; ///< A map of the current keys pressed.
     double delta; ///< The time since the last tick.
     double last_time; ///< The time of the previous tick.
     Battle_Entity **board; ///< An array of Entity pointers.

@@ -7,3 +7,10 @@ Doxyfile
 *.o
 src/latex/*
 src/html/*
+GPATH
+GRTAGS
+GTAGS
+latex/*
+html/*
+FreeSpace
+tests

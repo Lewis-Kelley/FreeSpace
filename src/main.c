@@ -4,22 +4,6 @@
 #include "main.h"
 
 /**
- * @def INIT_SURF(surf)
- * Local macro that loads the image file associated with a given surface
- * variable.
- */
-#define INIT_SURF(surf)                         \
-  strcat(file, "assets/");                      \
-  strcat(file, #surf);                          \
-  strcat(file, ".bmp");                         \
-  if((*surf = load_img(file)) == NULL) {        \
-    ERROR("Could not load surface on init.");   \
-    return -1;                                  \
-  }                                             \
-  set_invis_color(*surf, 255, 0, 255);          \
-  memset(file, '\0', sizeof(file));
-
-/**
  * Initializes all the various SDL structures used to draw on the screen.
  *
  * @param [out] win The window that will be drawn on.

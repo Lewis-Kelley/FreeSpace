@@ -20,6 +20,7 @@
 #define STR_LEN 75 ///< The standard length of strings when intitialized.
 #define MOVE_TIME 150.0 ///< The time for a unit to move one tile.
 #define ROUNDOFF 0.001 ///< Roundoff to be used when testing for equal doubles.
+#define CAM_SPEED 0.5 ///< The speed of the camera.
 
 /**
  * Convinience macro to return the absolute value of an expression.

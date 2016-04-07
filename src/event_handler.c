@@ -13,7 +13,9 @@
 void handle_event(SDL_Event *event, Game_Data *game_data) {
 	switch(event->type) {
 	case SDL_KEYDOWN:
-    key_down(event->key.keysym.sym, game_data);
+    if(event->key.repeat == 0) {
+      key_down(event->key.keysym.sym, game_data);
+    }
 		break;
 	case SDL_KEYUP :
     key_up(event->key.keysym.sym, game_data);
@@ -160,7 +162,20 @@ Move_Status move_entity(Coord_i origin, Coord_i dest, Game_Data* game_data) {
  * @param [in, out] game_data The current state of the game.
  */
 void key_up(SDL_Keycode keycode, Game_Data *game_data) {
-
+  switch(keycode) {
+  case SDLK_w:
+    game_data->battle_data.keys ^= KEY_CAM_UP;
+    break;
+  case SDLK_r:
+    game_data->battle_data.keys ^= KEY_CAM_DOWN;
+    break;
+  case SDLK_a:
+    game_data->battle_data.keys ^= KEY_CAM_LEFT;
+    break;
+  case SDLK_s:
+    game_data->battle_data.keys ^= KEY_CAM_RIGHT;
+    break;
+  }
 }
 
 /**
@@ -197,16 +212,16 @@ void key_down(SDL_Keycode keycode, Game_Data *game_data) {
     on_quit(game_data);
     break;
   case SDLK_w:
-    game_data->battle_data.camera_vel.y = 10;
+    game_data->battle_data.keys ^= KEY_CAM_UP;
     break;
   case SDLK_r:
-    game_data->battle_data.camera_vel.y = -10;
+    game_data->battle_data.keys ^= KEY_CAM_DOWN;
     break;
   case SDLK_a:
-    game_data->battle_data.camera_vel.x = 10;
+    game_data->battle_data.keys ^= KEY_CAM_LEFT;
     break;
   case SDLK_s:
-    game_data->battle_data.camera_vel.x = -10;
+    game_data->battle_data.keys ^= KEY_CAM_RIGHT;
     break;
   default:
     break;

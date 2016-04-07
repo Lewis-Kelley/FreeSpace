@@ -12,7 +12,7 @@ all : $(PROG)
 $(PROG) : $(OBJS) $(HDRS)
 	$(CC) $(OBJS) -o $(PROG) $(LFLAGS)
 
-event_handler.o : src/event_handler.c src/event_handler.h src/main.h
+event_handler.o : src/event_handler.c src/event_handler.h src/main.h src/game_state.h src/coord.h
 	$(CC) $(CFLAGS) -c src/event_handler.c
 
 hashmap.o : hashmap/hashmap.c hashmap/hashmap.h hashmap/stack.h
@@ -21,7 +21,7 @@ hashmap.o : hashmap/hashmap.c hashmap/hashmap.h hashmap/stack.h
 image.o : src/image.c src/image.h
 	$(CC) $(CFLAGS) -c src/image.c
 
-main.o : src/main.c src/main.h
+main.o : src/main.c src/main.h src/game_state.h src/update.h src/surface.h src/event_handler.h src/image.h
 	$(CC) $(CFLAGS) -c src/main.c
 
 stack.o : hashmap/stack.c hashmap/stack.h
@@ -37,7 +37,7 @@ testing : tests.o hashmap/stack.o hashmap/hashmap.o
 	$(CC) tests.o hashmap/stack.o hashmap/hashmap.o -o tests $(LFLAGS) -lcunit
 	./tests
 
-update.o : src/update.c src/update.h src/battle_entity.h src/game_state.h
+update.o : src/update.c src/update.h src/battle_entity.h src/game_state.h src/main.h
 	$(CC) $(CFLAGS) -c src/battle_entity.c
 
 clean : 
