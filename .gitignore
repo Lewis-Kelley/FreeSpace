@@ -5,12 +5,12 @@ Doxyfile
 *.css
 *.tex
 *.o
-src/latex/*
-src/html/*
 GPATH
 GRTAGS
 GTAGS
-latex/*
 html/*
+latex/*
+*/html/*
+*/latex/*
 FreeSpace
 test
