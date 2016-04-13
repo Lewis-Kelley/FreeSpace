@@ -49,11 +49,13 @@ typedef enum {
   KEY_MOVE_UP = 2,
   KEY_MOVE_LEFT = 4,
   KEY_MOVE_DOWN = 8,
+  KEY_MOVE = KEY_MOVE_RIGHT | KEY_MOVE_LEFT | KEY_MOVE_UP | KEY_MOVE_DOWN,
 
   KEY_CAM_RIGHT = 16,
   KEY_CAM_UP = 32,
   KEY_CAM_LEFT = 64,
-  KEY_CAM_DOWN = 128
+  KEY_CAM_DOWN = 128,
+  KEY_CAM = KEY_CAM_RIGHT | KEY_CAM_UP | KEY_CAM_LEFT | KEY_CAM_DOWN
 } KEYS;
 
 /**
@@ -69,10 +71,10 @@ typedef union {
     Battle_Entity **turn_order; ///< Holds when each unit moves.
     Coord_f camera_pos; ///< The camera's pixel position.
     Coord_f camera_vel; ///< The camera velocity.
-    int cols; ///< The number of columns in the current board.
-    int rows; ///< The number of rows in the current board.
-    int turn; ///< The current move (not round).
-    int num_units; ///< The number of units
+    uint16_t cols; ///< The number of columns in the current board.
+    uint16_t rows; ///< The number of rows in the current board.
+    uint16_t turn; ///< The current move (not round).
+    uint16_t num_units; ///< The number of units
   } battle_data; ///< Holds data on the battle states.
   struct {
     Game_State state; ///< The current state of the game.
@@ -81,9 +83,14 @@ typedef union {
     Explore_Entity **board; ///< An array of Entity pointers.
     Coord_f camera_pos; ///< The camera's pixel position.
     Coord_f camera_vel; ///< The camera velocity.
-    int cols; ///< The number of columns in the current board.
-    int rows; ///< The number of rows in the current board.
+    uint16_t cols; ///< The number of columns in the current board.
+    uint16_t rows; ///< The number of rows in the current board.
   } explore_data; ///< Holds data on the exploration states.
 } Game_Data;
 
+extern Battle_Entity * bat_ent_lookup(Game_Data *data, uint16_t x, uint16_t y);
+extern Explore_Entity * exp_ent_lookup(Game_Data *data, uint16_t x, uint16_t y);
+
+extern int8_t bat_ent_put(Game_Data *data, Battle_Entity *ent);
+extern int8_t exp_ent_put(Game_Data *data, Explore_Entity *ent);
 #endif

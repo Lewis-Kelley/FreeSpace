@@ -2,15 +2,19 @@ CC = gcc
 CFLAGS = -g -O2 -Wall -std=gnu11
 LFLAGS = -lSDLmain -lSDL_image -lSDL2
 
-SRCS = src/main.c src/surface.c src/event_handler.c hashmap/hashmap.c hashmap/stack.c src/image.c src/update.c
-HDRS = src/main.h src/surface.h src/event_handler.c hashmap/hashmap.h hashmap/stack.h src/image.h src/update.h
+SRCS = src/surface.c src/event_handler.c hashmap/hashmap.c hashmap/stack.c src/image.c src/update.c src/game_state.c
+HDRS = src/surface.h src/event_handler.c hashmap/hashmap.h hashmap/stack.h src/image.h src/update.h src/game_state.h
 OBJS = $(SRCS:.c=.o)
 PROG = FreeSpace
 
 all : $(PROG)
 
-$(PROG) : $(OBJS) $(HDRS)
-	$(CC) $(OBJS) -o $(PROG) $(LFLAGS)
+$(PROG) : src/main.o src/main.h $(OBJS) $(HDRS)
+	$(CC) src/main.o $(OBJS) -o $(PROG) $(LFLAGS)
+
+test : test.o $(OBJS) $(HDRS)
+	$(CC) test.o $(OBJS) -o test $(LFLAGS) -lcunit
+	./test
 
 event_handler.o : src/event_handler.c src/event_handler.h src/main.h src/game_state.h src/coord.h
 	$(CC) $(CFLAGS) -c src/event_handler.c
@@ -30,12 +34,8 @@ stack.o : hashmap/stack.c hashmap/stack.h
 surface.o : src/surface.c src/surface.h src/main.h
 	$(CC) $(CFLAGS) -c src/surface.c
 
-tests.o : tests.c 
-	$(CC) $(CFLAGS) -c tests.c
-
-testing : tests.o hashmap/stack.o hashmap/hashmap.o
-	$(CC) tests.o hashmap/stack.o hashmap/hashmap.o -o tests $(LFLAGS) -lcunit
-	./tests
+test.o : test.c
+	$(CC) $(CFLAGS) -c test.c
 
 update.o : src/update.c src/update.h src/battle_entity.h src/game_state.h src/main.h
 	$(CC) $(CFLAGS) -c src/battle_entity.c

@@ -19,7 +19,6 @@ void handle_event(SDL_Event *event, Game_Data *game_data) {
 		break;
 	case SDL_KEYUP :
     key_up(event->key.keysym.sym, game_data);
-		//EMPTY
 		break;
 	case SDL_MOUSEMOTION:
 		//EMPTY
@@ -50,26 +49,22 @@ void handle_event(SDL_Event *event, Game_Data *game_data) {
 			break;
 		}
 		break;
-	case SDL_JOYAXISMOTION:
-		//EMPTY
-		break;
-	case SDL_JOYBALLMOTION:
-		//EMPTY
-		break;
-	case SDL_JOYHATMOTION:
-		//EMPTY
-		break;
-	case SDL_JOYBUTTONDOWN:
-		//EMPTY
-		break;
-	case SDL_JOYBUTTONUP:
-		//EMPTY
-		break;
 	case SDL_QUIT:
     on_quit(game_data);
 		break;
+  case SDL_WINDOWEVENT:
+    //EMPTY
+    break;
+  case SDL_TEXTINPUT:
+    //EMPTY
+    break;
 	case SDL_SYSWMEVENT:
+    //EMPTY
 		break;
+  default:
+    ERROR("Unhandled event");
+    printf("Event is %d.\n", event->type);
+    break;
 	}
 }
 
@@ -84,7 +79,7 @@ void handle_event(SDL_Event *event, Game_Data *game_data) {
  * @return An enum signifying the status of the move operation.
  */
 Move_Status move_entity(Coord_i origin, Coord_i dest, Game_Data* game_data) {
-  if(game_data->battle_data.state % 3 == 1) { // In a battle state
+  if(game_data->battle_data.state % STATES == STATE_BATTLE) {
     if(dest.x >= game_data->battle_data.cols ||
        dest.y >= game_data->battle_data.rows) {
       return MOVE_OUT_OF_BOUNDS;
@@ -163,17 +158,29 @@ Move_Status move_entity(Coord_i origin, Coord_i dest, Game_Data* game_data) {
  */
 void key_up(SDL_Keycode keycode, Game_Data *game_data) {
   switch(keycode) {
+  case SDLK_UP:
+    game_data->battle_data.keys &= ~KEY_MOVE_UP;
+    break;
+  case SDLK_DOWN:
+    game_data->battle_data.keys &= ~KEY_MOVE_DOWN;
+    break;
+  case SDLK_LEFT:
+    game_data->battle_data.keys &= ~KEY_MOVE_LEFT;
+    break;
+  case SDLK_RIGHT:
+    game_data->battle_data.keys &= ~KEY_MOVE_RIGHT;
+    break;
   case SDLK_w:
-    game_data->battle_data.keys ^= KEY_CAM_UP;
+    game_data->battle_data.keys &= ~KEY_CAM_UP;
     break;
   case SDLK_r:
-    game_data->battle_data.keys ^= KEY_CAM_DOWN;
+    game_data->battle_data.keys &= ~KEY_CAM_DOWN;
     break;
   case SDLK_a:
-    game_data->battle_data.keys ^= KEY_CAM_LEFT;
+    game_data->battle_data.keys &= ~KEY_CAM_LEFT;
     break;
   case SDLK_s:
-    game_data->battle_data.keys ^= KEY_CAM_RIGHT;
+    game_data->battle_data.keys &= ~KEY_CAM_RIGHT;
     break;
   }
 }
@@ -181,7 +188,8 @@ void key_up(SDL_Keycode keycode, Game_Data *game_data) {
 /**
  * Event handles a key press.
  *
- * @param [in] keycode An SDL_Keycode instance which represents which key was pressed.
+ * @param [in] keycode An SDL_Keycode instance which represents which key
+ * was pressed.
  * @param [in, out] game_data The current state of the game.
  */
 void key_down(SDL_Keycode keycode, Game_Data *game_data) {
@@ -191,18 +199,30 @@ void key_down(SDL_Keycode keycode, Game_Data *game_data) {
   case SDLK_UP:
     move_entity((Coord_i){ent->pos.x, ent->pos.y},
                 (Coord_i){ent->pos.x, ent->pos.y - 1}, game_data);
+    game_data->battle_data.keys |= KEY_MOVE_UP;
+    game_data->battle_data.keys &=
+      ~(KEY_MOVE_DOWN | KEY_MOVE_LEFT | KEY_MOVE_RIGHT);
     break;
   case SDLK_DOWN:
     move_entity((Coord_i){ent->pos.x, ent->pos.y},
                 (Coord_i){ent->pos.x, ent->pos.y + 1}, game_data);
+    game_data->battle_data.keys |= KEY_MOVE_DOWN;
+    game_data->battle_data.keys &=
+      ~(KEY_MOVE_UP | KEY_MOVE_LEFT | KEY_MOVE_RIGHT);
     break;
   case SDLK_LEFT:
     move_entity((Coord_i){ent->pos.x, ent->pos.y},
                 (Coord_i){ent->pos.x - 1, ent->pos.y}, game_data);
+    game_data->battle_data.keys |= KEY_MOVE_LEFT;
+    game_data->battle_data.keys &=
+      ~(KEY_MOVE_DOWN | KEY_MOVE_UP | KEY_MOVE_RIGHT);
     break;
   case SDLK_RIGHT:
     move_entity((Coord_i){ent->pos.x, ent->pos.y},
                 (Coord_i){ent->pos.x + 1, ent->pos.y}, game_data);
+    game_data->battle_data.keys |= KEY_MOVE_RIGHT;
+    game_data->battle_data.keys &=
+      ~(KEY_MOVE_DOWN | KEY_MOVE_LEFT | KEY_MOVE_UP);
     break;
   case SDLK_SPACE:
     game_data->battle_data.turn = (game_data->battle_data.turn + 1)
@@ -212,16 +232,24 @@ void key_down(SDL_Keycode keycode, Game_Data *game_data) {
     on_quit(game_data);
     break;
   case SDLK_w:
-    game_data->battle_data.keys ^= KEY_CAM_UP;
+    game_data->battle_data.keys |= KEY_CAM_UP;
+    game_data->battle_data.keys &=
+      ~(KEY_CAM_DOWN | KEY_CAM_LEFT | KEY_CAM_RIGHT);
     break;
   case SDLK_r:
-    game_data->battle_data.keys ^= KEY_CAM_DOWN;
+    game_data->battle_data.keys |= KEY_CAM_DOWN;
+    game_data->battle_data.keys &=
+      ~(KEY_CAM_UP | KEY_CAM_LEFT | KEY_CAM_RIGHT);
     break;
   case SDLK_a:
-    game_data->battle_data.keys ^= KEY_CAM_LEFT;
+    game_data->battle_data.keys |= KEY_CAM_LEFT;
+    game_data->battle_data.keys &=
+      ~(KEY_CAM_DOWN | KEY_CAM_UP | KEY_CAM_RIGHT);
     break;
   case SDLK_s:
-    game_data->battle_data.keys ^= KEY_CAM_RIGHT;
+    game_data->battle_data.keys |= KEY_CAM_RIGHT;
+    game_data->battle_data.keys &=
+      ~(KEY_CAM_DOWN | KEY_CAM_LEFT | KEY_CAM_UP);
     break;
   default:
     break;

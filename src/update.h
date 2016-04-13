@@ -4,7 +4,9 @@
 #ifndef UPDATE_H
 #define UPDATE_H
 
+#include <stdint.h>
 #include "battle_entity.h"
+#include "event_handler.h"
 #include "game_state.h"
 #include "main.h"
 
