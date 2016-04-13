@@ -9,11 +9,11 @@ PROG = FreeSpace
 
 all : $(PROG)
 
-$(PROG) : src/main.o src/main.h $(OBJS) $(HDRS)
+$(PROG) : src/main.o $(OBJS) $(HDRS)
 	$(CC) src/main.o $(OBJS) -o $(PROG) $(LFLAGS)
 
-test : test.o $(OBJS) $(HDRS)
-	$(CC) test.o $(OBJS) -o test $(LFLAGS) -lcunit
+test : $(OBJS) $(HDRS) test.o
+	$(CC) $(OBJS) test.o -o test $(LFLAGS) -lcunit
 	./test
 
 event_handler.o : src/event_handler.c src/event_handler.h src/main.h src/game_state.h src/coord.h
@@ -41,6 +41,6 @@ update.o : src/update.c src/update.h src/battle_entity.h src/game_state.h src/ma
 	$(CC) $(CFLAGS) -c src/battle_entity.c
 
 clean : 
-	rm -f $(OBJS) *~ *.o
+	rm -f $(OBJS) *~ *.o src/main.o
 
 rebuild : clean $(PROG)

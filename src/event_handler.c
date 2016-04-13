@@ -134,7 +134,6 @@ Move_Status move_entity(Coord_i origin, Coord_i dest, Game_Data* game_data) {
     if(dest_ent->team == TEAM_EMPTY) {
       orig_ent->img.dest_x = dest.x * WIN_WIDTH / game_data->explore_data.cols;
       orig_ent->img.dest_y = dest.y * WIN_HEIGHT / game_data->explore_data.rows;
-      orig_ent->pos = dest;
 
       game_data->explore_data.board[dest.y * game_data->explore_data.cols
                                     + dest.x] = orig_ent;

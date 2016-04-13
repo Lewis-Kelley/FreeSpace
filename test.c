@@ -4,6 +4,7 @@
 #include "hashmap/hashmap.h"
 #include "src/game_state.h"
 #include "testing/stack_tests.c"
+#include "testing/hashmap_tests.c"
 
 #define QUIT do { CU_cleanup_registry(); return CU_get_error(); } while(0);
 
