@@ -114,7 +114,7 @@ int main(int argc, char **argv) {
   SDL_Event event;
 
   game_data.battle_data.board[10 * GRID_ROWS + 5]->img.tex = tex_player;
-  game_data.battle_data.board[10 * GRID_ROWS + 5]->team = TEAM_PLAYER;
+  game_data.battle_data.board[10 * GRID_ROWS + 5]->team = TEAM_SELECTED;
   game_data.battle_data.turn_order[0]
     = game_data.battle_data.board[10 * GRID_ROWS + 5];
 

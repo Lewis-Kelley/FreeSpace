@@ -72,6 +72,8 @@ void test_battle_entity_update() {
 
   data->battle_data.turn_order[0]->vel = (Coord_f){0.0, 0.0};
   data->battle_data.turn_order[1]->vel = (Coord_f){0.0, 0.0};
+
+  
 }
 
 void test_update_world() {

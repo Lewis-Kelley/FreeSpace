@@ -93,4 +93,12 @@ extern Explore_Entity * exp_ent_lookup(Game_Data *data, uint16_t x, uint16_t y);
 
 extern int8_t bat_ent_put(Game_Data *data, Battle_Entity *ent);
 extern int8_t exp_ent_put(Game_Data *data, Explore_Entity *ent);
+
+extern int8_t bat_ent_put_coord(Game_Data *data, Battle_Entity *ent,
+                                uint16_t x, uint16_t y);
+extern int8_t exp_ent_put_coord(Game_Data *data, Explore_Entity *ent,
+                                uint16_t x, uint16_t y);
+
+extern Battle_Entity * bat_ent_remove(Game_Data *data, uint16_t x, uint16_t y);
+extern Explore_Entity * exp_ent_remove(Game_Data *data, uint16_t x, uint16_t y);
 #endif

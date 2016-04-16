@@ -18,7 +18,7 @@
 
 #define DEBUG ///< Flag saying to include debugging information at compile time.
 #define STR_LEN 75 ///< The standard length of strings when intitialized.
-#define MOVE_TIME 150.0 ///< The time for a unit to move one tile.
+#define MOVE_SPEED 0.007 ///< The standard speed of a unit.
 #define ROUNDOFF 0.001 ///< Roundoff to be used when testing for equal doubles.
 #define CAM_SPEED 0.5 ///< The speed of the camera.
 

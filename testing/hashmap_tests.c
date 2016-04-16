@@ -1,10 +1,18 @@
+/** @file
+ */
 #include "CUnit/CUnit.h"
 #include "CUnit/Basic.h"
 #include "../hashmap/hashmap.h"
 
+/**
+ * Create a new hashmap with the given number of buckets.
+ */
 #define NEW_HASHMAP(size)                                 \
   (Hashmap){(Stack *)malloc(size * sizeof(Stack)), size};
 
+/**
+ * Tests the function hashmap_free.
+ */
 void test_hashmap_free() {
   Hashmap hashmap = NEW_HASHMAP(100);
   for(int i = 0; i < 100; i++) {
@@ -37,6 +45,9 @@ void test_hashmap_free() {
   CU_PASS();
 }
 
+/**
+ * Tests the function hashmap_put.
+ */
 void test_hashmap_put() {
   Hashmap hashmap = NEW_HASHMAP(100);
   for(int i = 0; i < 100; i++) {
@@ -95,6 +106,9 @@ void test_hashmap_put() {
   hashmap_free(&hashmap);
 }
 
+/**
+ * Test the function hashmap_find.
+ */
 void test_hashmap_find() {
   Hashmap hashmap = NEW_HASHMAP(100);
   for(int i = 0; i < 100; i++) {
@@ -150,6 +164,9 @@ void test_hashmap_find() {
   hashmap_free(&hashmap);
 }
 
+/**
+ * Test the function hashmap_remove.
+ */
 void test_hashmap_remove() {
   Hashmap hashmap = NEW_HASHMAP(100);
   for(int i = 0; i < 100; i++) {
