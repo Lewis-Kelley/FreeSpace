@@ -98,6 +98,8 @@ int8_t exp_ent_put(Game_Data *data, Explore_Entity *ent) {
  * 
  * @param data The current state of the game.
  * @param ent A pointer to the Battle_Entity to be added.
+ * @param x The x coordinate to put the Battle_Entity at.
+ * @param y The y coordinate to put the Battle_Entity at.
  * @return 0 if successfully added, 1 if the cell was occupied,
  * 2 if invalid parameters.
  */
@@ -124,6 +126,8 @@ int8_t bat_ent_put_coord(Game_Data *data, Battle_Entity *ent,
  * 
  * @param data The current state of the game.
  * @param ent A pointer to the Explore_Entity to be added.
+ * @param x The x coordinate to put the Explore_Entity at.
+ * @param y The y coordinate to put the Explore_Entity at.
  * @return 0 if successfully added, 1 if the cell was occupied,
  * 2 if invalid parameters.
  */

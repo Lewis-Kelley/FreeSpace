@@ -3,7 +3,7 @@
 #ifndef EVENT_HANDLER_H
 #define EVENT_HANDLER_H
 
-#include "main.h"
+#include "../main.h"
 #include "game_state.h"
 #include "coord.h"
 

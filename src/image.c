@@ -3,8 +3,8 @@
 /**
  * Draws the given Image to the screen using rend.
  *
- * @param img The Image struct to be drawn.
- * @param rend The SDL_Renderer to be used to draw the image.
+ * @param [in] img The Image struct to be drawn.
+ * @param [in] rend The SDL_Renderer to be used to draw the image.
  */
 void image_draw(Image *img, SDL_Renderer *rend) {
   if(img->src_w == 0 || img->src_h == 0) {
