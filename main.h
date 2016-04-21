@@ -10,11 +10,11 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdarg.h>
-#include "game_state.h"
-#include "update.h"
-#include "surface.h"
-#include "event_handler.h"
-#include "image.h"
+#include "src/game_state.h"
+#include "src/update.h"
+#include "src/surface.h"
+#include "src/event_handler.h"
+#include "src/image.h"
 
 #define DEBUG ///< Flag saying to include debugging information at compile time.
 #define STR_LEN 75 ///< The standard length of strings when intitialized.

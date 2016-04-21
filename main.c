@@ -9,18 +9,19 @@
  * @param [out] win The window that will be drawn on.
  * @param [out] rend The SDL_Renderer to be created.
  * @param [out] tex_player An SDL_Texture containing the image of the player ship.
+ * @return 0 if successful, 1 if error.
  */
-void init(SDL_Window **win, SDL_Renderer **rend, SDL_Texture **tex_player) {
+uint8_t init(SDL_Window **win, SDL_Renderer **rend, SDL_Texture **tex_player) {
   if(SDL_Init(SDL_INIT_VIDEO) != 0) {
     ERROR("SDL_Init failed.");
-    return;
+    return 1;
   }
   
   *win = SDL_CreateWindow("FreeSpace", 100, 100, WIN_WIDTH, WIN_HEIGHT,
                           SDL_WINDOW_SHOWN);
   if(*win == NULL) {
     ERROR("Failed to create window.");
-    return;
+    return 1;
   }
 
   *rend = SDL_CreateRenderer(*win, -1, SDL_RENDERER_ACCELERATED |
@@ -29,16 +30,17 @@ void init(SDL_Window **win, SDL_Renderer **rend, SDL_Texture **tex_player) {
     SDL_DestroyWindow(*win);
     ERROR("Failed to create renderer.");
     SDL_Quit();
-    return;
+    return 1;
   }
 
-  SDL_Surface *bmp = SDL_LoadBMP("assets/surf_player.bmp");
+  //TODO Figure out how to make this path work well
+  SDL_Surface *bmp = SDL_LoadBMP("/home/kelleyld/programs/FreeSpace/assets/surf_player.bmp");
   if(bmp == NULL) {
     SDL_DestroyRenderer(*rend);
     SDL_DestroyWindow(*win);
     ERROR("Failed to load surf_player.bmp.");
     SDL_Quit();
-    return;
+    return 1;
   }
   SDL_SetColorKey(bmp, SDL_TRUE, SDL_MapRGB(bmp->format, 0xFF, 0, 0xFF));
 
@@ -49,8 +51,10 @@ void init(SDL_Window **win, SDL_Renderer **rend, SDL_Texture **tex_player) {
     SDL_DestroyWindow(*win);
     ERROR("Failed to create tex_player.");
     SDL_Quit();
-    return;
+    return 1;
   }
+
+  return 0;
 }
 
 /**
@@ -81,7 +85,9 @@ int main(int argc, char **argv) {
   SDL_Renderer *rend = NULL;
   SDL_Texture *tex_player = NULL;
 
-  init(&win, &rend, &tex_player);
+  if(init(&win, &rend, &tex_player)) {
+    return 1;
+  }
 
   Game_Data game_data;
 
