@@ -1,124 +1,307 @@
 #include <stdio.h>
-#include "CUnit/CUnit.h"
-#include "CUnit/Basic.h"
-#include "hashmap/hashmap.h"
-#include "src/game_state.h"
-#include "testing/stack_tests.c"
-#include "testing/hashmap_tests.c"
+#include "hashmap/stack.h"
 
-#define QUIT do { CU_cleanup_registry(); return CU_get_error(); } while(0);
+#define CTEST_MAIN
 
-Game_Data * new_game_data(int rows, int cols, int num_units) {
-  Game_Data *data = malloc(sizeof *data);
-  data->battle_data.state = GAME_BATTLE_MOVE;
-  data->battle_data.keys = 0;
-  data->battle_data.delta = 0.0;
-  data->battle_data.last_time = 0.0;
-  data->battle_data.board =
-    (Battle_Entity **)malloc(rows * cols
-                             * sizeof(Battle_Entity *));
-  data->battle_data.turn_order =
-    (Battle_Entity **)malloc(num_units * sizeof(Battle_Entity *));
-  data->battle_data.camera_pos = (Coord_f){0.0, 0.0};
-  data->battle_data.camera_vel = (Coord_f){0.0, 0.0};
-  data->battle_data.cols = cols;
-  data->battle_data.rows = rows;
-  data->battle_data.turn = 0;
-  data->battle_data.num_units = num_units;
+// uncomment lines below to enable/disable features. See README.md for details
+#define CTEST_SEGFAULT
+//#define CTEST_NO_COLORS
+//#define CTEST_COLOR_OK
 
-  return data;
-}
+#include "ctest.h"
 
-Battle_Entity * add_battle_entity(Game_Data *data, int x, int y) {
-  Battle_Entity *ent;
-  int index = 0;
+CTEST(stack, stack_free_1){
+  Stack stack = (Stack){(Node *)malloc(sizeof(Node)), sizeof(char)};
+  *stack.head = (Node){malloc(sizeof(char)), malloc(sizeof(int)),
+                       sizeof(int), NULL};
+  Node *curr = stack.head;
+  *(int *)stack.head->data = 0;
 
-  if((ent = bat_ent_lookup(data, x, y)) == NULL) {
-    return NULL;
+  for(int i = 1; i < 10; i++){
+    curr->next = (Node *)malloc(sizeof(Node));
+    *curr->next = (Node){malloc(sizeof(char)), malloc(sizeof(int)),
+                         sizeof(int), NULL};
+
+    curr = curr->next;
+    *(int *)curr->data = i;
   }
 
-  for(int i = 0; i < data->battle_data.num_units
-        && data->battle_data.turn_order[i] != NULL; i++) {
-    index = i;
+  curr = stack.head;
+  *(char *)curr->key = 'a';
+  curr = curr->next;
+  *(char *)curr->key = 'b';
+  curr = curr->next;
+  *(char *)curr->key = 'c';
+  curr = curr->next;
+  *(char *)curr->key = 'd';
+  curr = curr->next;
+  *(char *)curr->key = 'e';
+  curr = curr->next;
+  *(char *)curr->key = 'f';
+  curr = curr->next;
+  *(char *)curr->key = 'g';
+  curr = curr->next;
+  *(char *)curr->key = 'h';
+  curr = curr->next;
+  *(char *)curr->key = 'i';
+  curr = curr->next;
+  *(char *)curr->key = 'j';
+
+  stack_free(&stack);
+  ASSERT_PASS();
+
+  stack_free(&stack);
+  ASSERT_PASS();
+}
+
+CTEST(stack, stack_free_2) {
+  Stack stack = (Stack){(Node *)malloc(sizeof(Node)), sizeof(char)};
+  stack.key_size = sizeof(double);
+  stack.head = (Node *)malloc(sizeof(Node));
+  *stack.head = (Node){malloc(sizeof(double)), malloc(sizeof(int)),
+                       sizeof(int), NULL};
+  Node *curr = stack.head;
+  *(int *)stack.head->data = 0;
+
+  for(int i = 1; i < 10; i++){
+    curr->next = (Node *)malloc(sizeof(Node));
+    *curr->next = (Node){malloc(sizeof(double)), malloc(sizeof(int)),
+                         sizeof(int), NULL};
+
+    curr = curr->next;
+    *(int *)curr->data = i;
   }
 
-  if(data->battle_data.turn_order[index] != NULL) {
-    return NULL;
+  curr = stack.head;
+  *(double *)curr->key = 1.01;
+  curr = curr->next;
+  *(double *)curr->key = 2.02;
+  curr = curr->next;
+  *(double *)curr->key = 3.03;
+  curr = curr->next;
+  *(double *)curr->key = 4.04;
+  curr = curr->next;
+  *(double *)curr->key = 5.05;
+  curr = curr->next;
+  *(double *)curr->key = 6.06;
+  curr = curr->next;
+  *(double *)curr->key = 7.07;
+  curr = curr->next;
+  *(double *)curr->key = 8.08;
+  curr = curr->next;
+  *(double *)curr->key = 9.09;
+  curr = curr->next;
+  *(double *)curr->key = 10.10;
+
+  stack_free(&stack);
+  ASSERT_PASS();
+
+  stack.key_size = 0;
+  stack.head = (Node *)malloc(sizeof(Node));
+  *stack.head = (Node){malloc(256 * sizeof(char)), malloc(sizeof(int)),
+                       sizeof(int), NULL};
+  curr = stack.head;
+  *(int *)stack.head->data = 0;
+
+  for(int i = 1; i < 3; i++){
+    curr->next = (Node *)malloc(sizeof(Node));
+    *curr->next = (Node){malloc(256 * sizeof(char)), malloc(sizeof(int)),
+                         sizeof(int), NULL};
+
+    curr = curr->next;
+    *(int *)curr->data = i;
   }
 
-  ent = malloc(sizeof *ent);
-  ent->pos = (Coord_f){x, y};
-  data->battle_data.turn_order[index] = ent;
+  curr = stack.head;
+  strcpy(curr->key, "one");
+  curr = curr->next;
+  strcpy(curr->key, "two");
+  curr = curr->next;
+  strcpy(curr->key, "three");
 
-  return ent;
+  stack_free(&stack);
+  ASSERT_PASS();
+
+  stack_free(&stack);
+  ASSERT_PASS();
 }
 
-int init_suite() {
-  return 0;
-}
+CTEST(stack, stack_find) {
+  Stack stack = (Stack){(Node *)malloc(sizeof(Node)), sizeof(char)};
+  Node *curr = stack.head;
+  *curr = (Node){malloc(sizeof(char)), malloc(sizeof(int)),
+                 sizeof(int), NULL};
+  *(int *)curr->data = 0;
 
-int clean_suite() {
-  return 0;
-}
+  for(int i = 1; i < 10; i++){
+    curr->next = (Node *)malloc(sizeof(Node));
 
-void test_battle_entity_update() {
-  Game_Data *data = new_game_data(20, 20, 2);
+    curr = curr->next;
+    *curr = (Node){malloc(sizeof(char)), malloc(sizeof(int)),
+                   sizeof(int), NULL};
 
-  data->battle_data.turn_order[0] = add_battle_entity(data, 5, 7);
-  data->battle_data.turn_order[1] = add_battle_entity(data, 0, 0);
-
-  data->battle_data.turn_order[0]->team = TEAM_SELECTED;
-  data->battle_data.turn_order[1]->team = TEAM_PLAYER;
-
-  data->battle_data.turn_order[0]->vel = (Coord_f){0.0, 0.0};
-  data->battle_data.turn_order[1]->vel = (Coord_f){0.0, 0.0};
-
-  
-}
-
-void test_update_world() {
-
-}
-
-int main(int argc, char **argv) {
-  CU_Suite *stack_suite = NULL,
-    *hashmap_suite = NULL,
-    *update_suite = NULL;
-
-  if(CUE_SUCCESS != CU_initialize_registry())
-    return CU_get_error();
-
-  stack_suite = CU_add_suite("stack_test_suite", init_suite, clean_suite);
-  hashmap_suite = CU_add_suite("hashmap_test_suite", init_suite, clean_suite);
-  update_suite = CU_add_suite("update_test_suite", init_suite, clean_suite);
-
-  if(stack_suite == NULL || hashmap_suite == NULL || update_suite == NULL) {
-    QUIT;
+    *(int *)curr->data = i;
   }
 
-  if(CU_add_test(stack_suite, "stack_free",
-                 test_stack_free) == NULL
-     || CU_add_test(stack_suite, "stack_find",
-                    test_stack_find) == NULL
-     || CU_add_test(stack_suite, "stack_put",
-                    test_stack_put) == NULL
-     || CU_add_test(stack_suite, "stack_remove",
-                    test_stack_remove) == NULL
-     || CU_add_test(hashmap_suite, "hashmap_free",
-                    test_hashmap_free) == NULL
-     || CU_add_test(hashmap_suite, "hashmap_put",
-                    test_hashmap_put) == NULL
-     || CU_add_test(hashmap_suite, "hashmap_find",
-                    test_hashmap_find) == NULL
-     || CU_add_test(hashmap_suite, "hashmap_remove",
-                    test_hashmap_remove) == NULL
-     )
-    QUIT;
+  curr = stack.head;
+  *(char *)curr->key = 'a';
+  curr = curr->next;
+  *(char *)curr->key = 'b';
+  curr = curr->next;
+  *(char *)curr->key = 'c';
+  curr = curr->next;
+  *(char *)curr->key = 'd';
+  curr = curr->next;
+  *(char *)curr->key = 'e';
+  curr = curr->next;
+  *(char *)curr->key = 'f';
+  curr = curr->next;
+  *(char *)curr->key = 'g';
+  curr = curr->next;
+  *(char *)curr->key = 'h';
+  curr = curr->next;
+  *(char *)curr->key = 'i';
+  curr = curr->next;
+  *(char *)curr->key = 'j';
 
-  CU_basic_set_mode(CU_BRM_VERBOSE);
-  CU_basic_run_tests();
-  CU_basic_show_failures(CU_get_failure_list());
-  printf("\n");
+  void *key = malloc(sizeof(char));
+  *(char *)key = 'b';
+  ASSERT_NOT_NULL(stack_find(stack, key));
+  ASSERT_EQUAL(*(int *)stack_find(stack, key)->data, 1);
+  *(char *)key = 'd';
+  ASSERT_NOT_NULL(stack_find(stack, key));
+  ASSERT_EQUAL(*(int *)stack_find(stack, key)->data, 3);
+  *(char *)key = 'c';
+  ASSERT_NOT_NULL(stack_find(stack, key));
+  ASSERT_EQUAL(*(int *)stack_find(stack, key)->data, 2);
+  *(char *)key = 'j';
+  ASSERT_NOT_NULL(stack_find(stack, key));
+  ASSERT_EQUAL(*(int *)stack_find(stack, key)->data, 9);
+  *(char *)key = 'q';
+  ASSERT_NULL(stack_find(stack, key));
+  ASSERT_NULL(stack_find(stack, NULL));
 
-  QUIT;
+  free(key);
+  key = malloc(sizeof(double));
+
+  stack_free(&stack);
+
+  stack.key_size = sizeof(double);
+  stack.head = (Node *)malloc(sizeof(Node));
+  *stack.head = (Node){malloc(sizeof(double)), malloc(sizeof(int)),
+                       sizeof(int), NULL};
+  curr = stack.head;
+  *(int *)stack.head->data = 0;
+
+  for(int i = 1; i < 10; i++){
+    curr->next = (Node *)malloc(sizeof(Node));
+    *curr->next = (Node){malloc(sizeof(double)), malloc(sizeof(int)),
+                         sizeof(int), NULL};
+
+    curr = curr->next;
+    *(int *)curr->data = i;
+  }
+
+  curr = stack.head;
+  *(double *)curr->key = 1.01;
+  curr = curr->next;
+  *(double *)curr->key = 2.02;
+  curr = curr->next;
+  *(double *)curr->key = 3.03;
+  curr = curr->next;
+  *(double *)curr->key = 4.04;
+  curr = curr->next;
+  *(double *)curr->key = 5.05;
+  curr = curr->next;
+  *(double *)curr->key = 6.06;
+  curr = curr->next;
+  *(double *)curr->key = 7.07;
+  curr = curr->next;
+  *(double *)curr->key = 8.08;
+  curr = curr->next;
+  *(double *)curr->key = 9.09;
+  curr = curr->next;
+  *(double *)curr->key = 10.10;
+
+  *(double *)key = 2.02;
+  ASSERT_NOT_NULL(stack_find(stack, key));
+  ASSERT_EQUAL(*(int *)stack_find(stack, key)->data, 1);
+  *(double *)key = 3.03;
+  ASSERT_NOT_NULL(stack_find(stack, key));
+  ASSERT_EQUAL(*(int *)stack_find(stack, key)->data, 2);
+  *(double *)key = 1.02;
+  ASSERT_NULL(stack_find(stack, key));
+
+  free(key);
+  stack_free(&stack);
+
+  stack.key_size = 0;
+  stack.head = (Node *)malloc(sizeof(Node));
+  *stack.head = (Node){malloc(256 * sizeof(char)), malloc(sizeof(int)),
+                       sizeof(int), NULL};
+
+  curr = stack.head;
+  *(int *)stack.head->data = 0;
+
+  for(int i = 1; i < 10; i++){
+    curr->next = (Node *)malloc(sizeof(Node));
+    *curr->next = (Node){malloc(256 * sizeof(char)), malloc(sizeof(int)),
+                         sizeof(int), NULL};
+
+    curr = curr->next;
+    *(int *)curr->data = i;
+  }
+
+  curr = stack.head;
+  strcpy(curr->key, "one");
+  curr = curr->next;
+  strcpy(curr->key, "two");
+  curr = curr->next;
+  strcpy(curr->key, "three");
+  curr = curr->next;
+  strcpy(curr->key, "four");
+  curr = curr->next;
+  strcpy(curr->key, "five");
+  curr = curr->next;
+  strcpy(curr->key, "six");
+  curr = curr->next;
+  strcpy(curr->key, "seven");
+  curr = curr->next;
+  strcpy(curr->key, "eight");
+  curr = curr->next;
+  strcpy(curr->key, "nine");
+  curr = curr->next;
+  strcpy(curr->key, "ten");
+
+  key = malloc(256 * sizeof(char));
+
+  strcpy(key, "four");
+  ASSERT_NOT_NULL(stack_find(stack, key));
+  ASSERT_EQUAL(*(int *)stack_find(stack, key)->data, 3);
+  strcpy(key, "two");
+  ASSERT_NOT_NULL(stack_find(stack, key));
+  ASSERT_EQUAL(*(int *)stack_find(stack, key)->data, 1);
+  strcpy(key, "four");
+  ASSERT_NOT_NULL(stack_find(stack, key));
+  ASSERT_EQUAL(*(int *)stack_find(stack, key)->data, 3);
+  strcpy(key, "ten");
+  ASSERT_NOT_NULL(stack_find(stack, key));
+  ASSERT_EQUAL(*(int *)stack_find(stack, key)->data, 9);
+  strcpy(key, "eleven");
+  ASSERT_NULL(stack_find(stack, key));
+
+  free(key);
+  key = NULL;
+
+  ASSERT_NULL(stack_find(stack, key));
+
+  stack_free(&stack);
 }
+
+int main(int argc, const char *argv[])
+{
+    int result = ctest_main(argc, argv);
+
+    return result;
+}
+

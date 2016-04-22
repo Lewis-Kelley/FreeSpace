@@ -1,8 +1,8 @@
 #include "update.h"
 
 /**
- * Takes an Battle_Entity to update given that it is at a cell intersection and a move
- * key has been pressed.
+ * Takes an Battle_Entity to update given that it is at a cell
+ * intersection and a move key has been pressed.
  *
  * @param [in, out] ent The Battle_Entity that is being updated.
  * @param [in, out] game_data The current state of the game.
@@ -16,7 +16,11 @@ void battle_entity_key_update(Battle_Entity *ent, Game_Data *game_data) {
       ent->pos.x = ((Coord_i *)ent->move_queue.head->data)->x
         + game_data->battle_data.camera_pos.x;
 
-      ent->img.dest_x = ent->pos.x * (double)WIN_WIDTH / game_data->battle_data.cols;
+      ent->img.dest_x = ent->pos.x * (double)WIN_WIDTH /
+        game_data->battle_data.cols + game_data->battle_data.camera_pos.x;      
+      printf("Set img.dest_x: %f\n", ent->img.dest_x);
+      printf("camera_pos.x: %f\n", game_data->battle_data.camera_pos.x);
+      printf("ent->pos.x: %f\n", ent->pos.x);
 
       stack_remove(&ent->move_queue, NULL);
     } else if (ent->vel.y != 0.0) {
@@ -24,7 +28,8 @@ void battle_entity_key_update(Battle_Entity *ent, Game_Data *game_data) {
       ent->pos.y = ((Coord_i *)ent->move_queue.head->data)->y
         + game_data->battle_data.camera_pos.y;
 
-      ent->img.dest_y = ent->pos.y * (double)WIN_HEIGHT / game_data->battle_data.rows;
+      ent->img.dest_y = (ent->pos.y + game_data->battle_data.camera_pos.y)
+        * (double)WIN_HEIGHT / game_data->battle_data.rows;
 
       stack_remove(&ent->move_queue, NULL);
     }
@@ -62,7 +67,8 @@ void battle_entity_key_update(Battle_Entity *ent, Game_Data *game_data) {
       ent->pos.y = ((Coord_i *)ent->move_queue.head->data)->y
         + game_data->battle_data.camera_pos.y;
 
-      ent->img.dest_y = ent->pos.y * (double)WIN_HEIGHT / game_data->battle_data.rows;
+      ent->img.dest_y = (ent->pos.y + game_data->battle_data.camera_pos.y)
+        * (double)WIN_HEIGHT / game_data->battle_data.rows;
 
       stack_remove(&ent->move_queue, NULL);
     } else if (ent->vel.x != 0.0) {
@@ -70,7 +76,8 @@ void battle_entity_key_update(Battle_Entity *ent, Game_Data *game_data) {
       ent->pos.x = ((Coord_i *)ent->move_queue.head->data)->x
         + game_data->battle_data.camera_pos.x;
 
-      ent->img.dest_x = ent->pos.x * (double)WIN_WIDTH / game_data->battle_data.cols;
+      ent->img.dest_x = (ent->pos.x + game_data->battle_data.camera_pos.x)
+        * (double)WIN_WIDTH / game_data->battle_data.cols;
 
       stack_remove(&ent->move_queue, NULL);
     }
@@ -117,12 +124,12 @@ void battle_entity_key_update(Battle_Entity *ent, Game_Data *game_data) {
 void battle_entity_update(Battle_Entity *ent, Game_Data *game_data) {
   if(ent->team != TEAM_EMPTY) {
     if(game_data->battle_data.camera_vel.x != 0.0) {
-      ent->img.dest_x += game_data->battle_data.camera_vel.x
+      ent->img.dest_x -= game_data->battle_data.camera_vel.x
         * game_data->battle_data.delta;
     }
 
     if(game_data->battle_data.camera_vel.y != 0.0) {
-      ent->img.dest_y += game_data->battle_data.camera_vel.y
+      ent->img.dest_y -= game_data->battle_data.camera_vel.y
         * game_data->battle_data.delta;
     }
 
@@ -183,6 +190,8 @@ void battle_entity_update(Battle_Entity *ent, Game_Data *game_data) {
    * @param [in, out] game_data The current state of the game.
    */
   void update_world(Game_Data *game_data) {
+    printf("camera_pos: (%3f, %3f)\n", game_data->battle_data.camera_pos.x,
+           game_data->battle_data.camera_pos.y);
     double time = SDL_GetTicks();
     switch(game_data->battle_data.state % STATES) {
     case STATE_MENU:

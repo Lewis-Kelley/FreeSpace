@@ -1,6 +1,6 @@
 /** @file
- * Used to DEBUG and ERROR macros, various constants, and many of the include statements needed
- * by most files.
+ * Used to DEBUG and ERROR macros, various constants, and many of the
+ * include statements needed by most files.
  */
 #ifndef MAIN_H
 #define MAIN_H
