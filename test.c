@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "hashmap/stack.h"
+#include "hashmap/hashmap.h"
 
 #define CTEST_MAIN
 
@@ -48,10 +49,8 @@ CTEST(stack, stack_free_1){
   *(char *)curr->key = 'j';
 
   stack_free(&stack);
-  ASSERT_PASS();
 
   stack_free(&stack);
-  ASSERT_PASS();
 }
 
 CTEST(stack, stack_free_2) {
@@ -94,7 +93,6 @@ CTEST(stack, stack_free_2) {
   *(double *)curr->key = 10.10;
 
   stack_free(&stack);
-  ASSERT_PASS();
 
   stack.key_size = 0;
   stack.head = (Node *)malloc(sizeof(Node));
@@ -120,10 +118,8 @@ CTEST(stack, stack_free_2) {
   strcpy(curr->key, "three");
 
   stack_free(&stack);
-  ASSERT_PASS();
 
   stack_free(&stack);
-  ASSERT_PASS();
 }
 
 CTEST(stack, stack_find) {
@@ -298,10 +294,284 @@ CTEST(stack, stack_find) {
   stack_free(&stack);
 }
 
+CTEST(stack, stack_put) {
+  Stack stack = (Stack){NULL, 0};
+
+  void *data = malloc(sizeof(int));
+
+  *(int *)data = 1;
+  ASSERT_EQUAL(stack_put(&stack, "first", data, sizeof(int)), STACK_SUCCESS);
+  ASSERT_EQUAL(*(int *)stack_find(stack, "first")->data, 1);
+  ASSERT_NULL(stack_find(stack, "first")->next);
+
+  *(int *)data = 0;
+  ASSERT_EQUAL(*(int *)stack_find(stack, "first")->data, 1);
+
+  ASSERT_EQUAL(stack_put(&stack, "first", data, sizeof(int)), STACK_REPLACED);
+  ASSERT_EQUAL(*(int *)stack_find(stack, "first")->data, 0);
+
+  *(int *)data = 1;
+  ASSERT_EQUAL(stack_put(&stack, "second", data, sizeof(int)), STACK_SUCCESS);
+  ASSERT_EQUAL(*(int *)stack_find(stack, "first")->data, 0);
+  ASSERT_EQUAL(*(int *)stack_find(stack, "second")->data, 1);
+
+  free(data);
+  data = malloc(sizeof(char));
+
+  *(char *)data = 'c';
+  ASSERT_EQUAL(*(int *)stack_find(stack, "second")->data, 1);
+  ASSERT_EQUAL(stack_put(&stack, "third", data, sizeof(char)), STACK_SUCCESS);
+  ASSERT_EQUAL(*(char *)stack_find(stack, "third")->data, 'c');
+  ASSERT_NULL(stack_find(stack, "first")->next);
+
+  free(data);
+  data = malloc(sizeof(int));
+
+  *(int *)data = 2;
+  ASSERT_EQUAL(stack_put(&stack, "first", data, sizeof(int)), STACK_REPLACED);
+  ASSERT_EQUAL(*(int *)stack_find(stack, "first")->data, 2);
+  ASSERT_EQUAL(*(char *)stack_find(stack, "third")->data, 'c');
+  ASSERT_NULL(stack_find(stack, "fourth"));
+
+  ASSERT_EQUAL(stack_put(NULL, "word", data, sizeof(int)), STACK_INVALID_ARGS);
+  ASSERT_EQUAL(stack_put(&stack, NULL, data, sizeof(int)), STACK_SUCCESS);
+  ASSERT_EQUAL(stack_put(&stack, "word", NULL, sizeof(int)),
+               STACK_INVALID_ARGS);
+  ASSERT_EQUAL(stack_put(&stack, "word", data, 0), STACK_INVALID_ARGS);
+
+  stack_free(&stack);
+}
+
+CTEST(stack, stack_remove) {
+  Stack stack = (Stack){NULL, 0};
+
+  void *data = malloc(sizeof(int));
+
+  ASSERT_NULL(stack_remove(&stack, "new"));
+
+  *(int *)data = 0;
+  stack_put(&stack, "first", data, sizeof(int));
+  *(int *)data = 1;
+  stack_put(&stack, "second", data, sizeof(int));
+
+  data = malloc(sizeof(char));
+
+  *(char *)data = 'c';
+  stack_put(&stack, "third", data, sizeof(char));
+  *(char *)data = 'd';
+  stack_put(&stack, "fourth", data, sizeof(char));
+
+  ASSERT_NOT_NULL(stack_find(stack, "first"));
+  ASSERT_NULL(stack_find(stack, "first")->next);
+  ASSERT_NULL(stack_remove(&stack, "fifth"));
+  ASSERT_NOT_NULL(stack_find(stack, "first"));
+  ASSERT_EQUAL(*(int *)stack_find(stack, "first")->data, 0);
+  ASSERT_NOT_NULL(stack_find(stack, "fourth"));
+  ASSERT_EQUAL(*(char *)stack_find(stack, "fourth")->data, 'd');
+  ASSERT_NOT_NULL(stack_find(stack, "second"));
+  ASSERT_EQUAL(*(int *)stack_find(stack, "second")->data, 1);
+
+  ASSERT_EQUAL(*(int *)stack_remove(&stack, "second"), 1);
+  ASSERT_NOT_NULL(stack_find(stack, "first"));
+  ASSERT_EQUAL(*(int *)stack_find(stack, "first")->data, 0);
+  ASSERT_NOT_NULL(stack_find(stack, "third"));
+  ASSERT_EQUAL(*(char *)stack_find(stack, "third")->data, 'c');
+  ASSERT_NOT_NULL(stack_find(stack, "fourth"));
+  ASSERT_EQUAL(*(char *)stack_find(stack, "fourth")->data, 'd');
+  ASSERT_EQUAL(*(int *)stack_find(stack, "third")->next->data, 0);
+
+  ASSERT_EQUAL(*(char *)stack_remove(&stack, "third"), 'c');
+  ASSERT_NULL(stack_find(stack, "third"));
+  ASSERT_EQUAL(*(int *)stack_find(stack, "first")->data, 0);
+  ASSERT_EQUAL(*(char *)stack_find(stack, "fourth")->data, 'd');
+  ASSERT_EQUAL(*(int *)stack_find(stack, "fourth")->next->data, 0);
+  ASSERT_NULL(stack_find(stack, "first")->next);
+
+  ASSERT_EQUAL(*(int *)stack_remove(&stack, "first"), 0);
+  ASSERT_EQUAL(*(char *)stack_find(stack, "fourth")->data, 'd');
+  ASSERT_NULL(stack_find(stack, "first"));
+  ASSERT_NULL(stack_find(stack, "fourth")->next);
+
+  ASSERT_EQUAL(*(char *)stack_remove(&stack, "fourth"), 'd');
+  ASSERT_NULL(stack.head);
+
+  stack_free(&stack);
+}
+
+#define NEW_HASHMAP(size)                                 \
+  (Hashmap){(Stack *)malloc(size * sizeof(Stack)), size};
+
+CTEST(hashmap, hashmap_free) {
+  Hashmap hashmap = NEW_HASHMAP(100);
+  for(int i = 0; i < 100; i++) {
+    hashmap.data[i].key_size = 0;
+    hashmap.data[i].head = NULL;
+  }
+
+  void *data = malloc(sizeof(int));
+
+  *(int *)data = 5;
+  stack_put(&hashmap.data[5], "test", data, sizeof(int));
+
+  *(int *)data = 6;
+  stack_put(&hashmap.data[5], "testing", data, sizeof(int));
+
+  *(int *)data = 0;
+  stack_put(&hashmap.data[0], "test", data, sizeof(int));
+  stack_put(&hashmap.data[99], "test", data, sizeof(int));
+
+  hashmap_free(&hashmap);
+
+  hashmap = NEW_HASHMAP(100);
+  for(int i = 0; i < 100; i++) {
+    hashmap.data[i].key_size = 0;
+    hashmap.data[i].head = NULL;
+  }
+
+  hashmap_free(&hashmap);
+}
+
+CTEST(hashmap, hashmap_put) {
+  Hashmap hashmap = NEW_HASHMAP(100);
+  for(int i = 0; i < 100; i++) {
+    hashmap.data[i].key_size = 0;
+    hashmap.data[i].head = NULL;
+  }
+
+  void *data = malloc(sizeof(int));
+
+  *(int *)data = 100;
+  ASSERT_EQUAL(hashmap_put(&hashmap, "one", data, sizeof(int)),
+               STACK_SUCCESS);
+  ASSERT_EQUAL(*(int *)stack_find(hashmap.data[hash_func("one",
+                                                         hashmap.data[0].
+                                                         key_size, 100)],
+                                  "one")->data, 100);
+
+  *(int *)data = 101;
+  ASSERT_EQUAL(hashmap_put(&hashmap, "one", data, sizeof(int)),
+               STACK_REPLACED);
+  ASSERT_EQUAL(*(int *)stack_find(hashmap.data[hash_func("one",
+                                                         hashmap.data[0].
+                                                         key_size, 100)],
+                                  "one")->data, 101);
+
+  *(int *)data = 102;
+  ASSERT_EQUAL(hashmap_put(&hashmap, "two", data, sizeof(int)),
+               STACK_SUCCESS);
+  ASSERT_EQUAL(*(int *)stack_find(hashmap.data[hash_func("two",
+                                                         hashmap.data[0].
+                                                         key_size, 100)],
+                                  "two")->data, 102);
+
+  free(data);
+  data = malloc(sizeof(char));
+
+  *(char *)data = 'a';
+  ASSERT_EQUAL(hashmap_put(&hashmap, "three", data, sizeof(int)),
+               STACK_SUCCESS);
+  ASSERT_EQUAL(*(char *)stack_find(hashmap.data[hash_func("three",
+                                                          hashmap.data[0].
+                                                          key_size, 100)],
+                                   "three")->data, 'a');
+  ASSERT_NULL(stack_find(hashmap.data[hash_func("three",
+                                                hashmap.data[0].
+                                                key_size, 100)], "thwee"));
+
+  ASSERT_EQUAL(hashmap_put(&hashmap, "one", data, sizeof(char)),
+               STACK_REPLACED);
+  ASSERT_EQUAL(*(char *)stack_find(hashmap.data[hash_func("one",
+                                                          hashmap.data[0].
+                                                          key_size, 100)],
+                                   "one")->data, 'a');
+
+  hashmap_free(&hashmap);
+}
+
+CTEST(hashmap, hashmap_find) {
+  Hashmap hashmap = NEW_HASHMAP(100);
+  for(int i = 0; i < 100; i++) {
+    hashmap.data[i].key_size = 0;
+    hashmap.data[i].head = NULL;
+  }
+
+  void *data = malloc(sizeof(int));
+
+  *(int *)data = 0;
+  hashmap_put(&hashmap, "first", data, sizeof(int));
+  ASSERT_EQUAL(*(int *)hashmap_find(hashmap, "first")->data, 0);
+  ASSERT_NULL(hashmap_find(hashmap, "second"));
+
+  *(int *)data = 1;
+  hashmap_put(&hashmap, "second", data, sizeof(int));
+  ASSERT_EQUAL(*(int *)hashmap_find(hashmap, "second")->data, 1);
+  ASSERT_EQUAL(*(int *)hashmap_find(hashmap, "first")->data, 0);
+
+  free(data);
+  data = malloc(sizeof(char));
+
+  *(char *)data = 'c';
+  hashmap_put(&hashmap, "third", data, sizeof(char));
+  ASSERT_EQUAL(*(char *)hashmap_find(hashmap, "third")->data, 'c');
+
+  hashmap_free(&hashmap);
+
+  hashmap = NEW_HASHMAP(100);
+  for(int i = 0; i < 100; i++) {
+    hashmap.data[i].key_size = 0;
+    hashmap.data[i].head = NULL;
+  }
+
+  void *key = malloc(sizeof(int));
+
+  *(int *)key = 0;
+  *(int *)data = 0;
+  hashmap_put(&hashmap, key, data, sizeof(int));
+  ASSERT_NOT_NULL(hashmap_find(hashmap, key));
+  ASSERT_EQUAL(*(int *)hashmap_find(hashmap, key)->data, 0);
+
+  *(int *)key = 1;
+  *(int *)data = 1;
+  ASSERT_NULL(hashmap_find(hashmap, key));
+  hashmap_put(&hashmap, key, data, sizeof(int));
+  ASSERT_NOT_NULL(hashmap_find(hashmap, key));
+  ASSERT_EQUAL(*(int *)hashmap_find(hashmap, key)->data, 1);
+
+  *(int *)key = 0;
+  ASSERT_EQUAL(*(int *)hashmap_find(hashmap, key)->data, 0);
+
+  hashmap_free(&hashmap);
+}
+
+CTEST(hashmap, hashmap_remove) {
+  Hashmap hashmap = NEW_HASHMAP(100);
+  for(int i = 0; i < 100; i++) {
+    hashmap.data[i].key_size = 0;
+    hashmap.data[i].head = NULL;
+  }
+
+  void *data = malloc(sizeof(int));
+
+  ASSERT_NULL(hashmap_remove(&hashmap, "anything"));
+
+  *(int *)data = 5;
+  hashmap_put(&hashmap, "five", data, sizeof(int));
+
+  *(int *)data = 7;
+  hashmap_put(&hashmap, "seven", data, sizeof(int));
+  ASSERT_EQUAL(*(int *)hashmap_remove(&hashmap, "five"), 5);
+  ASSERT_NULL(hashmap_find(hashmap, "five"));
+  ASSERT_NULL(hashmap_remove(&hashmap, "five"));
+
+  hashmap_free(&hashmap);
+}
+
+#undef NEW_HASHMAP
+
 int main(int argc, const char *argv[])
 {
-    int result = ctest_main(argc, argv);
+  int result = ctest_main(argc, argv);
 
-    return result;
+  return result;
 }
 

@@ -11,9 +11,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * - I have altered the file to add support for ASSERT_PASS(),
- *   basically the opposite of ASSERT_FAIL().
  */
 
 #ifndef CTEST_H
@@ -142,7 +139,6 @@ void assert_not_null(const void* real, const char* caller, int line);
 #define ASSERT_NOT_NULL(real) assert_not_null(real, __FILE__, __LINE__)
 
 void assert_true(int real, const char* caller, int line);
-#define ASSERT_TRUE(real) assert_true(real, __FILE__, __LINE__)
 
 void assert_false(int real, const char* caller, int line);
 #define ASSERT_FALSE(real) assert_false(real, __FILE__, __LINE__)
