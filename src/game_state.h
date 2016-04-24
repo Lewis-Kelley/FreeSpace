@@ -59,14 +59,12 @@ typedef enum {
 } KEYS;
 
 /**
- * Stores information about the current state of the game.
+ * Holds all the data needed by the game in a battle state.
  */
-typedef union {
-  struct {
+typedef struct {
     Game_State state; ///< The current state of the game.
     uint16_t keys; ///< A map of the current keys pressed.
     double delta; ///< The time since the last tick.
-    double last_time; ///< The time of the previous tick.
     Battle_Entity **board; ///< An array of Entity pointers.
     Battle_Entity **turn_order; ///< Holds when each unit moves.
     Coord_f camera_pos; ///< The camera's pixel position.
@@ -75,17 +73,27 @@ typedef union {
     uint16_t rows; ///< The number of rows in the current board.
     uint16_t turn; ///< The current move (not round).
     uint16_t num_units; ///< The number of units
-  } battle_data; ///< Holds data on the battle states.
-  struct {
+  } Battle_Data;
+
+/**
+ * Holds all the data needed by the game in an explore state.
+ */
+typedef struct {
     Game_State state; ///< The current state of the game.
     double delta; ///< The time since the last tick.
-    double last_time; ///< The time of the previous tick.
     Explore_Entity **board; ///< An array of Entity pointers.
     Coord_f camera_pos; ///< The camera's pixel position.
     Coord_f camera_vel; ///< The camera velocity.
     uint16_t cols; ///< The number of columns in the current board.
     uint16_t rows; ///< The number of rows in the current board.
-  } explore_data; ///< Holds data on the exploration states.
+} Explore_Data;
+
+/**
+ * Stores information about the current state of the game.
+ */
+typedef union {
+  Battle_Data battle_data; ///< Holds data needed for battle states.
+  Explore_Data explore_data; ///< Holds data on the exploration states.
 } Game_Data;
 
 extern Battle_Entity * bat_ent_lookup(Game_Data *data, uint16_t x, uint16_t y);

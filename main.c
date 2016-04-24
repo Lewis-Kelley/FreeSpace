@@ -129,12 +129,15 @@ int main(int argc, char **argv) {
   game_data.battle_data.turn_order[1]
     = game_data.battle_data.board[19 * GRID_ROWS + 19];
 
+  double time = SDL_GetTicks();
+
   while(game_data.battle_data.state != GAME_STOPPED) {
     SDL_RenderClear(rend);
     while(SDL_PollEvent(&event))
       handle_event(&event, &game_data);
 
-    update_world(&game_data);
+    update_world(&game_data, SDL_GetTicks() - time);
+    time = SDL_GetTicks();
     render(rend, &game_data);
     SDL_RenderPresent(rend);
   }

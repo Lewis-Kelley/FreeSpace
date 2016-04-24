@@ -21,6 +21,6 @@ target_link_libraries(FreeSpace src hashmap ${SDL2_LIBRARIES}
   ${SDL2IMAGE_LIBRARIES})
 
 add_executable(unit-tests test.c)
-target_link_libraries(unit-tests hashmap)
+target_link_libraries(unit-tests hashmap src)
 
 add_test(unit-tests unit-tests)

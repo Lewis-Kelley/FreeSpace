@@ -1,17 +1,20 @@
 #include <stdio.h>
 #include "hashmap/stack.h"
 #include "hashmap/hashmap.h"
+#include "src/game_state.h"
+#include "src/update.h"
+#include "main.h"
 
 #define CTEST_MAIN
 
 // uncomment lines below to enable/disable features. See README.md for details
 #define CTEST_SEGFAULT
 //#define CTEST_NO_COLORS
-//#define CTEST_COLOR_OK
+#define CTEST_COLOR_OK
 
 #include "ctest.h"
 
-CTEST(stack, stack_free_1){
+CTEST(stack, stack_free_1) {
   Stack stack = (Stack){(Node *)malloc(sizeof(Node)), sizeof(char)};
   *stack.head = (Node){malloc(sizeof(char)), malloc(sizeof(int)),
                        sizeof(int), NULL};
@@ -567,6 +570,40 @@ CTEST(hashmap, hashmap_remove) {
 }
 
 #undef NEW_HASHMAP
+
+CTEST(camera, camera_move) {
+  Game_Data game;
+  game.battle_data.state = GAME_BATTLE_MOVE;
+  game.battle_data.keys = 0;
+  game.battle_data.delta = 0.0;
+  game.battle_data.camera_pos.x = 0.0;
+  game.battle_data.camera_pos.y = 0.0;
+  game.battle_data.camera_vel.x = 0.0;
+  game.battle_data.camera_vel.y = 0.0;
+  game.battle_data.cols = 0;
+  game.battle_data.rows = 0;
+
+  for(float i = 0; i < 1; i += 0.25) {
+    update_world(&game, 0.25);
+  }
+
+  ASSERT_EQUAL(0.0, game.battle_data.camera_pos.x);
+  ASSERT_EQUAL(0.0, game.battle_data.camera_pos.y);
+  ASSERT_EQUAL(0.0, game.battle_data.camera_vel.x);
+  ASSERT_EQUAL(0.0, game.battle_data.camera_vel.y);
+
+  game.battle_data.keys = KEY_CAM_RIGHT;
+  game.battle_data = game.battle_data;
+  printf("I have game.battle_data.keys = %d\n", game.battle_data.keys);
+  for(int i = 0; i < 4; i++) {
+    update_world(&game, 0.25);
+  }
+
+  ASSERT_EQUAL(4 * CAM_SPEED, game.battle_data.camera_pos.x);
+  ASSERT_EQUAL(0.0, game.battle_data.camera_pos.y);
+  ASSERT_EQUAL(1.0, game.battle_data.camera_vel.x);
+  ASSERT_EQUAL(0.0, game.battle_data.camera_vel.y);
+}
 
 int main(int argc, const char *argv[])
 {

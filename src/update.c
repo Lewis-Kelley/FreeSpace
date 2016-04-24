@@ -184,54 +184,51 @@ void battle_entity_update(Battle_Entity *ent, Game_Data *game_data) {
   }
 }
 
-  /**
-   * Checks the time delta and updates the game state accordingly.
-   *
-   * @param [in, out] game_data The current state of the game.
-   */
-  void update_world(Game_Data *game_data) {
-    printf("camera_pos: (%3f, %3f)\n", game_data->battle_data.camera_pos.x,
-           game_data->battle_data.camera_pos.y);
-    double time = SDL_GetTicks();
-    switch(game_data->battle_data.state % STATES) {
-    case STATE_MENU:
-      break;
-    case STATE_BATTLE:
-      game_data->battle_data.delta = time - game_data->battle_data.last_time;
-      game_data->battle_data.last_time = time;
+/**
+ * Checks the time delta and updates the game state accordingly.
+ *
+ * @param [in, out] game_data The current state of the game.
+ * @param [in] delta The time since the last update.
+ */
+void update_world(Game_Data *game_data, double delta) {
+  switch(game_data->battle_data.state % STATES) {
+  case STATE_MENU:
+    break;
+  case STATE_BATTLE:
+    game_data->battle_data.delta = delta;
 
-      if((game_data->battle_data.keys & KEY_CAM_LEFT) != 0) {
-        game_data->battle_data.camera_vel.x = -CAM_SPEED;
-        game_data->battle_data.camera_pos.x -= CAM_SPEED
-          * game_data->battle_data.delta;
-      } else if((game_data->battle_data.keys & KEY_CAM_RIGHT) != 0) {
-        game_data->battle_data.camera_vel.x = CAM_SPEED;
-        game_data->battle_data.camera_pos.x += CAM_SPEED
-          * game_data->battle_data.delta;
-      } else {
-        game_data->battle_data.camera_vel.x = 0.0;
-      }
-
-      if((game_data->battle_data.keys & KEY_CAM_UP) != 0) {
-        game_data->battle_data.camera_vel.y = -CAM_SPEED;
-        game_data->battle_data.camera_pos.x -= CAM_SPEED
-          * game_data->battle_data.delta;
-      } else if((game_data->battle_data.keys & KEY_CAM_DOWN) != 0) {
-        game_data->battle_data.camera_vel.y = CAM_SPEED;
-        game_data->battle_data.camera_pos.x += CAM_SPEED
-          * game_data->battle_data.delta;
-      } else {
-        game_data->battle_data.camera_vel.y = 0.0;
-      }
-
-      for(uint16_t i = 0; i < game_data->battle_data.rows *
-            game_data->battle_data.cols; i++) {
-        battle_entity_update(game_data->battle_data.board[i], game_data);
-      }
-      break;
-    case STATE_EXPLORE:
-      break;
-    default:
-      ERROR("Invalid state.");
+    if((game_data->battle_data.keys & KEY_CAM_LEFT) != 0) {
+      game_data->battle_data.camera_vel.x = -CAM_SPEED;
+      game_data->battle_data.camera_pos.x -= CAM_SPEED
+        * game_data->battle_data.delta;
+    } else if((game_data->battle_data.keys & KEY_CAM_RIGHT) != 0) {
+      game_data->battle_data.camera_vel.x = CAM_SPEED;
+      game_data->battle_data.camera_pos.x += CAM_SPEED
+        * game_data->battle_data.delta;
+    } else {
+      game_data->battle_data.camera_vel.x = 0.0;
     }
+
+    if((game_data->battle_data.keys & KEY_CAM_UP) != 0) {
+      game_data->battle_data.camera_vel.y = -CAM_SPEED;
+      game_data->battle_data.camera_pos.x -= CAM_SPEED
+        * game_data->battle_data.delta;
+    } else if((game_data->battle_data.keys & KEY_CAM_DOWN) != 0) {
+      game_data->battle_data.camera_vel.y = CAM_SPEED;
+      game_data->battle_data.camera_pos.x += CAM_SPEED
+        * game_data->battle_data.delta;
+    } else {
+      game_data->battle_data.camera_vel.y = 0.0;
+    }
+
+    for(uint16_t i = 0; i < game_data->battle_data.rows *
+          game_data->battle_data.cols; i++) {
+      battle_entity_update(game_data->battle_data.board[i], game_data);
+    }
+    break;
+  case STATE_EXPLORE:
+    break;
+  default:
+    ERROR("Invalid state.");
   }
+}
