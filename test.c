@@ -587,22 +587,50 @@ CTEST(camera, camera_move) {
     update_world(&game, 0.25);
   }
 
-  ASSERT_EQUAL(0.0, game.battle_data.camera_pos.x);
-  ASSERT_EQUAL(0.0, game.battle_data.camera_pos.y);
-  ASSERT_EQUAL(0.0, game.battle_data.camera_vel.x);
-  ASSERT_EQUAL(0.0, game.battle_data.camera_vel.y);
+  ASSERT_DBL_NEAR(game.battle_data.camera_pos.x, 0.0);
+  ASSERT_DBL_NEAR(game.battle_data.camera_pos.y, 0.0);
+  ASSERT_DBL_NEAR(game.battle_data.camera_vel.x, 0.0);
+  ASSERT_DBL_NEAR(game.battle_data.camera_vel.y, 0.0);
 
   game.battle_data.keys = KEY_CAM_RIGHT;
-  game.battle_data = game.battle_data;
-  printf("I have game.battle_data.keys = %d\n", game.battle_data.keys);
   for(int i = 0; i < 4; i++) {
     update_world(&game, 0.25);
   }
 
-  ASSERT_EQUAL(4 * CAM_SPEED, game.battle_data.camera_pos.x);
-  ASSERT_EQUAL(0.0, game.battle_data.camera_pos.y);
-  ASSERT_EQUAL(1.0, game.battle_data.camera_vel.x);
-  ASSERT_EQUAL(0.0, game.battle_data.camera_vel.y);
+  ASSERT_DBL_NEAR(game.battle_data.camera_pos.x, CAM_SPEED);
+  ASSERT_DBL_NEAR(game.battle_data.camera_pos.y, 0.0);
+  ASSERT_DBL_NEAR(game.battle_data.camera_vel.x, CAM_SPEED);
+  ASSERT_DBL_NEAR(game.battle_data.camera_vel.y, 0.0);
+
+  game.battle_data.keys = 0;
+  for(int i = 0; i < 4; i++) {
+    update_world(&game, 0.25);
+  }
+
+  ASSERT_DBL_NEAR(game.battle_data.camera_pos.x, CAM_SPEED);
+  ASSERT_DBL_NEAR(game.battle_data.camera_pos.y, 0.0);
+  ASSERT_DBL_NEAR(game.battle_data.camera_vel.x, 0.0);
+  ASSERT_DBL_NEAR(game.battle_data.camera_vel.y, 0.0);
+
+  game.battle_data.keys = KEY_CAM_LEFT | KEY_CAM_UP;
+  for(int i = 0; i < 4; i++) {
+    update_world(&game, 0.25);
+  }
+
+  ASSERT_DBL_NEAR(game.battle_data.camera_pos.x, 0.0);
+  ASSERT_DBL_NEAR(game.battle_data.camera_pos.y, -CAM_SPEED);
+  ASSERT_DBL_NEAR(game.battle_data.camera_vel.x, -CAM_SPEED);
+  ASSERT_DBL_NEAR(game.battle_data.camera_vel.y, -CAM_SPEED);
+
+  game.battle_data.keys = KEY_CAM_LEFT;
+  for(int i = 0; i < 4; i++) {
+    update_world(&game, 0.25);
+  }
+
+  ASSERT_DBL_NEAR(game.battle_data.camera_pos.x, -CAM_SPEED);
+  ASSERT_DBL_NEAR(game.battle_data.camera_pos.y, -CAM_SPEED);
+  ASSERT_DBL_NEAR(game.battle_data.camera_vel.x, -CAM_SPEED);
+  ASSERT_DBL_NEAR(game.battle_data.camera_vel.y, 0.0);
 }
 
 int main(int argc, const char *argv[])

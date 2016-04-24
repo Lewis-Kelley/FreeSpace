@@ -201,6 +201,7 @@ void update_world(Game_Data *game_data, double delta) {
       game_data->battle_data.camera_vel.x = -CAM_SPEED;
       game_data->battle_data.camera_pos.x -= CAM_SPEED
         * game_data->battle_data.delta;
+      printf("camera_pos.x: %f\n", game_data->battle_data.camera_pos.x);
     } else if((game_data->battle_data.keys & KEY_CAM_RIGHT) != 0) {
       game_data->battle_data.camera_vel.x = CAM_SPEED;
       game_data->battle_data.camera_pos.x += CAM_SPEED
@@ -211,11 +212,11 @@ void update_world(Game_Data *game_data, double delta) {
 
     if((game_data->battle_data.keys & KEY_CAM_UP) != 0) {
       game_data->battle_data.camera_vel.y = -CAM_SPEED;
-      game_data->battle_data.camera_pos.x -= CAM_SPEED
+      game_data->battle_data.camera_pos.y -= CAM_SPEED
         * game_data->battle_data.delta;
     } else if((game_data->battle_data.keys & KEY_CAM_DOWN) != 0) {
       game_data->battle_data.camera_vel.y = CAM_SPEED;
-      game_data->battle_data.camera_pos.x += CAM_SPEED
+      game_data->battle_data.camera_pos.y += CAM_SPEED
         * game_data->battle_data.delta;
     } else {
       game_data->battle_data.camera_vel.y = 0.0;
