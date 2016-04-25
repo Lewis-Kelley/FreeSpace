@@ -575,7 +575,6 @@ CTEST(camera, camera_move) {
   Game_Data game;
   game.battle_data.state = GAME_BATTLE_MOVE;
   game.battle_data.keys = 0;
-  game.battle_data.delta = 0.0;
   game.battle_data.camera_pos.x = 0.0;
   game.battle_data.camera_pos.y = 0.0;
   game.battle_data.camera_vel.x = 0.0;
@@ -633,10 +632,54 @@ CTEST(camera, camera_move) {
   ASSERT_DBL_NEAR(game.battle_data.camera_vel.y, 0.0);
 }
 
+CTEST(battle_entity, battle_entity_key_update) {
+  Game_Data game_data;
+
+  game_data.battle_data.state = GAME_BATTLE_MOVE;
+  game_data.battle_data.keys = 0;
+  game_data.battle_data.camera_pos.x = 0.0;
+  game_data.battle_data.camera_pos.y = 0.0;
+  game_data.battle_data.camera_vel.x = 0.0;
+  game_data.battle_data.camera_vel.y = 0.0;
+  game_data.battle_data.cols = 10;
+  game_data.battle_data.rows = 15;
+  game_data.battle_data.board = malloc(game_data.battle_data.cols
+                                       * game_data.battle_data.rows
+                                       * sizeof **game_data.battle_data.board);
+  for(int i = 0; i < game_data.battle_data.cols
+        * game_data.battle_data.rows; i++) {
+    game_data.battle_data.board[i]
+      = malloc(sizeof *game_data.battle_data.board);
+    game_data.battle_data.board[i]->team = TEAM_EMPTY;
+    game_data.battle_data.board[i]->pos.x
+      = i % game_data.battle_data.cols;
+    game_data.battle_data.board[i]->pos.y
+      = i / game_data.battle_data.rows;
+    game_data.battle_data.board[i]->vel = (Coord_f){0.0, 0.0};
+    game_data.battle_data.board[i]->move_queue.head = NULL;
+    game_data.battle_data.board[i]->move_queue.key_size = 0;
+  }
+
+  Battle_Entity *ent = game_data.battle_data.board[23];
+  ent->team = TEAM_SELECTED;
+
+  for(int i = 0; i < 4; i++) {
+    battle_entity_key_update(ent, &game_data);
+  }
+
+  for(int i = 0; i < game_data.battle_data.cols
+        * game_data.battle_data.rows; i++) {
+    if(i != 23) {
+      ASSERT_EQUAL(game_data.battle_data.board[i]->team, TEAM_EMPTY);
+    } else {
+      ASSERT_EQUAL(game_data.battle_data.board[i]->team, TEAM_SELECTED);
+    }
+  }
+}
+
 int main(int argc, const char *argv[])
 {
   int result = ctest_main(argc, argv);
 
   return result;
 }
-

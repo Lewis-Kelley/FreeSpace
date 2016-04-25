@@ -64,7 +64,6 @@ typedef enum {
 typedef struct {
     Game_State state; ///< The current state of the game.
     uint16_t keys; ///< A map of the current keys pressed.
-    double delta; ///< The time since the last tick.
     Battle_Entity **board; ///< An array of Entity pointers.
     Battle_Entity **turn_order; ///< Holds when each unit moves.
     Coord_f camera_pos; ///< The camera's pixel position.
@@ -80,7 +79,6 @@ typedef struct {
  */
 typedef struct {
     Game_State state; ///< The current state of the game.
-    double delta; ///< The time since the last tick.
     Explore_Entity **board; ///< An array of Entity pointers.
     Coord_f camera_pos; ///< The camera's pixel position.
     Coord_f camera_vel; ///< The camera velocity.

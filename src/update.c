@@ -121,21 +121,20 @@ void battle_entity_key_update(Battle_Entity *ent, Game_Data *game_data) {
  * @param [in, out] ent The Battle_Entity to be updated.
  * @param [in, out] game_data The current state of the game.
  */
-void battle_entity_update(Battle_Entity *ent, Game_Data *game_data) {
+void battle_entity_update(Battle_Entity *ent, Game_Data *game_data,
+                          double delta) {
   if(ent->team != TEAM_EMPTY) {
     if(game_data->battle_data.camera_vel.x != 0.0) {
-      ent->img.dest_x -= game_data->battle_data.camera_vel.x
-        * game_data->battle_data.delta;
+      ent->img.dest_x -= game_data->battle_data.camera_vel.x * delta;
     }
 
     if(game_data->battle_data.camera_vel.y != 0.0) {
-      ent->img.dest_y -= game_data->battle_data.camera_vel.y
-        * game_data->battle_data.delta;
+      ent->img.dest_y -= game_data->battle_data.camera_vel.y * delta;
     }
 
     if(ent->move_queue.head != NULL) {
       if(ent->vel.x != 0.0) {
-        ent->pos.x += ent->vel.x * game_data->battle_data.delta;
+        ent->pos.x += ent->vel.x * delta;
 
         if(ABS(ent->pos.x
                - ((Coord_i *)ent->move_queue.head->data)->x) < ROUNDOFF
@@ -153,11 +152,10 @@ void battle_entity_update(Battle_Entity *ent, Game_Data *game_data) {
             stack_remove(&ent->move_queue, NULL);
           }
         } else {
-          ent->img.dest_x += ent->vel.x * ent->img.dest_w
-            * game_data->battle_data.delta;
+          ent->img.dest_x += ent->vel.x * ent->img.dest_w * delta;
         }
       } else if(ent->vel.y != 0.0) {
-        ent->pos.y += ent->vel.y * game_data->battle_data.delta;
+        ent->pos.y += ent->vel.y * delta;
 
         if(ABS(ent->pos.y
                - ((Coord_i *)ent->move_queue.head->data)->y) < ROUNDOFF
@@ -173,8 +171,7 @@ void battle_entity_update(Battle_Entity *ent, Game_Data *game_data) {
 
           stack_remove(&ent->move_queue, NULL);
         } else {
-          ent->img.dest_y += ent->vel.y * ent->img.dest_h
-            * game_data->battle_data.delta;
+          ent->img.dest_y += ent->vel.y * ent->img.dest_h * delta;
         }
       }
     } else if(ent->team == TEAM_SELECTED
@@ -195,36 +192,31 @@ void update_world(Game_Data *game_data, double delta) {
   case STATE_MENU:
     break;
   case STATE_BATTLE:
-    game_data->battle_data.delta = delta;
 
     if((game_data->battle_data.keys & KEY_CAM_LEFT) != 0) {
       game_data->battle_data.camera_vel.x = -CAM_SPEED;
-      game_data->battle_data.camera_pos.x -= CAM_SPEED
-        * game_data->battle_data.delta;
+      game_data->battle_data.camera_pos.x -= CAM_SPEED * delta;
       printf("camera_pos.x: %f\n", game_data->battle_data.camera_pos.x);
     } else if((game_data->battle_data.keys & KEY_CAM_RIGHT) != 0) {
       game_data->battle_data.camera_vel.x = CAM_SPEED;
-      game_data->battle_data.camera_pos.x += CAM_SPEED
-        * game_data->battle_data.delta;
+      game_data->battle_data.camera_pos.x += CAM_SPEED * delta;
     } else {
       game_data->battle_data.camera_vel.x = 0.0;
     }
 
     if((game_data->battle_data.keys & KEY_CAM_UP) != 0) {
       game_data->battle_data.camera_vel.y = -CAM_SPEED;
-      game_data->battle_data.camera_pos.y -= CAM_SPEED
-        * game_data->battle_data.delta;
+      game_data->battle_data.camera_pos.y -= CAM_SPEED * delta;
     } else if((game_data->battle_data.keys & KEY_CAM_DOWN) != 0) {
       game_data->battle_data.camera_vel.y = CAM_SPEED;
-      game_data->battle_data.camera_pos.y += CAM_SPEED
-        * game_data->battle_data.delta;
+      game_data->battle_data.camera_pos.y += CAM_SPEED * delta;
     } else {
       game_data->battle_data.camera_vel.y = 0.0;
     }
 
     for(uint16_t i = 0; i < game_data->battle_data.rows *
           game_data->battle_data.cols; i++) {
-      battle_entity_update(game_data->battle_data.board[i], game_data);
+      battle_entity_update(game_data->battle_data.board[i], game_data, delta);
     }
     break;
   case STATE_EXPLORE:
