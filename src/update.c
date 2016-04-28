@@ -12,18 +12,14 @@ void battle_entity_key_update(Battle_Entity *ent, Game_Data *game_data) {
   switch(game_data->battle_data.keys & KEY_MOVE) {
   case KEY_MOVE_LEFT:
   case KEY_MOVE_RIGHT:
-    if(ent->vel.x != 0.0) {
+    if(ABS(ent->vel.x) >= ROUNDOFF) {
       ent->pos.x = ((Coord_i *)ent->move_queue.head->data)->x
         + game_data->battle_data.camera_pos.x;
 
       ent->img.dest_x = ent->pos.x * (double)WIN_WIDTH /
         game_data->battle_data.cols + game_data->battle_data.camera_pos.x;      
-      printf("Set img.dest_x: %f\n", ent->img.dest_x);
-      printf("camera_pos.x: %f\n", game_data->battle_data.camera_pos.x);
-      printf("ent->pos.x: %f\n", ent->pos.x);
-
       stack_remove(&ent->move_queue, NULL);
-    } else if (ent->vel.y != 0.0) {
+    } else if (ABS(ent->vel.y) >= ROUNDOFF) {
       ent->vel.y = 0.0;
       ent->pos.y = ((Coord_i *)ent->move_queue.head->data)->y
         + game_data->battle_data.camera_pos.y;
@@ -63,7 +59,7 @@ void battle_entity_key_update(Battle_Entity *ent, Game_Data *game_data) {
     break;
   case KEY_MOVE_UP:
   case KEY_MOVE_DOWN:
-    if(ent->vel.y != 0.0) {
+    if(ABS(ent->vel.y) >= ROUNDOFF) {
       ent->pos.y = ((Coord_i *)ent->move_queue.head->data)->y
         + game_data->battle_data.camera_pos.y;
 
@@ -71,7 +67,7 @@ void battle_entity_key_update(Battle_Entity *ent, Game_Data *game_data) {
         * (double)WIN_HEIGHT / game_data->battle_data.rows;
 
       stack_remove(&ent->move_queue, NULL);
-    } else if (ent->vel.x != 0.0) {
+    } else if (ABS(ent->vel.x) >= ROUNDOFF) {
       ent->vel.x = 0.0;
       ent->pos.x = ((Coord_i *)ent->move_queue.head->data)->x
         + game_data->battle_data.camera_pos.x;
@@ -192,11 +188,9 @@ void update_world(Game_Data *game_data, double delta) {
   case STATE_MENU:
     break;
   case STATE_BATTLE:
-
     if((game_data->battle_data.keys & KEY_CAM_LEFT) != 0) {
       game_data->battle_data.camera_vel.x = -CAM_SPEED;
       game_data->battle_data.camera_pos.x -= CAM_SPEED * delta;
-      printf("camera_pos.x: %f\n", game_data->battle_data.camera_pos.x);
     } else if((game_data->battle_data.keys & KEY_CAM_RIGHT) != 0) {
       game_data->battle_data.camera_vel.x = CAM_SPEED;
       game_data->battle_data.camera_pos.x += CAM_SPEED * delta;

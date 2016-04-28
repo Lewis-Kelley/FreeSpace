@@ -634,6 +634,7 @@ CTEST(camera, camera_move) {
 
 CTEST(battle_entity, battle_entity_key_update) {
   Game_Data game_data;
+  int sel = 23;
 
   game_data.battle_data.state = GAME_BATTLE_MOVE;
   game_data.battle_data.keys = 0;
@@ -660,7 +661,7 @@ CTEST(battle_entity, battle_entity_key_update) {
     game_data.battle_data.board[i]->move_queue.key_size = 0;
   }
 
-  Battle_Entity *ent = game_data.battle_data.board[23];
+  Battle_Entity *ent = game_data.battle_data.board[sel];
   ent->team = TEAM_SELECTED;
 
   for(int i = 0; i < 4; i++) {
@@ -669,10 +670,54 @@ CTEST(battle_entity, battle_entity_key_update) {
 
   for(int i = 0; i < game_data.battle_data.cols
         * game_data.battle_data.rows; i++) {
-    if(i != 23) {
-      ASSERT_EQUAL(game_data.battle_data.board[i]->team, TEAM_EMPTY);
+    if(i != sel) {
+      ASSERT_EQUAL(TEAM_EMPTY, game_data.battle_data.board[i]->team);
     } else {
-      ASSERT_EQUAL(game_data.battle_data.board[i]->team, TEAM_SELECTED);
+      ASSERT_EQUAL(TEAM_SELECTED, game_data.battle_data.board[i]->team);
+    }
+
+    ASSERT_EQUAL(0.0, game_data.battle_data.board[i]->vel.x);
+    ASSERT_EQUAL(0.0, game_data.battle_data.board[i]->vel.y);
+  }
+
+  game_data.battle_data.keys = KEY_MOVE_LEFT;
+  sel -= 1;
+
+  battle_entity_key_update(ent, &game_data);
+
+  for(int i = 0; i < game_data.battle_data.cols
+        * game_data.battle_data.rows; i++) {
+    if(i != sel) {
+      ASSERT_EQUAL(TEAM_EMPTY, game_data.battle_data.board[i]->team);
+    } else {
+      //FIXME This test if failing.
+      ASSERT_EQUAL(TEAM_SELECTED, game_data.battle_data.board[i]->team);
+    }
+  }
+
+  game_data.battle_data.keys = 0;
+
+  battle_entity_key_update(ent, &game_data);
+
+  for(int i = 0; i < game_data.battle_data.cols
+        * game_data.battle_data.rows; i++) {
+    if(i != sel) {
+      ASSERT_EQUAL(TEAM_EMPTY, game_data.battle_data.board[i]->team);
+    } else {
+      ASSERT_EQUAL(TEAM_SELECTED, game_data.battle_data.board[i]->team);
+    }
+  }
+
+  game_data.battle_data.keys = KEY_MOVE_UP;
+
+  battle_entity_key_update(ent, &game_data);
+
+  for(int i = 0; i < game_data.battle_data.cols *
+        game_data.battle_data.rows; i++) {
+    if(i != sel) {
+      ASSERT_EQUAL(TEAM_EMPTY, game_data.battle_data.board[i]->team);
+    } else {
+      ASSERT_EQUAL(TEAM_SELECTED, game_data.battle_data.board[i]->team);
     }
   }
 }
