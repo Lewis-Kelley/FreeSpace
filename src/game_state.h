@@ -11,8 +11,8 @@
 #define GRID_ROWS 20 ///< The number of rows in the grid.
 #define GRID_COLS 20 ///< The number of columns in the grid.
 
-#define WIN_WIDTH 1000 ///< The width of the window in pixels
-#define WIN_HEIGHT 1000 ///<The height of the window in pixels
+#define WIN_WIDTH 500 ///< The width of the window in pixels
+#define WIN_HEIGHT 500 ///<The height of the window in pixels
 
 #define STATES 3 ///< The number of major states in the program.
 
@@ -20,9 +20,9 @@
  * The different types of major states.
  */
 typedef enum {
-  STATE_MENU = 0, ///< In a menu outside of the actual game.
-  STATE_BATTLE = 1, ///< In a battle state.
-  STATE_EXPLORE = 2 ///< In an exploration state.
+  STATE_MENU = 1, ///< In a menu outside of the actual game.
+  STATE_BATTLE = 2, ///< In a battle state.
+  STATE_EXPLORE = 3 ///< In an exploration state.
 } Major_State;
 
 /**
@@ -41,7 +41,7 @@ typedef enum {
 } Game_State;
 
 /**
- * List of masking powiers of 2 representing the current state
+ * List of masking powers of 2 representing the current state
  * of the keyboard.
  */
 typedef enum {

@@ -55,12 +55,12 @@ int8_t bat_ent_put(Game_Data *data, Battle_Entity *ent) {
     return 2;
   }
 
-  if(bat_ent_lookup(data, (uint16_t)ent->pos.x, (uint16_t)ent->pos.y) != NULL) {
+  if(bat_ent_lookup(data, (int16_t)ent->pos.x, (int16_t)ent->pos.y) != NULL) {
     return 1;
   }
 
-  data->battle_data.board[(uint16_t)ent->pos.y * data->battle_data.cols
-                          + (uint16_t)ent->pos.x] = ent;
+  data->battle_data.board[(int16_t)ent->pos.y * data->battle_data.cols
+                          + (int16_t)ent->pos.x] = ent;
 
   return 0;
 }

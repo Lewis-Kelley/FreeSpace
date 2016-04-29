@@ -646,16 +646,16 @@ CTEST(battle_entity, battle_entity_key_update) {
   game_data.battle_data.rows = 15;
   game_data.battle_data.board = malloc(game_data.battle_data.cols
                                        * game_data.battle_data.rows
-                                       * sizeof **game_data.battle_data.board);
+                                       * sizeof *game_data.battle_data.board);
   for(int i = 0; i < game_data.battle_data.cols
         * game_data.battle_data.rows; i++) {
     game_data.battle_data.board[i]
-      = malloc(sizeof *game_data.battle_data.board);
+      = malloc(sizeof **game_data.battle_data.board);
     game_data.battle_data.board[i]->team = TEAM_EMPTY;
     game_data.battle_data.board[i]->pos.x
       = i % game_data.battle_data.cols;
     game_data.battle_data.board[i]->pos.y
-      = i / game_data.battle_data.rows;
+      = i / game_data.battle_data.cols;
     game_data.battle_data.board[i]->vel = (Coord_f){0.0, 0.0};
     game_data.battle_data.board[i]->move_queue.head = NULL;
     game_data.battle_data.board[i]->move_queue.key_size = 0;
@@ -690,7 +690,6 @@ CTEST(battle_entity, battle_entity_key_update) {
     if(i != sel) {
       ASSERT_EQUAL(TEAM_EMPTY, game_data.battle_data.board[i]->team);
     } else {
-      //FIXME This test if failing.
       ASSERT_EQUAL(TEAM_SELECTED, game_data.battle_data.board[i]->team);
     }
   }

@@ -34,7 +34,8 @@ uint8_t init(SDL_Window **win, SDL_Renderer **rend, SDL_Texture **tex_player) {
   }
 
   //TODO Figure out how to make this path work well
-  SDL_Surface *bmp = SDL_LoadBMP("/home/kelleyld/programs/FreeSpace/assets/surf_player.bmp");
+  SDL_Surface *bmp =
+    SDL_LoadBMP("/home/kelleyld/programs/FreeSpace/assets/surf_player.bmp");
   if(bmp == NULL) {
     SDL_DestroyRenderer(*rend);
     SDL_DestroyWindow(*win);

@@ -46,13 +46,14 @@ void battle_entity_key_update(Battle_Entity *ent, Game_Data *game_data) {
 
       stack_put(&ent->move_queue, NULL, dest_coord, sizeof *dest_coord);
       free(dest_coord);
-      //FIXME The destination and origin entities aren't being swapped.
+      
       Battle_Entity *dest_ent = bat_ent_lookup(game_data, dest, ent->pos.y);
+      game_data->battle_data.board[(int)ent->pos.y * game_data->battle_data.cols
+                                   + (int)ent->pos.x] = dest_ent;
+      game_data->battle_data.board[(int)dest_ent->pos.y
+                                   * game_data->battle_data.cols
+                                   + (int)dest_ent->pos.x] = ent;
       dest_ent->pos.x = ent->pos.x;
-      bat_ent_put_coord(game_data, bat_ent_lookup(game_data, ent->pos.x,
-                                                  ent->pos.y),
-                        dest, ent->pos.y);
-      bat_ent_put_coord(game_data, dest_ent, ent->pos.x, ent->pos.y);
     } else {
       ent->vel.x = 0.0;
     }
@@ -94,13 +95,14 @@ void battle_entity_key_update(Battle_Entity *ent, Game_Data *game_data) {
 
       stack_put(&ent->move_queue, NULL, dest_coord, sizeof *dest_coord);
       free(dest_coord);
-      //FIXME The destination and origin entities aren't being swapped.
-      Battle_Entity *dest_ent = bat_ent_lookup(game_data, ent->pos.x, dest);
-      dest_ent->pos.y = ent->pos.y;
-      bat_ent_put_coord(game_data, bat_ent_lookup(game_data, ent->pos.x,
-                                                  ent->pos.y),
-                        ent->pos.x, dest);
-      bat_ent_put_coord(game_data, dest_ent, ent->pos.x, ent->pos.y);
+      
+      Battle_Entity *dest_ent = bat_ent_lookup(game_data, dest, ent->pos.y);
+      game_data->battle_data.board[(int)ent->pos.y * game_data->battle_data.cols
+                                   + (int)ent->pos.x] = dest_ent;
+      game_data->battle_data.board[(int)dest_ent->pos.y
+                                   * game_data->battle_data.cols
+                                   + (int)dest_ent->pos.x] = ent;
+      dest_ent->pos.x = ent->pos.x;
     } else {
       ent->vel.y = 0.0;
     }
