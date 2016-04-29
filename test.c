@@ -681,7 +681,7 @@ CTEST(battle_entity, battle_entity_key_update) {
   }
 
   game_data.battle_data.keys = KEY_MOVE_LEFT;
-  sel -= 1;
+  sel -= 1; //22
 
   battle_entity_key_update(ent, &game_data);
 
@@ -708,11 +708,24 @@ CTEST(battle_entity, battle_entity_key_update) {
   }
 
   game_data.battle_data.keys = KEY_MOVE_UP;
+  sel -= game_data.battle_data.cols; //7
 
   battle_entity_key_update(ent, &game_data);
 
   for(int i = 0; i < game_data.battle_data.cols *
         game_data.battle_data.rows; i++) {
+    if(i != sel) {
+      ASSERT_EQUAL(TEAM_EMPTY, game_data.battle_data.board[i]->team);
+    } else {
+      ASSERT_EQUAL(TEAM_SELECTED, game_data.battle_data.board[i]->team);
+    }
+  }
+
+  //Going out of bounds at the top of the screen.
+  game_data.battle_data.keys = KEY_MOVE_UP;
+
+  for(int i = 0; i < game_data.battle_data.cols
+        * game_data.battle_data.rows; i++) {
     if(i != sel) {
       ASSERT_EQUAL(TEAM_EMPTY, game_data.battle_data.board[i]->team);
     } else {
