@@ -62,28 +62,28 @@ typedef enum {
  * Holds all the data needed by the game in a battle state.
  */
 typedef struct {
-    Game_State state; ///< The current state of the game.
-    uint16_t keys; ///< A map of the current keys pressed.
-    Battle_Entity **board; ///< An array of Entity pointers.
-    Battle_Entity **turn_order; ///< Holds when each unit moves.
-    Coord_f camera_pos; ///< The camera's pixel position.
-    Coord_f camera_vel; ///< The camera velocity.
-    uint16_t cols; ///< The number of columns in the current board.
-    uint16_t rows; ///< The number of rows in the current board.
-    uint16_t turn; ///< The current move (not round).
-    uint16_t num_units; ///< The number of units
-  } Battle_Data;
+  Game_State state; ///< The current state of the game.
+  uint16_t keys; ///< A map of the current keys pressed.
+  Battle_Entity **board; ///< An array of Entity pointers.
+  Battle_Entity **turn_order; ///< Holds when each unit moves.
+  Coord_f camera_pos; ///< The camera's pixel position.
+  Coord_f camera_vel; ///< The camera velocity.
+  uint16_t cols; ///< The number of columns in the current board.
+  uint16_t rows; ///< The number of rows in the current board.
+  uint16_t turn; ///< The current move (not round).
+  uint16_t num_units; ///< The number of units
+} Battle_Data;
 
 /**
  * Holds all the data needed by the game in an explore state.
  */
 typedef struct {
-    Game_State state; ///< The current state of the game.
-    Explore_Entity **board; ///< An array of Entity pointers.
-    Coord_f camera_pos; ///< The camera's pixel position.
-    Coord_f camera_vel; ///< The camera velocity.
-    uint16_t cols; ///< The number of columns in the current board.
-    uint16_t rows; ///< The number of rows in the current board.
+  Game_State state; ///< The current state of the game.
+  Explore_Entity **board; ///< An array of Entity pointers.
+  Coord_f camera_pos; ///< The camera's pixel position.
+  Coord_f camera_vel; ///< The camera velocity.
+  uint16_t cols; ///< The number of columns in the current board.
+  uint16_t rows; ///< The number of rows in the current board.
 } Explore_Data;
 
 /**

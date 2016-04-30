@@ -1,0 +1,12 @@
+* [6/8] Engine
+1. [X] store board information
+2. [X] display board
+3. [X] basic motion
+4. [X] motion with collision detection
+5. [ ] camera control
+6. [X] animated motion
+7. [X] key control
+8. [ ] limited move range
+* Issues
+1. [ ] moving units after moving the camera crashes the game
+2. [ ] images appear to get out of allignment by a pixel or two

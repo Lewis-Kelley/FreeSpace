@@ -1,5 +1,19 @@
 * FreeSpace
-A space-themed SRPG in the vein of games like Shining Force and Fire Emblem. As a general concept, this means a turn-based strategy game where the player controls a group of characters that can move about a board with the usual goal of eliminating all of the opposing force, which may either be controlled by another player or an AI.
+A space-themed SRPG in the vein of games like Shining Force and Fire Emblem. As
+a general concept, this means a turn-based strategy game where the player
+controls a group of characters that can move about a board with the usual
+goal of eliminating all of the opposing force, which may either be controlled
+by another player or an AI.
 
-This is going to just be a hobby project that I'll be working on in the free time I don't have.
-The hope is to learn more about C as well as to gain some experience in handling a large project.
+This is going to just be a hobby project that I'll be working on in the free
+time I don't have. The hope is to learn more about C as well as to gain some
+experience in handling a large project.
+
+For more detail on where this project is going and its status, see TODO.org
+* Development Status
+Right now I'm currently working on the main engine, and as of right now one is able
+to start a "battle" and move two units around, toggling between the two with the
+space bar. Collision is working, but the images are drifting for some reason.
+
+My next goal will be to get the camera control to work, since it's currently causing
+segfaults.
