@@ -1,12 +1,22 @@
-* [6/8] Engine
-1. [X] store board information
-2. [X] display board
-3. [X] basic motion
-4. [X] motion with collision detection
-5. [ ] camera control
-6. [X] animated motion
-7. [X] key control
-8. [ ] limited move range
-* Issues
-1. [ ] moving units after moving the camera crashes the game
-2. [ ] images appear to get out of allignment by a pixel or two
+* [5/7] Board Engine (BE)
+1. [X] Store board information.
+2. [X] Display board.
+3. [X] Basic motion.
+4. [X] Motion with collision detection.
+5. [X] Key control.
+6. [ ] Camera control.
+7. [ ] Limited move range.
+* [0/3] Entities (EN)
+1. [ ] Store pertinent data (attack, health, etc.).
+2. [ ] Calculate attack damage given two entities.
+3. [ ] Check what entities are within range.
+* [1/6] Visuals (VI)
+1. [X] Animated motion.
+2. [ ] Tracking camera.
+3. [ ] Tiling background.
+4. [ ] Show selected unit's move range.
+5. [ ] Animated still images.
+6. [ ] Parallax scrolling.
+* Issues (IS)
+1. [ ] Moving units after moving the camera crashes the game.
+2. [ ] Images appear to get out of allignment by a pixel or two.
