@@ -181,7 +181,7 @@ CTEST(hashmap, hashmap_remove) {
 
   hashmap_free(&hashmap);
 }
-camera
+
 int main(int argc, const char *argv[])
 {
   int result = ctest_main(argc, argv);

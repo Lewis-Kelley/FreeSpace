@@ -171,6 +171,10 @@ CTEST(battle_entity, collision_battle_entity_key_update) {
   }
 }
 
+CTEST(battle_entity, battle_entity_update) {
+
+}
+
 int main(int argc, const char *argv[])
 {
   int result = ctest_main(argc, argv);
