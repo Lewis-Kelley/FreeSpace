@@ -20,7 +20,18 @@ add_executable(FreeSpace main.c)
 target_link_libraries(FreeSpace src hashmap ${SDL2_LIBRARIES}
   ${SDL2IMAGE_LIBRARIES})
 
-add_executable(unit-tests test.c)
-target_link_libraries(unit-tests hashmap src)
+add_executable(stack-tests test/stack_tests.c)
+target_link_libraries(stack-tests hashmap)
+add_test(stack-tests stack-tests)
 
-add_test(unit-tests unit-tests)
+add_executable(hashmap-tests test/hashmap_tests.c)
+target_link_libraries(hashmap-tests hashmap)
+add_test(hashmap-tests hashmap-tests)
+
+add_executable(camera-tests test/camera_tests.c)
+target_link_libraries(camera-tests src hashmap)
+add_test(camera-tests camera-tests)
+
+add_executable(battle-entity-tests test/battle_entity_tests.c)
+target_link_libraries(battle-entity-tests src hashmap)
+add_test(battle-entity-tests battle-entity-tests)
