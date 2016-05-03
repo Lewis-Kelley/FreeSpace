@@ -95,10 +95,10 @@ int main(int argc, char **argv) {
   game_data.battle_data.state = GAME_BATTLE_MOVE;
   game_data.battle_data.num_units = 2;
   game_data.battle_data.board =
-    (Battle_Entity **)malloc(GRID_COLS * GRID_COLS * sizeof(Battle_Entity *));
+    malloc(GRID_COLS * GRID_COLS * sizeof *game_data.battle_data.board);
   game_data.battle_data.turn_order =
-    (Battle_Entity **)malloc(game_data.battle_data.num_units *
-                             sizeof(Battle_Entity *));
+    malloc(game_data.battle_data.num_units
+           * sizeof *game_data.battle_data.turn_order);
   game_data.battle_data.camera_pos = (Coord_f){0.0, 0.0};
   game_data.battle_data.camera_vel = (Coord_f){0.0, 0.0};
   game_data.battle_data.cols = GRID_COLS;
@@ -108,7 +108,7 @@ int main(int argc, char **argv) {
   for(int i = 0; i < GRID_COLS; i++)
     for(int j = 0; j < GRID_ROWS; j++) {
       game_data.battle_data.board[j * GRID_COLS + i]
-        = (Battle_Entity *)malloc(sizeof(Battle_Entity));
+        = malloc(sizeof **game_data.battle_data.board);
       *game_data.battle_data.board[j * GRID_COLS + i]
         = (Battle_Entity){(Image){NULL, i * WIN_WIDTH / GRID_COLS,
                                   j * WIN_HEIGHT / GRID_ROWS,

@@ -75,6 +75,120 @@ CTEST(camera, camera_move) {
   ASSERT_DBL_NEAR(game.battle_data.camera_vel.y, 0.0);
 }
 
+CTEST(camera, image_move) {
+  Game_Data game_data;
+  Battle_Data battle_data;
+  int sel = 0;
+
+  battle_data.state = GAME_BATTLE_MOVE;
+  battle_data.camera_pos.x = 0.0;
+  battle_data.camera_pos.y = 0.0;
+  battle_data.camera_vel.x = 0.0;
+  battle_data.camera_vel.y = 0.0;
+  battle_data.cols = 10;
+  battle_data.rows = 15;
+  battle_data.board = malloc(battle_data.cols
+                             * battle_data.rows
+                             * sizeof *battle_data.board);
+  for(int i = 0; i < battle_data.cols
+        * battle_data.rows; i++) {
+    battle_data.board[i]
+      = malloc(sizeof **battle_data.board);
+    battle_data.board[i]->team = TEAM_EMPTY;
+    battle_data.board[i]->pos.x
+      = i % battle_data.cols;
+    battle_data.board[i]->pos.y
+      = i / battle_data.cols;
+    battle_data.board[i]->vel = (Coord_f){0.0, 0.0};
+    battle_data.board[i]->move_queue.head = NULL;
+    battle_data.board[i]->move_queue.key_size = 0;
+    battle_data.board[i]->img.dest_x = (i % battle_data.cols)
+      * WIN_WIDTH / battle_data.cols;
+    battle_data.board[i]->img.dest_y = (i / battle_data.rows)
+      * WIN_HEIGHT / battle_data.rows;
+  }
+
+  game_data.battle_data = battle_data;
+
+  Battle_Entity *ent = game_data.battle_data.board[sel];
+  ent->team = TEAM_SELECTED;
+
+  game_data.battle_data.keys = 0;
+  update_world(&game_data, 0.25);
+
+  ASSERT_EQUAL(0, ent->img.dest_x);
+  ASSERT_EQUAL(0, ent->img.dest_y);
+
+  game_data.battle_data.keys = KEY_CAM_LEFT;
+  update_world(&game_data, 0.25);
+
+  ASSERT_DBL_NEAR(0.25 * CAM_SPEED, ent->img.dest_x);
+  ASSERT_EQUAL(0, ent->img.dest_y);
+
+  game_data.battle_data.keys = KEY_CAM_LEFT | KEY_CAM_UP;
+  update_world(&game_data, 0.25);
+
+  ASSERT_DBL_NEAR(0.50 * CAM_SPEED, ent->img.dest_x);
+  ASSERT_DBL_NEAR(0.25 * CAM_SPEED, ent->img.dest_y);
+}
+
+CTEST(camera, camera_ent_move) {
+  Game_Data game_data;
+  Battle_Data battle_data;
+  int sel = 0;
+
+  battle_data.state = GAME_BATTLE_MOVE;
+  battle_data.camera_pos.x = 0.0;
+  battle_data.camera_pos.y = 0.0;
+  battle_data.camera_vel.x = 0.0;
+  battle_data.camera_vel.y = 0.0;
+  battle_data.cols = 10;
+  battle_data.rows = 15;
+  battle_data.board = malloc(battle_data.cols
+                             * battle_data.rows
+                             * sizeof *battle_data.board);
+  for(int i = 0; i < battle_data.cols
+        * battle_data.rows; i++) {
+    battle_data.board[i]
+      = malloc(sizeof **battle_data.board);
+    battle_data.board[i]->team = TEAM_EMPTY;
+    battle_data.board[i]->pos.x
+      = i % battle_data.cols;
+    battle_data.board[i]->pos.y
+      = i / battle_data.cols;
+    battle_data.board[i]->vel = (Coord_f){0.0, 0.0};
+    battle_data.board[i]->move_queue.head = NULL;
+    battle_data.board[i]->move_queue.key_size = 0;
+    battle_data.board[i]->img.dest_x = (i % battle_data.cols)
+      * WIN_WIDTH / battle_data.cols;
+    battle_data.board[i]->img.dest_y = (i / battle_data.rows)
+      * WIN_HEIGHT / battle_data.rows;
+  }
+
+  game_data.battle_data = battle_data;
+  Battle_Entity *ent = game_data.battle_data.board[sel];
+  ent->team = TEAM_SELECTED;
+
+  game_data.battle_data.keys = 0;
+  update_world(&game_data, 0.25);
+
+  ASSERT_DBL_NEAR(0, ent->img.dest_x);
+  ASSERT_DBL_NEAR(0, ent->img.dest_y);
+  ASSERT_DBL_NEAR(0, ent->pos.x);
+  ASSERT_DBL_NEAR(0, ent->pos.y);
+
+  game_data.battle_data.keys = KEY_CAM_UP;
+  update_world(&game_data, 1);
+
+  ASSERT_DBL_NEAR(0, ent->img.dest_x);
+  ASSERT_DBL_NEAR(CAM_SPEED, ent->img.dest_y);
+  ASSERT_DBL_NEAR(0, ent->pos.x);
+  ASSERT_DBL_NEAR(0, ent->pos.y);
+
+  game_data.battle_data.keys = KEY_MOVE_DOWN;
+  update_world(&game_data, 0.25);
+}
+
 int main(int argc, const char *argv[])
 {
   int result = ctest_main(argc, argv);

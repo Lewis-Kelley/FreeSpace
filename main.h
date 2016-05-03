@@ -20,7 +20,7 @@
 #define STR_LEN 75 ///< The standard length of strings when intitialized.
 #define MOVE_SPEED 0.007 ///< The standard speed of a unit.
 #define ROUNDOFF 0.001 ///< Roundoff to be used when testing for equal doubles.
-#define CAM_SPEED 0.5 ///< The speed of the camera.
+#define CAM_SPEED 0.005 ///< The speed of the camera.
 
 /**
  * Convinience macro to return the absolute value of an expression.

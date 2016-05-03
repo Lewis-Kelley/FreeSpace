@@ -85,15 +85,17 @@ void battle_entity_key_update(Battle_Entity *ent, Battle_Data *battle_data) {
  * @param [in, out] ent The Battle_Entity to be updated.
  * @param [in, out] game_data The current state of the game.
  */
-void battle_entity_update(Battle_Entity *ent, Game_Data *game_data,
+void battle_entity_update(Battle_Entity *ent, Battle_Data *battle_data,
                           double delta) {
   if(ent->team != TEAM_EMPTY) {
-    if(game_data->battle_data.camera_vel.x != 0.0) {
-      ent->img.dest_x -= game_data->battle_data.camera_vel.x * delta;
+    if(battle_data->camera_vel.x != 0.0) {
+      ent->img.dest_x -= battle_data->camera_vel.x * delta
+        * WIN_WIDTH / battle_data->cols;
     }
 
-    if(game_data->battle_data.camera_vel.y != 0.0) {
-      ent->img.dest_y -= game_data->battle_data.camera_vel.y * delta;
+    if(battle_data->camera_vel.y != 0.0) {
+      ent->img.dest_y -= battle_data->camera_vel.y * delta
+        * WIN_HEIGHT / battle_data->rows;
     }
 
     if(ent->move_queue.head != NULL) {
@@ -106,12 +108,12 @@ void battle_entity_update(Battle_Entity *ent, Game_Data *game_data,
                ((Coord_i *)ent->move_queue.head->data)->x)
            || (ent->vel.x < 0.0 && ent->pos.x <
                ((Coord_i *)ent->move_queue.head->data)->x)) {
-          if((game_data->battle_data.keys & KEY_MOVE) != 0) {
-            battle_entity_key_update(ent, &(game_data->battle_data));
+          if((battle_data->keys & KEY_MOVE) != 0) {
+            battle_entity_key_update(ent, battle_data);
           } else {
             ent->vel.x = 0.0;
             ent->pos.x = ((Coord_i *)ent->move_queue.head->data)->x
-              + game_data->battle_data.camera_pos.x;
+              + battle_data->camera_pos.x;
 
             stack_remove(&ent->move_queue, NULL);
           }
@@ -130,7 +132,7 @@ void battle_entity_update(Battle_Entity *ent, Game_Data *game_data,
 
           ent->pos.y = ((Coord_i *)ent->move_queue.head->data)->y;
           ent->img.dest_y = ent->pos.y * ent->img.dest_h
-            + game_data->battle_data.camera_pos.y;
+            + battle_data->camera_pos.y;
           ent->vel = (Coord_f){0.0, 0.0};
 
           stack_remove(&ent->move_queue, NULL);
@@ -139,8 +141,8 @@ void battle_entity_update(Battle_Entity *ent, Game_Data *game_data,
         }
       }
     } else if(ent->team == TEAM_SELECTED
-              && (game_data->battle_data.keys & KEY_MOVE) != 0) {
-      battle_entity_key_update(ent, &(game_data->battle_data));
+              && (battle_data->keys & KEY_MOVE) != 0) {
+      battle_entity_key_update(ent, battle_data);
     }
   }
 }
@@ -178,7 +180,8 @@ void update_world(Game_Data *game_data, double delta) {
 
     for(uint16_t i = 0; i < game_data->battle_data.rows *
           game_data->battle_data.cols; i++) {
-      battle_entity_update(game_data->battle_data.board[i], game_data, delta);
+      battle_entity_update(game_data->battle_data.board[i],
+                           &game_data->battle_data, delta);
     }
     break;
   case STATE_EXPLORE:
