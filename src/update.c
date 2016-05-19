@@ -15,11 +15,8 @@ void battle_entity_key_update(Battle_Entity *ent, Battle_Data *battle_data) {
     ent->pos.y = ((Coord_i *)ent->move_queue.head->data)->y
       + battle_data->camera_pos.y;
 
-    ent->img.dest_x = ent->pos.x * (double)WIN_WIDTH /
-      battle_data->cols + battle_data->camera_pos.x;      
-    ent->img.dest_y = (ent->pos.y + battle_data->camera_pos.y)
-      * (double)WIN_HEIGHT / battle_data->rows;
-
+    battle_image_move(&ent->img, ent->pos.x, ent->pos.y, battle_data);
+    
     stack_remove(&ent->move_queue, NULL);
   }
 
@@ -83,19 +80,15 @@ void battle_entity_key_update(Battle_Entity *ent, Battle_Data *battle_data) {
  * the last tick.
  *
  * @param [in, out] ent The Battle_Entity to be updated.
- * @param [in, out] game_data The current state of the game.
+ * @param [in, out] battle_data The current state of the game.
+ * @param [in] delta The time since the last tick.
  */
 void battle_entity_update(Battle_Entity *ent, Battle_Data *battle_data,
                           double delta) {
   if(ent->team != TEAM_EMPTY) {
-    if(battle_data->camera_vel.x != 0.0) {
-      ent->img.dest_x -= battle_data->camera_vel.x * delta
-        * WIN_WIDTH / battle_data->cols;
-    }
-
-    if(battle_data->camera_vel.y != 0.0) {
-      ent->img.dest_y -= battle_data->camera_vel.y * delta
-        * WIN_HEIGHT / battle_data->rows;
+    if(battle_data->camera_vel.x != 0.0
+       || battle_data->camera_vel.y != 0.0) {
+      battle_image_move(&ent->img, ent->pos.x, ent->pos.y, battle_data);
     }
 
     if(ent->move_queue.head != NULL) {
@@ -108,18 +101,14 @@ void battle_entity_update(Battle_Entity *ent, Battle_Data *battle_data,
                ((Coord_i *)ent->move_queue.head->data)->x)
            || (ent->vel.x < 0.0 && ent->pos.x <
                ((Coord_i *)ent->move_queue.head->data)->x)) {
-          if((battle_data->keys & KEY_MOVE) != 0) {
-            battle_entity_key_update(ent, battle_data);
-          } else {
-            ent->vel.x = 0.0;
-            ent->pos.x = ((Coord_i *)ent->move_queue.head->data)->x
-              + battle_data->camera_pos.x;
+          ent->vel.x = 0.0;
+          ent->pos.x = ((Coord_i *)ent->move_queue.head->data)->x
+            + battle_data->camera_pos.x;
 
-            stack_remove(&ent->move_queue, NULL);
-          }
-        } else {
-          ent->img.dest_x += ent->vel.x * ent->img.dest_w * delta;
+          stack_remove(&ent->move_queue, NULL);
         }
+        
+        battle_image_move(&ent->img, ent->pos.x, ent->pos.y, battle_data);
       } else if(ent->vel.y != 0.0) {
         ent->pos.y += ent->vel.y * delta;
 
@@ -130,15 +119,13 @@ void battle_entity_update(Battle_Entity *ent, Battle_Data *battle_data,
            || (ent->vel.y < 0.0 && ent->pos.y <
                ((Coord_i *)ent->move_queue.head->data)->y)) {
 
+          ent->vel.y = 0.0;
           ent->pos.y = ((Coord_i *)ent->move_queue.head->data)->y;
-          ent->img.dest_y = ent->pos.y * ent->img.dest_h
-            + battle_data->camera_pos.y;
-          ent->vel = (Coord_f){0.0, 0.0};
 
           stack_remove(&ent->move_queue, NULL);
-        } else {
-          ent->img.dest_y += ent->vel.y * ent->img.dest_h * delta;
         }
+        
+        battle_image_move(&ent->img, ent->pos.x, ent->pos.y, battle_data);
       }
     } else if(ent->team == TEAM_SELECTED
               && (battle_data->keys & KEY_MOVE) != 0) {

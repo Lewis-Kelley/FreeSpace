@@ -8,6 +8,7 @@
 #include "battle_entity.h"
 #include "event_handler.h"
 #include "game_state.h"
+#include "image_update.h"
 #include "../main.h"
 
 void update_world(Game_Data *game_data, double delta);
