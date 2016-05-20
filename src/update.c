@@ -102,12 +102,11 @@ void battle_entity_update(Battle_Entity *ent, Battle_Data *battle_data,
            || (ent->vel.x < 0.0 && ent->pos.x <
                ((Coord_i *)ent->move_queue.head->data)->x)) {
           ent->vel.x = 0.0;
-          ent->pos.x = ((Coord_i *)ent->move_queue.head->data)->x
-            + battle_data->camera_pos.x;
-
+          ent->pos.x = ((Coord_i *)ent->move_queue.head->data)->x;
+          
           stack_remove(&ent->move_queue, NULL);
         }
-        
+
         battle_image_move(&ent->img, ent->pos.x, ent->pos.y, battle_data);
       } else if(ent->vel.y != 0.0) {
         ent->pos.y += ent->vel.y * delta;

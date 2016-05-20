@@ -145,23 +145,19 @@ void key_down(SDL_Keycode keycode, Game_Data *game_data) {
     break;
   case SDLK_w:
     game_data->battle_data.keys |= KEY_CAM_UP;
-    game_data->battle_data.keys &=
-      ~(KEY_CAM_DOWN | KEY_CAM_LEFT | KEY_CAM_RIGHT);
+    game_data->battle_data.keys &= ~KEY_CAM_DOWN;
     break;
   case SDLK_r:
     game_data->battle_data.keys |= KEY_CAM_DOWN;
-    game_data->battle_data.keys &=
-      ~(KEY_CAM_UP | KEY_CAM_LEFT | KEY_CAM_RIGHT);
+    game_data->battle_data.keys &= ~KEY_CAM_UP;
     break;
   case SDLK_a:
     game_data->battle_data.keys |= KEY_CAM_LEFT;
-    game_data->battle_data.keys &=
-      ~(KEY_CAM_DOWN | KEY_CAM_UP | KEY_CAM_RIGHT);
+    game_data->battle_data.keys &= ~KEY_CAM_RIGHT;
     break;
   case SDLK_s:
     game_data->battle_data.keys |= KEY_CAM_RIGHT;
-    game_data->battle_data.keys &=
-      ~(KEY_CAM_DOWN | KEY_CAM_LEFT | KEY_CAM_UP);
+    game_data->battle_data.keys &= ~KEY_CAM_LEFT;
     break;
   default:
     break;

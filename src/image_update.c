@@ -16,8 +16,8 @@ void _image_pos (Image *img, double x, double y,
                         double cam_x, double cam_y,
                         uint16_t cols, uint16_t rows,
                         uint16_t win_width, uint16_t win_height) {
-  img->dest_x = (cam_x + x) * (double)win_width / cols;
-  img->dest_y = (cam_y + y) * (double)win_height / rows;
+  img->dest_x = (x - cam_x) * (double)win_width / cols;
+  img->dest_y = (y - cam_y) * (double)win_height / rows;
 }
 
 /**
