@@ -1,10 +1,10 @@
-* [5/7] Board Engine (BE)
+* [6/7] Board Engine (BE)
 1. [X] Store board information.
 2. [X] Display board.
 3. [X] Basic motion.
 4. [X] Motion with collision detection.
 5. [X] Key control.
-6. [ ] Camera control.
+6. [X] Camera control.
 7. [ ] Limited move range.
 * [0/4] Entities (EN)
 1. [ ] Store pertinent stats (attack, health, etc.).
