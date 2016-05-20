@@ -6,10 +6,14 @@
 5. [X] Key control.
 6. [ ] Camera control.
 7. [ ] Limited move range.
-* [0/3] Entities (EN)
-1. [ ] Store pertinent data (attack, health, etc.).
-2. [ ] Calculate attack damage given two entities.
-3. [ ] Check what entities are within range.
+* [0/4] Entities (EN)
+1. [ ] Store pertinent stats (attack, health, etc.).
+2. [ ] Implement energy allocation system.
+   - Three different systems: Weapons, Shields, and Engines.
+   - Allocating different amounts of energy to the different systems improves
+     their performance.
+3. [ ] Calculate attack damage given two entities.
+4. [ ] Check what entities are within range.
 * [1/6] Visuals (VI)
 1. [X] Animated motion.
 2. [ ] Tracking camera.
