@@ -12,8 +12,11 @@ experience in handling a large project.
 For more detail on where this project is going and its status, see TODO.org
 * Development Status
 Right now I'm currently working on the main engine, and as of right now one is able
-to start a "battle" and move two units around, toggling between the two with the
-space bar. Collision is working, but the images are drifting for some reason.
+to start a "battle" and move two units around with the arrow keys,
+toggling between the two with the space bar. The camera can be moved with
+WARS (I use colemak keyboard; it's not hard to modify if you really want to).
+Collision is working, but I think the images are drifting for some reason.
 
-My next goal will be to get the camera control to work, since it's currently causing
-segfaults.
+My next goal will be to implement a move range that is reset upon switching to the
+ship. This will require some visual indicator of the move range which I haven't
+settled on yet.

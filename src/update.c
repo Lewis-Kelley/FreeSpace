@@ -92,38 +92,31 @@ void battle_entity_update(Battle_Entity *ent, Battle_Data *battle_data,
     }
 
     if(ent->move_queue.head != NULL) {
+      double *vel = NULL;
+      double *pos = NULL;
+      int dest;
+      
       if(ent->vel.x != 0.0) {
-        ent->pos.x += ent->vel.x * delta;
-
-        if(ABS(ent->pos.x
-               - ((Coord_i *)ent->move_queue.head->data)->x) < ROUNDOFF
-           || (ent->vel.x > 0.0 && ent->pos.x >
-               ((Coord_i *)ent->move_queue.head->data)->x)
-           || (ent->vel.x < 0.0 && ent->pos.x <
-               ((Coord_i *)ent->move_queue.head->data)->x)) {
-          ent->vel.x = 0.0;
-          ent->pos.x = ((Coord_i *)ent->move_queue.head->data)->x;
-          
-          stack_remove(&ent->move_queue, NULL);
-        }
-
-        battle_image_move(&ent->img, ent->pos.x, ent->pos.y, battle_data);
+        vel = &ent->vel.x;
+        pos = &ent->pos.x;
+        dest = ((Coord_i *)ent->move_queue.head->data)->x;
       } else if(ent->vel.y != 0.0) {
-        ent->pos.y += ent->vel.y * delta;
+        vel = &ent->vel.y;
+        pos = &ent->pos.y;
+        dest = ((Coord_i *)ent->move_queue.head->data)->y;
+      }
 
-        if(ABS(ent->pos.y
-               - ((Coord_i *)ent->move_queue.head->data)->y) < ROUNDOFF
-           || (ent->vel.y > 0.0 && ent->pos.y >
-               ((Coord_i *)ent->move_queue.head->data)->y)
-           || (ent->vel.y < 0.0 && ent->pos.y <
-               ((Coord_i *)ent->move_queue.head->data)->y)) {
+      if(pos != NULL) {
+        *pos += *vel * delta;
 
-          ent->vel.y = 0.0;
-          ent->pos.y = ((Coord_i *)ent->move_queue.head->data)->y;
-
+        if(ABS(*pos - dest) < ROUNDOFF || (*vel > 0.0 && *pos > dest)
+           || (*vel < 0.0 && *pos < dest)) {
+          *vel = 0.0;
+          *pos = dest;
+        
           stack_remove(&ent->move_queue, NULL);
         }
-        
+
         battle_image_move(&ent->img, ent->pos.x, ent->pos.y, battle_data);
       }
     } else if(ent->team == TEAM_SELECTED
