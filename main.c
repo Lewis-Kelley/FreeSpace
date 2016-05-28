@@ -16,7 +16,7 @@ uint8_t init(SDL_Window **win, SDL_Renderer **rend, SDL_Texture **tex_player) {
     ERROR("SDL_Init failed.");
     return 1;
   }
-  
+
   *win = SDL_CreateWindow("FreeSpace", 100, 100, WIN_WIDTH, WIN_HEIGHT,
                           SDL_WINDOW_SHOWN);
   if(*win == NULL) {
@@ -65,12 +65,14 @@ uint8_t init(SDL_Window **win, SDL_Renderer **rend, SDL_Texture **tex_player) {
  * @param [in] game_data The current state of the game.
  */
 void render(SDL_Renderer *rend, Game_Data *game_data) {
-  for(int i = 0; i < GRID_COLS * GRID_ROWS; i++) {
-    if(game_data->battle_data.board[i]->team != TEAM_EMPTY) {
-      image_draw(&game_data->battle_data.board[i]->img, rend);
+  for(uint16_t i = 0; i < game_data->battle_data.board.rows
+        * game_data->battle_data.board.cols; i++) {
+    if(game_data->battle_data.board.tiles[i].ent != NULL) {
+      image_draw(&((Battle_Entity *)game_data->
+                   battle_data.board.tiles[i].ent)->img, rend);
     }
   }
-
+  
   SDL_RenderPresent(rend);
 }
 
@@ -94,54 +96,73 @@ int main(int argc, char **argv) {
 
   game_data.battle_data.state = GAME_BATTLE_MOVE;
   game_data.battle_data.num_units = 2;
-  game_data.battle_data.board =
-    malloc(GRID_COLS * GRID_COLS * sizeof *game_data.battle_data.board);
+  game_data.battle_data.board.tiles
+    = malloc(GRID_COLS * GRID_ROWS * sizeof *game_data.battle_data.board.tiles);
   game_data.battle_data.turn_order =
     malloc(game_data.battle_data.num_units
            * sizeof *game_data.battle_data.turn_order);
   game_data.battle_data.camera_pos = (Coord_f){0.0, 0.0};
   game_data.battle_data.camera_vel = (Coord_f){0.0, 0.0};
-  game_data.battle_data.cols = GRID_COLS;
-  game_data.battle_data.rows = GRID_ROWS;
+  game_data.battle_data.board.cols = GRID_COLS;
+  game_data.battle_data.board.rows = GRID_ROWS;
   game_data.battle_data.turn = 0;
 
   for(int i = 0; i < GRID_COLS; i++)
     for(int j = 0; j < GRID_ROWS; j++) {
-      game_data.battle_data.board[j * GRID_COLS + i]
-        = malloc(sizeof **game_data.battle_data.board);
-      *game_data.battle_data.board[j * GRID_COLS + i]
-        = (Battle_Entity){(Image){NULL, i * WIN_WIDTH / GRID_COLS,
-                                  j * WIN_HEIGHT / GRID_ROWS,
-                                  WIN_WIDTH /GRID_COLS, WIN_HEIGHT / GRID_ROWS,
-                                  0, 0, 0, 0},
-                          TEAM_EMPTY, (Coord_f){i, j}, (Coord_f){0, 0},
-                          (Stack){NULL, 0}};
+      game_data.battle_data.board.tiles[j * GRID_COLS + i].ent = NULL;
     }
 
   SDL_Event event;
+  Battle_Entity *temp;
 
-  game_data.battle_data.board[10 * GRID_ROWS + 5]->img.tex = tex_player;
-  game_data.battle_data.board[10 * GRID_ROWS + 5]->team = TEAM_SELECTED;
-  game_data.battle_data.turn_order[0]
-    = game_data.battle_data.board[10 * GRID_ROWS + 5];
+  temp = game_data.battle_data.board.tiles[10 * GRID_ROWS + 5].ent
+    = malloc(sizeof(Battle_Entity));
 
-  game_data.battle_data.board[19 * GRID_ROWS + 19]->img.tex = tex_player;
-  game_data.battle_data.board[19 * GRID_ROWS + 19]->team = TEAM_PLAYER;
-  game_data.battle_data.turn_order[1]
-    = game_data.battle_data.board[19 * GRID_ROWS + 19];
+  temp->img.tex = tex_player;
+  temp->img.dest_x = 5.0 * WIN_WIDTH / GRID_ROWS;
+  temp->img.dest_y = 10.0 * WIN_HEIGHT / GRID_COLS;
+  temp->img.dest_w = WIN_WIDTH / GRID_ROWS;
+  temp->img.dest_h = WIN_HEIGHT / GRID_COLS;
+  temp->team = TEAM_SELECTED;
+  temp->pos = (Coord_f){10.0, 5.0};
+  temp->vel = (Coord_f){0.0, 0.0};
+  temp->move_queue.key_size = 0;
 
+  game_data.battle_data.turn_order[0] = temp;
+
+  temp = game_data.battle_data.board.tiles[19 * GRID_ROWS + 19].ent
+    = malloc(sizeof(Battle_Entity));
+
+  temp->img.tex = tex_player;
+  temp->img.dest_x = 19.0 * WIN_WIDTH / GRID_ROWS;
+  temp->img.dest_y = 19.0 * WIN_HEIGHT / GRID_COLS;
+  temp->img.dest_w = WIN_WIDTH / GRID_ROWS;
+  temp->img.dest_h = WIN_HEIGHT / GRID_COLS;
+  temp->team = TEAM_SELECTED;
+  temp->pos = (Coord_f){19.0, 19.0};
+  temp->vel = (Coord_f){0.0, 0.0};
+  temp->move_queue.key_size = 0;
+  
+  game_data.battle_data.turn_order[1] = temp;
+  game_data.battle_data.keys = 0;
+  
   double time = SDL_GetTicks();
 
   while(game_data.battle_data.state != GAME_STOPPED) {
     SDL_RenderClear(rend);
-    while(SDL_PollEvent(&event))
+    
+    while(SDL_PollEvent(&event)) {
       handle_event(&event, &game_data);
+    }
 
     update_world(&game_data, SDL_GetTicks() - time);
     time = SDL_GetTicks();
     render(rend, &game_data);
     SDL_RenderPresent(rend);
   }
+
+  free(game_data.battle_data.board.tiles[10 * GRID_ROWS + 5].ent);
+  free(game_data.battle_data.board.tiles[19 * GRID_ROWS + 19].ent);
 
   SDL_DestroyTexture(tex_player);
   SDL_DestroyRenderer(rend);

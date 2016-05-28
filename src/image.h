@@ -6,6 +6,14 @@
 #include <SDL2/SDL.h>
 #include <stdint.h>
 
+#define ROUNDOFF 0.001 ///< Roundoff to be used when testing for equal doubles.
+
+/**
+ * Convinience macro to return the absolute value of an expression.
+ */
+#define ABS(exp)                                \
+  ((exp) < 0 ? -(exp) : (exp))
+
 /** @struct Image
  * Holds the details on how to draw a surface, including its draw coordinates.
  */

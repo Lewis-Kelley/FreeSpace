@@ -31,7 +31,8 @@ void _image_pos (Image *img, double x, double y,
 void battle_image_move (Image *img, double x, double y,
                         Battle_Data *battle_data) {
   _image_pos(img, x, y, battle_data->camera_pos.x, battle_data->camera_pos.y,
-             battle_data->cols, battle_data->rows, WIN_WIDTH, WIN_HEIGHT);
+             battle_data->board.cols, battle_data->board.rows,
+             WIN_WIDTH, WIN_HEIGHT);
 }
 
 /**
@@ -45,5 +46,5 @@ void battle_image_move (Image *img, double x, double y,
 void explore_image_move (Image *img, double x, double y,
                          Explore_Data *exp_data) {
   _image_pos(img, x, y, exp_data->camera_pos.x, exp_data->camera_pos.y,
-             exp_data->cols, exp_data->rows, WIN_WIDTH, WIN_HEIGHT);
+             exp_data->board.cols, exp_data->board.rows, WIN_WIDTH, WIN_HEIGHT);
 }

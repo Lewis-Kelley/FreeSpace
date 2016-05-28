@@ -7,6 +7,7 @@
 #include "battle_entity.h"
 #include "explore_entity.h"
 #include "coord.h"
+#include "board.h"
 
 #define GRID_ROWS 20 ///< The number of rows in the grid.
 #define GRID_COLS 20 ///< The number of columns in the grid.
@@ -64,12 +65,10 @@ typedef enum {
 typedef struct {
   Game_State state; ///< The current state of the game.
   uint16_t keys; ///< A map of the current keys pressed.
-  Battle_Entity **board; ///< An array of Entity pointers.
+  Board board; ///< The current board.
   Battle_Entity **turn_order; ///< Holds when each unit moves.
   Coord_f camera_pos; ///< The camera's pixel position.
   Coord_f camera_vel; ///< The camera velocity.
-  uint16_t cols; ///< The number of columns in the current board.
-  uint16_t rows; ///< The number of rows in the current board.
   uint16_t turn; ///< The current move (not round).
   uint16_t num_units; ///< The number of units
 } Battle_Data;
@@ -79,11 +78,9 @@ typedef struct {
  */
 typedef struct {
   Game_State state; ///< The current state of the game.
-  Explore_Entity **board; ///< An array of Entity pointers.
+  Board board; ///< The current board.
   Coord_f camera_pos; ///< The camera's pixel position.
   Coord_f camera_vel; ///< The camera velocity.
-  uint16_t cols; ///< The number of columns in the current board.
-  uint16_t rows; ///< The number of rows in the current board.
 } Explore_Data;
 
 /**

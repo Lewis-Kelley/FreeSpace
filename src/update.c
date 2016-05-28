@@ -55,18 +55,18 @@ void battle_entity_key_update(Battle_Entity *ent, Battle_Data *battle_data) {
     return;
   }
 
-  if(dest.x < battle_data->cols && dest.y < battle_data->rows
-     && battle_data->board[dest.y * battle_data->cols + dest.x]->team
-     == TEAM_EMPTY) {
+  if(dest.x < battle_data->board.cols && dest.y < battle_data->board.rows
+     && (battle_data->board.tiles[dest.y * battle_data->board.cols + dest.x]
+         .block & BLOCK_PLAYER) == 0) {
 
     stack_put(&ent->move_queue, NULL, &dest, sizeof dest);
 
-    Battle_Entity *dest_ent = battle_data->board[dest.y * battle_data->cols
-                                                 + dest.x];
-    battle_data->board[(int)ent->pos.y * battle_data->cols
-                       + (int)ent->pos.x] = dest_ent;
-    battle_data->board[(int)dest_ent->pos.y * battle_data->cols
-                       + (int)dest_ent->pos.x] = ent;
+    Battle_Entity *dest_ent
+      = battle_data->board.tiles[dest.y * battle_data->board.cols + dest.x].ent;
+    battle_data->board.tiles[(int)ent->pos.y * battle_data->board.cols
+                       + (int)ent->pos.x].ent = dest_ent;
+    battle_data->board.tiles[(int)dest_ent->pos.y * battle_data->board.cols
+                       + (int)dest_ent->pos.x].ent = ent;
     dest_ent->pos.x = ent->pos.x;
     dest_ent->pos.y = ent->pos.y;
   } else {
@@ -85,44 +85,42 @@ void battle_entity_key_update(Battle_Entity *ent, Battle_Data *battle_data) {
  */
 void battle_entity_update(Battle_Entity *ent, Battle_Data *battle_data,
                           double delta) {
-  if(ent->team != TEAM_EMPTY) {
-    if(battle_data->camera_vel.x != 0.0
-       || battle_data->camera_vel.y != 0.0) {
+  if(battle_data->camera_vel.x != 0.0
+     || battle_data->camera_vel.y != 0.0) {
+    battle_image_move(&ent->img, ent->pos.x, ent->pos.y, battle_data);
+  }
+
+  if(ent->move_queue.head != NULL) {
+    double *vel = NULL;
+    double *pos = NULL;
+    int dest;
+      
+    if(ent->vel.x != 0.0) {
+      vel = &ent->vel.x;
+      pos = &ent->pos.x;
+      dest = ((Coord_i *)ent->move_queue.head->data)->x;
+    } else if(ent->vel.y != 0.0) {
+      vel = &ent->vel.y;
+      pos = &ent->pos.y;
+      dest = ((Coord_i *)ent->move_queue.head->data)->y;
+    }
+
+    if(pos != NULL) {
+      *pos += *vel * delta;
+
+      if(ABS(*pos - dest) < ROUNDOFF || (*vel > 0.0 && *pos > dest)
+         || (*vel < 0.0 && *pos < dest)) {
+        *vel = 0.0;
+        *pos = dest;
+        
+        stack_remove(&ent->move_queue, NULL);
+      }
+
       battle_image_move(&ent->img, ent->pos.x, ent->pos.y, battle_data);
     }
-
-    if(ent->move_queue.head != NULL) {
-      double *vel = NULL;
-      double *pos = NULL;
-      int dest;
-      
-      if(ent->vel.x != 0.0) {
-        vel = &ent->vel.x;
-        pos = &ent->pos.x;
-        dest = ((Coord_i *)ent->move_queue.head->data)->x;
-      } else if(ent->vel.y != 0.0) {
-        vel = &ent->vel.y;
-        pos = &ent->pos.y;
-        dest = ((Coord_i *)ent->move_queue.head->data)->y;
-      }
-
-      if(pos != NULL) {
-        *pos += *vel * delta;
-
-        if(ABS(*pos - dest) < ROUNDOFF || (*vel > 0.0 && *pos > dest)
-           || (*vel < 0.0 && *pos < dest)) {
-          *vel = 0.0;
-          *pos = dest;
-        
-          stack_remove(&ent->move_queue, NULL);
-        }
-
-        battle_image_move(&ent->img, ent->pos.x, ent->pos.y, battle_data);
-      }
-    } else if(ent->team == TEAM_SELECTED
-              && (battle_data->keys & KEY_MOVE) != 0) {
-      battle_entity_key_update(ent, battle_data);
-    }
+  } else if(ent->team == TEAM_SELECTED
+            && (battle_data->keys & KEY_MOVE) != 0) {
+    battle_entity_key_update(ent, battle_data);
   }
 }
 
@@ -157,10 +155,12 @@ void update_world(Game_Data *game_data, double delta) {
       game_data->battle_data.camera_vel.y = 0.0;
     }
 
-    for(uint16_t i = 0; i < game_data->battle_data.rows *
-          game_data->battle_data.cols; i++) {
-      battle_entity_update(game_data->battle_data.board[i],
-                           &game_data->battle_data, delta);
+    for(uint16_t i = 0; i < game_data->battle_data.board.rows *
+          game_data->battle_data.board.cols; i++) {
+      if(game_data->battle_data.board.tiles[i].ent != NULL) {
+        battle_entity_update(game_data->battle_data.board.tiles[i].ent,
+                             &game_data->battle_data, delta);
+      }
     }
     break;
   case STATE_EXPLORE:

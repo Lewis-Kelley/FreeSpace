@@ -7,7 +7,7 @@
  * @param [in] rend The SDL_Renderer to be used to draw the image.
  */
 void image_draw(Image *img, SDL_Renderer *rend) {
-  if(img->src_w == 0 || img->src_h == 0) {
+  if(ABS(img->src_w) < ROUNDOFF  || ABS(img->src_h) < ROUNDOFF) {
     if(img->dest_w == 0 || img->dest_h == 0) {
       SDL_RenderCopy(rend, img->tex, NULL, NULL);
     } else {
