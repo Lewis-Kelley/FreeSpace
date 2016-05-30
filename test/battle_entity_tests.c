@@ -24,26 +24,15 @@ CTEST(battle_entity, basic_battle_entity_key_update) {
   game_data.battle_data.camera_pos.y = 0.0;
   game_data.battle_data.camera_vel.x = 0.0;
   game_data.battle_data.camera_vel.y = 0.0;
-  game_data.battle_data.cols = 10;
-  game_data.battle_data.rows = 15;
-  game_data.battle_data.board = malloc(game_data.battle_data.cols
-                                       * game_data.battle_data.rows
-                                       * sizeof *game_data.battle_data.board);
-  for(int i = 0; i < game_data.battle_data.cols
-        * game_data.battle_data.rows; i++) {
-    game_data.battle_data.board[i]
-      = malloc(sizeof **game_data.battle_data.board);
-    game_data.battle_data.board[i]->team = TEAM_EMPTY;
-    game_data.battle_data.board[i]->pos.x
-      = i % game_data.battle_data.cols;
-    game_data.battle_data.board[i]->pos.y
-      = i / game_data.battle_data.cols;
-    game_data.battle_data.board[i]->vel = (Coord_f){0.0, 0.0};
-    game_data.battle_data.board[i]->move_queue.head = NULL;
-    game_data.battle_data.board[i]->move_queue.key_size = 0;
-  }
-
-  Battle_Entity *ent = game_data.battle_data.board[sel];
+  game_data.battle_data.board.cols = 10;
+  game_data.battle_data.board.rows = 15;
+  game_data.battle_data.board.tiles
+    = malloc(game_data.battle_data.board.cols
+             * game_data.battle_data.board.rows
+             * sizeof *game_data.battle_data.board.tiles);
+  
+  Battle_Entity *ent
+    = game_data.battle_data.board.tiles[sel].ent = malloc(sizeof *ent);
   ent->team = TEAM_SELECTED;
   game_data.battle_data.keys = 0;
 
@@ -51,16 +40,19 @@ CTEST(battle_entity, basic_battle_entity_key_update) {
     battle_entity_key_update(ent, &(game_data.battle_data));
   }
 
-  for(int i = 0; i < game_data.battle_data.cols
-        * game_data.battle_data.rows; i++) {
+  for(int i = 0; i < game_data.battle_data.board.cols
+        * game_data.battle_data.board.rows; i++) {
     if(i != sel) {
-      ASSERT_EQUAL(TEAM_EMPTY, game_data.battle_data.board[i]->team);
+      ASSERT_NULL(game_data.battle_data.board.tiles[i].ent);
     } else {
-      ASSERT_EQUAL(TEAM_SELECTED, game_data.battle_data.board[i]->team);
+      ASSERT_EQUAL(TEAM_SELECTED, ((Battle_Entity *)game_data.battle_data.
+                                   board.tiles[i].ent)->team);
     }
 
-    ASSERT_EQUAL(0.0, game_data.battle_data.board[i]->vel.x);
-    ASSERT_EQUAL(0.0, game_data.battle_data.board[i]->vel.y);
+    ASSERT_EQUAL(0.0, ((Battle_Entity *)game_data.battle_data.
+                       board.tiles[i].ent)->vel.x);
+    ASSERT_EQUAL(0.0, ((Battle_Entity *)game_data.battle_data.board.
+                       tiles[i].ent)->vel.y);
   }
 
   game_data.battle_data.keys = KEY_MOVE_LEFT;
@@ -68,12 +60,13 @@ CTEST(battle_entity, basic_battle_entity_key_update) {
 
   battle_entity_key_update(ent, &(game_data.battle_data));
 
-  for(int i = 0; i < game_data.battle_data.cols
-        * game_data.battle_data.rows; i++) {
+  for(int i = 0; i < game_data.battle_data.board.cols
+        * game_data.battle_data.board.rows; i++) {
     if(i != sel) {
-      ASSERT_EQUAL(TEAM_EMPTY, game_data.battle_data.board[i]->team);
+      ASSERT_NULL(game_data.battle_data.board.tiles[i].ent);
     } else {
-      ASSERT_EQUAL(TEAM_SELECTED, game_data.battle_data.board[i]->team);
+      ASSERT_EQUAL(TEAM_SELECTED, ((Battle_Entity *)game_data.battle_data.
+                                   board.tiles[i].ent)->team);
     }
   }
 
@@ -81,26 +74,28 @@ CTEST(battle_entity, basic_battle_entity_key_update) {
 
   battle_entity_key_update(ent, &(game_data.battle_data));
 
-  for(int i = 0; i < game_data.battle_data.cols
-        * game_data.battle_data.rows; i++) {
+  for(int i = 0; i < game_data.battle_data.board.cols
+        * game_data.battle_data.board.rows; i++) {
     if(i != sel) {
-      ASSERT_EQUAL(TEAM_EMPTY, game_data.battle_data.board[i]->team);
+      ASSERT_NULL(game_data.battle_data.board.tiles[i].ent);
     } else {
-      ASSERT_EQUAL(TEAM_SELECTED, game_data.battle_data.board[i]->team);
+      ASSERT_EQUAL(TEAM_SELECTED, ((Battle_Entity *)game_data.battle_data.
+                                   board.tiles[i].ent)->team);
     }
   }
 
   game_data.battle_data.keys = KEY_MOVE_UP;
-  sel -= game_data.battle_data.cols; //7
+  sel -= game_data.battle_data.board.cols; //7
 
   battle_entity_key_update(ent, &(game_data.battle_data));
 
-  for(int i = 0; i < game_data.battle_data.cols *
-        game_data.battle_data.rows; i++) {
+  for(int i = 0; i < game_data.battle_data.board.cols *
+        game_data.battle_data.board.rows; i++) {
     if(i != sel) {
-      ASSERT_EQUAL(TEAM_EMPTY, game_data.battle_data.board[i]->team);
+      ASSERT_NULL(game_data.battle_data.board.tiles[i].ent);
     } else {
-      ASSERT_EQUAL(TEAM_SELECTED, game_data.battle_data.board[i]->team);
+      ASSERT_EQUAL(TEAM_SELECTED, ((Battle_Entity *)game_data.battle_data.
+                                   board.tiles[i].ent)->team);
     }
   }
 }
@@ -115,26 +110,15 @@ CTEST(battle_entity, collision_battle_entity_key_update) {
   game_data.battle_data.camera_pos.y = 0.0;
   game_data.battle_data.camera_vel.x = 0.0;
   game_data.battle_data.camera_vel.y = 0.0;
-  game_data.battle_data.cols = 10;
-  game_data.battle_data.rows = 15;
-  game_data.battle_data.board = malloc(game_data.battle_data.cols
-                                       * game_data.battle_data.rows
-                                       * sizeof *game_data.battle_data.board);
-  for(int i = 0; i < game_data.battle_data.cols
-        * game_data.battle_data.rows; i++) {
-    game_data.battle_data.board[i]
-      = malloc(sizeof **game_data.battle_data.board);
-    game_data.battle_data.board[i]->team = TEAM_EMPTY;
-    game_data.battle_data.board[i]->pos.x
-      = i % game_data.battle_data.cols;
-    game_data.battle_data.board[i]->pos.y
-      = i / game_data.battle_data.cols;
-    game_data.battle_data.board[i]->vel = (Coord_f){0.0, 0.0};
-    game_data.battle_data.board[i]->move_queue.head = NULL;
-    game_data.battle_data.board[i]->move_queue.key_size = 0;
-  }
-
-  Battle_Entity *ent = game_data.battle_data.board[sel];
+  game_data.battle_data.board.cols = 10;
+  game_data.battle_data.board.rows = 15;
+  game_data.battle_data.board.tiles
+    = malloc(game_data.battle_data.board.cols
+             * game_data.battle_data.board.rows
+             * sizeof *game_data.battle_data.board.tiles);
+ 
+  Battle_Entity *ent
+    = game_data.battle_data.board.tiles[sel].ent = malloc(sizeof *ent);
   ent->team = TEAM_SELECTED;
 
   //Going out of bounds at the top of the screen.
@@ -142,31 +126,37 @@ CTEST(battle_entity, collision_battle_entity_key_update) {
 
   battle_entity_key_update(ent, &(game_data.battle_data));
 
-  for(int i = 0; i < game_data.battle_data.cols
-        * game_data.battle_data.rows; i++) {
+  for(int i = 0; i < game_data.battle_data.board.cols
+        * game_data.battle_data.board.rows; i++) {
     if(i != sel) {
-      ASSERT_EQUAL(TEAM_EMPTY, game_data.battle_data.board[i]->team);
+      ASSERT_NULL(game_data.battle_data.board.tiles[i].ent);
     } else {
-      ASSERT_EQUAL(TEAM_SELECTED, game_data.battle_data.board[i]->team);
+      ASSERT_EQUAL(TEAM_SELECTED, ((Battle_Entity *)game_data.battle_data.
+                                   board.tiles[i].ent)->team);
     }
   }
 
   //Moving left into an entity
-  game_data.battle_data.board[sel + 1]->team = TEAM_PLAYER;
+  game_data.battle_data.board.tiles[sel + 1].ent
+    = malloc(sizeof(Battle_Entity));
+  ((Battle_Entity *)game_data.battle_data.board.tiles[sel + 1].ent)->team
+    = TEAM_PLAYER;
   game_data.battle_data.keys = KEY_MOVE_RIGHT;
 
   battle_entity_key_update(ent, &(game_data.battle_data));
 
-  for(int i = 0; i < game_data.battle_data.cols
-        * game_data.battle_data.rows; i++) {
+  for(int i = 0; i < game_data.battle_data.board.cols
+        * game_data.battle_data.board.rows; i++) {
     if(i != sel + 1) {
       if(i != sel) {
-        ASSERT_EQUAL(TEAM_EMPTY, game_data.battle_data.board[i]->team);
+        ASSERT_NULL(game_data.battle_data.board.tiles[i].ent);
       } else {
-        ASSERT_EQUAL(TEAM_SELECTED, game_data.battle_data.board[i]->team);
+        ASSERT_EQUAL(TEAM_SELECTED, ((Battle_Entity *)game_data.battle_data.
+                                     board.tiles[i].ent)->team);
       }
     } else {
-      ASSERT_EQUAL(TEAM_PLAYER, game_data.battle_data.board[i]->team);
+      ASSERT_EQUAL(TEAM_PLAYER, ((Battle_Entity *)game_data.battle_data.
+                                 board.tiles[i].ent)->team);
     }
   }
 }
@@ -180,26 +170,14 @@ CTEST(battle_entity, basic_battle_entity_update) {
   battle_data.camera_pos.y = 0.0;
   battle_data.camera_vel.x = 0.0;
   battle_data.camera_vel.y = 0.0;
-  battle_data.cols = 10;
-  battle_data.rows = 15;
-  battle_data.board = malloc(battle_data.cols
-                             * battle_data.rows
-                             * sizeof *battle_data.board);
-  for(int i = 0; i < battle_data.cols
-        * battle_data.rows; i++) {
-    battle_data.board[i]
-      = malloc(sizeof **battle_data.board);
-    battle_data.board[i]->team = TEAM_EMPTY;
-    battle_data.board[i]->pos.x
-      = i % battle_data.cols;
-    battle_data.board[i]->pos.y
-      = i / battle_data.cols;
-    battle_data.board[i]->vel = (Coord_f){0.0, 0.0};
-    battle_data.board[i]->move_queue.head = NULL;
-    battle_data.board[i]->move_queue.key_size = 0;
-  }
-
-  Battle_Entity *ent = battle_data.board[sel];
+  battle_data.board.cols = 10;
+  battle_data.board.rows = 15;
+  battle_data.board.tiles = malloc(battle_data.board.cols
+                                   * battle_data.board.rows
+                                   * sizeof *battle_data.board.tiles);
+  
+  Battle_Entity *ent
+    = battle_data.board.tiles[sel].ent = malloc(sizeof *ent);
   ent->team = TEAM_SELECTED;
 
   battle_data.keys = 0;
@@ -210,12 +188,13 @@ CTEST(battle_entity, basic_battle_entity_update) {
   ASSERT_EQUAL(0, ent->vel.x);
   ASSERT_EQUAL(0, ent->vel.y);
 
-  for(int i = 0; i < battle_data.rows * battle_data.cols;
+  for(int i = 0; i < battle_data.board.rows * battle_data.board.cols;
       i++) {
     if(i != sel) {
-      ASSERT_EQUAL(TEAM_EMPTY, battle_data.board[i]->team);
+      ASSERT_NULL(battle_data.board.tiles[i].ent);
     } else {
-      ASSERT_EQUAL(TEAM_SELECTED, battle_data.board[i]->team);
+      ASSERT_EQUAL(TEAM_SELECTED, ((Battle_Entity *)battle_data.
+                                   board.tiles[i].ent)->team);
     }
   }
 
@@ -229,12 +208,13 @@ CTEST(battle_entity, basic_battle_entity_update) {
 
   sel++;
 
-  for(int i = 0; i < battle_data.rows * battle_data.cols;
+  for(int i = 0; i < battle_data.board.rows * battle_data.board.cols;
       i++) {
     if(i != sel) {
-      ASSERT_EQUAL(TEAM_EMPTY, battle_data.board[i]->team);
+      ASSERT_NULL(battle_data.board.tiles[i].ent);
     } else {
-      ASSERT_EQUAL(TEAM_SELECTED, battle_data.board[i]->team);
+      ASSERT_EQUAL(TEAM_SELECTED, ((Battle_Entity *)battle_data.
+                                   board.tiles[i].ent)->team);
     }
   }
 
@@ -246,12 +226,13 @@ CTEST(battle_entity, basic_battle_entity_update) {
   ASSERT_DBL_NEAR(MOVE_SPEED, ent->vel.x);
   ASSERT_EQUAL(0, ent->vel.y);
 
-  for(int i = 0; i < battle_data.rows * battle_data.cols;
+  for(int i = 0; i < battle_data.board.rows * battle_data.board.cols;
       i++) {
     if(i != sel) {
-      ASSERT_EQUAL(TEAM_EMPTY, battle_data.board[i]->team);
+      ASSERT_NULL(battle_data.board.tiles[i].ent);
     } else {
-      ASSERT_EQUAL(TEAM_SELECTED, battle_data.board[i]->team);
+      ASSERT_EQUAL(TEAM_SELECTED, ((Battle_Entity *)battle_data.
+                                   board.tiles[i].ent)->team);
     }
   }
 
@@ -264,12 +245,13 @@ CTEST(battle_entity, basic_battle_entity_update) {
   ASSERT_EQUAL(0, ent->vel.x);
   ASSERT_EQUAL(0, ent->vel.y);
 
-  for(int i = 0; i < battle_data.rows * battle_data.cols;
+  for(int i = 0; i < battle_data.board.rows * battle_data.board.cols;
       i++) {
     if(i != sel) {
-      ASSERT_EQUAL(TEAM_EMPTY, battle_data.board[i]->team);
+      ASSERT_NULL(battle_data.board.tiles[i].ent);
     } else {
-      ASSERT_EQUAL(TEAM_SELECTED, battle_data.board[i]->team);
+      ASSERT_EQUAL(TEAM_SELECTED, ((Battle_Entity *)battle_data.
+                                   board.tiles[i].ent)->team);
     }
   }
 }

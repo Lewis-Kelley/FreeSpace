@@ -8,7 +8,7 @@
  *
  * @param [out] win The window that will be drawn on.
  * @param [out] rend The SDL_Renderer to be created.
- * @param [out] tex_player An SDL_Texture containing the image of the player ship.
+ * @param [out] tex_player An SDL_Texture containing the image of the player.
  * @return 0 if successful, 1 if error.
  */
 uint8_t init(SDL_Window **win, SDL_Renderer **rend, SDL_Texture **tex_player) {
@@ -123,10 +123,15 @@ int main(int argc, char **argv) {
   temp->img.dest_y = 10.0 * WIN_HEIGHT / GRID_COLS;
   temp->img.dest_w = WIN_WIDTH / GRID_ROWS;
   temp->img.dest_h = WIN_HEIGHT / GRID_COLS;
+  temp->img.src_x = 0.0;
+  temp->img.src_y = 0.0;
+  temp->img.src_w = 0.0;
+  temp->img.src_h = 0.0;
   temp->team = TEAM_SELECTED;
   temp->pos = (Coord_f){10.0, 5.0};
   temp->vel = (Coord_f){0.0, 0.0};
   temp->move_queue.key_size = 0;
+  temp->move_queue.head = NULL;
 
   game_data.battle_data.turn_order[0] = temp;
 
@@ -138,10 +143,15 @@ int main(int argc, char **argv) {
   temp->img.dest_y = 19.0 * WIN_HEIGHT / GRID_COLS;
   temp->img.dest_w = WIN_WIDTH / GRID_ROWS;
   temp->img.dest_h = WIN_HEIGHT / GRID_COLS;
+  temp->img.src_x = 0.0;
+  temp->img.src_y = 0.0;
+  temp->img.src_w = 0.0;
+  temp->img.src_h = 0.0;
   temp->team = TEAM_SELECTED;
   temp->pos = (Coord_f){19.0, 19.0};
   temp->vel = (Coord_f){0.0, 0.0};
   temp->move_queue.key_size = 0;
+  temp->move_queue.head = NULL;
   
   game_data.battle_data.turn_order[1] = temp;
   game_data.battle_data.keys = 0;

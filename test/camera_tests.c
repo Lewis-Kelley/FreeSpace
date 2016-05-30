@@ -22,8 +22,8 @@ CTEST(camera, camera_move) {
   game.battle_data.camera_pos.y = 0.0;
   game.battle_data.camera_vel.x = 0.0;
   game.battle_data.camera_vel.y = 0.0;
-  game.battle_data.cols = 0;
-  game.battle_data.rows = 0;
+  game.battle_data.board.cols = 0;
+  game.battle_data.board.rows = 0;
 
   for(float i = 0; i < 1; i += 0.25) {
     update_world(&game, 0.25);
@@ -84,53 +84,44 @@ CTEST(camera, image_move) {
   battle_data.camera_pos.y = 0.0;
   battle_data.camera_vel.x = 0.0;
   battle_data.camera_vel.y = 0.0;
-  battle_data.cols = 10;
-  battle_data.rows = 15;
-  battle_data.board = malloc(battle_data.cols
-                             * battle_data.rows
-                             * sizeof *battle_data.board);
-  for(int i = 0; i < battle_data.cols
-        * battle_data.rows; i++) {
-    battle_data.board[i]
-      = malloc(sizeof **battle_data.board);
-    battle_data.board[i]->team = TEAM_EMPTY;
-    battle_data.board[i]->pos.x
-      = i % battle_data.cols;
-    battle_data.board[i]->pos.y
-      = i / battle_data.cols;
-    battle_data.board[i]->vel = (Coord_f){0.0, 0.0};
-    battle_data.board[i]->move_queue.head = NULL;
-    battle_data.board[i]->move_queue.key_size = 0;
-    battle_data.board[i]->img.dest_x = (i % battle_data.cols)
-      * WIN_WIDTH / battle_data.cols;
-    battle_data.board[i]->img.dest_y = (i / battle_data.rows)
-      * WIN_HEIGHT / battle_data.rows;
+  battle_data.board.cols = 10;
+  battle_data.board.rows = 15;
+  battle_data.board.tiles = malloc(battle_data.board.cols
+                                   * battle_data.board.rows
+                                   * sizeof *battle_data.board.tiles);
+  for(int i = 0; i < battle_data.board.cols
+        * battle_data.board.rows; i++) {
+    battle_data.board.tiles[i].ent = NULL;
   }
 
   game_data.battle_data = battle_data;
 
-  Battle_Entity *ent = game_data.battle_data.board[0];
+  Battle_Entity *ent
+    = game_data.battle_data.board.tiles[1].ent = malloc(sizeof *ent);
+  ent->pos = (Coord_f){1.0, 0.0};
+  ent->img.dest_x = WIN_WIDTH / battle_data.board.cols;
+  ent->img.dest_y = WIN_HEIGHT / battle_data.board.rows;
   ent->team = TEAM_SELECTED;
 
   game_data.battle_data.keys = 0;
   update_world(&game_data, 0.25);
 
-  ASSERT_EQUAL(0, ent->img.dest_x);
-  ASSERT_EQUAL(0, ent->img.dest_y);
+  ASSERT_DBL_NEAR(WIN_WIDTH / battle_data.board.cols, ent->img.dest_x);
+  ASSERT_DBL_NEAR(0.0, ent->img.dest_y);
 
   game_data.battle_data.keys = KEY_CAM_LEFT;
   update_world(&game_data, 0.25);
 
-  ASSERT_DBL_NEAR(0.25 * CAM_SPEED * WIN_WIDTH / battle_data.cols,
+  ASSERT_DBL_NEAR((0.25 * CAM_SPEED + 1) * WIN_WIDTH / battle_data.board.cols,
                   ent->img.dest_x);
-  ASSERT_EQUAL(0, ent->img.dest_y);
+  ASSERT_DBL_NEAR(0.0, ent->img.dest_y);
 
   game_data.battle_data.keys = KEY_CAM_LEFT | KEY_CAM_UP;
   update_world(&game_data, 0.25);
 
-  ASSERT_DBL_NEAR(0.50 * CAM_SPEED * WIN_WIDTH / battle_data.cols,
+  ASSERT_DBL_NEAR((0.50 * CAM_SPEED + 1) * WIN_WIDTH / battle_data.board.cols,
                   ent->img.dest_x);
-  ASSERT_DBL_NEAR(0.25 * CAM_SPEED * WIN_HEIGHT / battle_data.rows,
+  ASSERT_DBL_NEAR(0.25 * CAM_SPEED * WIN_HEIGHT / battle_data.board.rows,
                   ent->img.dest_y);
 }
 
@@ -144,31 +135,14 @@ CTEST(camera, camera_ent_move) {
   battle_data.camera_pos.y = 0.0;
   battle_data.camera_vel.x = 0.0;
   battle_data.camera_vel.y = 0.0;
-  battle_data.cols = 10;
-  battle_data.rows = 15;
-  battle_data.board = malloc(battle_data.cols
-                             * battle_data.rows
-                             * sizeof *battle_data.board);
-  for(int i = 0; i < battle_data.cols
-        * battle_data.rows; i++) {
-    battle_data.board[i]
-      = malloc(sizeof **battle_data.board);
-    battle_data.board[i]->team = TEAM_EMPTY;
-    battle_data.board[i]->pos.x
-      = i % battle_data.cols;
-    battle_data.board[i]->pos.y
-      = i / battle_data.cols;
-    battle_data.board[i]->vel = (Coord_f){0.0, 0.0};
-    battle_data.board[i]->move_queue.head = NULL;
-    battle_data.board[i]->move_queue.key_size = 0;
-    battle_data.board[i]->img.dest_x = (i % battle_data.cols)
-      * WIN_WIDTH / battle_data.cols;
-    battle_data.board[i]->img.dest_y = (i / battle_data.rows)
-      * WIN_HEIGHT / battle_data.rows;
-  }
-
+  battle_data.board.cols = 10;
+  battle_data.board.rows = 15;
+  battle_data.board.tiles = malloc(battle_data.board.cols
+                                   * battle_data.board.rows
+                                   * sizeof *battle_data.board.tiles);
   game_data.battle_data = battle_data;
-  Battle_Entity *ent = game_data.battle_data.board[sel];
+  Battle_Entity *ent
+    = game_data.battle_data.board.tiles[sel].ent = malloc(sizeof *ent);
   ent->team = TEAM_SELECTED;
 
   game_data.battle_data.keys = 0;
@@ -183,7 +157,8 @@ CTEST(camera, camera_ent_move) {
   update_world(&game_data, 1.0);
 
   ASSERT_DBL_NEAR(0, ent->img.dest_x);
-  ASSERT_DBL_NEAR(CAM_SPEED * WIN_HEIGHT / battle_data.rows, ent->img.dest_y);
+  ASSERT_DBL_NEAR(CAM_SPEED * WIN_HEIGHT / battle_data.board.rows,
+                  ent->img.dest_y);
   ASSERT_DBL_NEAR(0, ent->pos.x);
   ASSERT_DBL_NEAR(0, ent->pos.y);
 
@@ -192,13 +167,13 @@ CTEST(camera, camera_ent_move) {
 
   ASSERT_DBL_NEAR(0.0, ent->img.dest_x);
   ASSERT_DBL_NEAR((CAM_SPEED + MOVE_SPEED * 0.25) * WIN_HEIGHT
-                  / battle_data.rows, ent->img.dest_y);
+                  / battle_data.board.rows, ent->img.dest_y);
 
   game_data.battle_data.keys = 0;
   update_world(&game_data, 1000.0);
 
   ASSERT_DBL_NEAR(0.0, ent->img.dest_x);
-  ASSERT_DBL_NEAR((CAM_SPEED + 1) * WIN_HEIGHT / battle_data.rows,
+  ASSERT_DBL_NEAR((CAM_SPEED + 1) * WIN_HEIGHT / battle_data.board.rows,
                   ent->img.dest_y);
 
   game_data.battle_data.keys = KEY_MOVE_UP;
@@ -208,13 +183,13 @@ CTEST(camera, camera_ent_move) {
   update_world(&game_data, 1000.0);
 
   ASSERT_DBL_NEAR(0.0, ent->img.dest_x);
-  ASSERT_DBL_NEAR(CAM_SPEED * WIN_HEIGHT / battle_data.rows,
+  ASSERT_DBL_NEAR(CAM_SPEED * WIN_HEIGHT / battle_data.board.rows,
                   ent->img.dest_y);
 
   game_data.battle_data.keys = KEY_CAM_RIGHT | KEY_CAM_DOWN;
   update_world(&game_data, 1.0);
 
-  ASSERT_DBL_NEAR(-CAM_SPEED * WIN_WIDTH * 1.0 / battle_data.cols,
+  ASSERT_DBL_NEAR(-CAM_SPEED * WIN_WIDTH * 1.0 / battle_data.board.cols,
                   ent->img.dest_x);
   ASSERT_DBL_NEAR(0.0, ent->img.dest_y);
 }

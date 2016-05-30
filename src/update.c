@@ -58,17 +58,20 @@ void battle_entity_key_update(Battle_Entity *ent, Battle_Data *battle_data) {
   if(dest.x < battle_data->board.cols && dest.y < battle_data->board.rows
      && (battle_data->board.tiles[dest.y * battle_data->board.cols + dest.x]
          .block & BLOCK_PLAYER) == 0) {
-
     stack_put(&ent->move_queue, NULL, &dest, sizeof dest);
-
     Battle_Entity *dest_ent
       = battle_data->board.tiles[dest.y * battle_data->board.cols + dest.x].ent;
+
     battle_data->board.tiles[(int)ent->pos.y * battle_data->board.cols
-                       + (int)ent->pos.x].ent = dest_ent;
-    battle_data->board.tiles[(int)dest_ent->pos.y * battle_data->board.cols
-                       + (int)dest_ent->pos.x].ent = ent;
-    dest_ent->pos.x = ent->pos.x;
-    dest_ent->pos.y = ent->pos.y;
+                             + (int)ent->pos.x].ent = dest_ent;
+    battle_data->board.tiles[dest.y * battle_data->board.cols + dest.x].ent
+      = ent;
+
+    if (dest_ent) {
+      dest_ent->pos.x = ent->pos.x;
+      dest_ent->pos.y = ent->pos.y;
+  
+    }
   } else {
     ent->vel.x = 0.0;
     ent->vel.y = 0.0;
